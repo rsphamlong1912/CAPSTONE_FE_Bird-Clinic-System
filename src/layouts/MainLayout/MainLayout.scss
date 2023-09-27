@@ -1,0 +1,104 @@
+.parent {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main {
+  display: flex;
+  flex-grow: 1;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-size: 20px;
+  line-height: 20px;
+  color: #ffe8c3;
+}
+
+.child.header {
+  height: 80px;
+  justify-content: space-between;
+  font-weight: 600;
+  color: #fff;
+  .user > span {
+    font-size: 22px;
+  }
+  span.logo-text {
+    font-size: 36px;
+    margin-left: 2%;
+  }
+  .black-text {
+    color: black;
+  }
+  .datetime {
+    background-color: white;
+    color: black;
+    padding: 10px 30px;
+    border-radius: 5px;
+    margin-left: 15%;
+  }
+  .user {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    span {
+      margin-right: 10px;
+    }
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+}
+
+.child.sidebar {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .tab-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .tab-service {
+    cursor: pointer;
+    color: white;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    min-width: 200px;
+    text-align: center;
+    padding: 20px 0;
+    font-weight: 500;
+  }
+  .tab-service.active {
+    background-color: rgba(0, 255, 178, 0.498);
+    border-radius: 8px;
+  }
+}
+
+.content {
+  background-color: #fff;
+  color: black;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #32b768;
+}
+
+ion-icon {
+  margin-right: 10px;
+  font-size: 24px;
+}

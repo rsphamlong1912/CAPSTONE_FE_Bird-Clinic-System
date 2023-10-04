@@ -1,0 +1,212 @@
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.headerContent {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 25px 0;
+  .left {
+    transform: translateX(-200px);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    ion-icon {
+      color: black;
+    }
+  }
+  .right {
+    transform: translateX(176px);
+  }
+}
+.nameCustomer {
+  width: 280px;
+  text-align: center;
+  background-color: #32b768;
+  color: white;
+  padding: 10px 30px;
+  border-radius: 5px;
+  margin-left: 15%;
+  font-weight: 600;
+}
+
+.mainContent {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mainContent .content {
+  width: 68%;
+  background-color: #d9d9d9;
+  padding: 20px;
+  height: 580px;
+  border-radius: 5px;
+  margin-left: 3.5rem;
+}
+
+.mainContent .metaContent {
+  width: 25%;
+  margin: 0 auto;
+  .boxData {
+    width: 80%;
+    margin-left: 2.5rem;
+    display: inline-block;
+    padding: 15px 45px;
+    background-color: #32b768;
+    text-align: center;
+    border-radius: 5px;
+    .boxDataItem {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      padding-left: 25px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    ion-icon {
+      color: white;
+    }
+  }
+  button {
+    display: block;
+    width: 80%;
+    padding: 15px 45px;
+    margin: 15px 0;
+    margin-left: 2.5rem;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+  button.btnComplete {
+    background-color: #32b768;
+    color: white;
+    border: none;
+  }
+  button.btnHospitalize {
+    background-color: white;
+    color: #32b768;
+    border: 1px solid #32b768;
+  }
+}
+
+.procedureTab {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+
+.procedureTab span {
+  width: 160px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #32b768;
+  color: #32b768;
+  font-weight: bold;
+  padding: 15px;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+span.active {
+  background-color: #32b768;
+  color: white;
+}
+
+.examing {
+  width: 75%;
+  margin: 0 auto;
+}
+
+.serviceItem {
+  display: flex;
+  align-items: center;
+}
+
+.mainContent .procedureTab {
+  display: flex;
+}
+
+.wtInfo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.wtInfo div {
+  width: 45%;
+}
+
+.examing input {
+  width: 100%;
+  display: block;
+  border: none;
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 5px;
+}
+.inputItem {
+  margin-bottom: 30px;
+}
+textarea {
+  display: block;
+  width: 100%;
+  border: 1px solid rgba(128, 128, 128, 0.355);
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 5px;
+  resize: none;
+}
+
+ion-icon {
+  color: #32b768;
+}
+
+.footerContent {
+  background-color: #d9d9d9;
+  display: flex;
+  justify-content: end;
+  padding: 20px;
+}
+
+.footerContent button {
+  padding: 15px 30px;
+  margin: 0 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btnBack {
+  background-color: rgba(108, 108, 108, 0.5);
+}
+
+.btnCont {
+  background-color: rgba(50, 183, 104, 0.5);
+}
+
+.serviceItem > input {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+.serviceItem > label {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0.20000000298023224px;
+  text-align: left;
+}
+
+.requireText {
+  display: inline-block;
+  margin-bottom: 10px;
+}

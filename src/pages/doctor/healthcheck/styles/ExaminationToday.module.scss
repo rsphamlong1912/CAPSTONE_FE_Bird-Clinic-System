@@ -1,16 +1,8 @@
-* {
-  margin: 0;
-  padding: 0;
-
-  box-sizing: border-box;
-  font-family: sans-serif;
-}
-
 .container {
   padding: 40px;
 }
 
-.header-content {
+.headerContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,7 +30,7 @@
   display: flex;
 }
 
-.btn-search {
+.btnSearch {
   font-size: 20px;
   align-self: center;
   border: 1px gray solid;
@@ -50,6 +42,7 @@
 }
 
 .right input {
+  width: 200px;
   padding: 10px;
   border-radius: 5px;
   border: 1px gray solid;
@@ -70,7 +63,7 @@ main.table {
   overflow: hidden;
 }
 
-.table__header {
+.tableHeader {
   width: 100%;
   height: 10%;
   background-color: #fff4;
@@ -81,7 +74,7 @@ main.table {
   align-items: center;
 }
 
-.table__header .input-group {
+.tableHeader .inputGroup {
   width: 35%;
   height: 100%;
   background-color: #fff5;
@@ -95,18 +88,18 @@ main.table {
   transition: 0.2s;
 }
 
-.table__header .input-group:hover {
+.tableHeader .inputGroup:hover {
   width: 45%;
   background-color: #fff8;
   box-shadow: 0 0.1rem 0.4rem #0002;
 }
 
-.table__header .input-group img {
+.tableHeader .inputGroup img {
   width: 1.2rem;
   height: 1.2rem;
 }
 
-.table__header .input-group input {
+.tableHeader .inputGroup input {
   width: 100%;
   padding: 0 0.5rem 0 0.3rem;
   background-color: transparent;
@@ -114,7 +107,7 @@ main.table {
   outline: none;
 }
 
-.table__body {
+.tableBody {
   width: 95%;
   max-height: calc(89% - 1.6rem);
   background-color: #fffb;
@@ -126,18 +119,18 @@ main.table {
   overflow: overlay;
 }
 
-.table__body::-webkit-scrollbar {
+.tableBody::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
 
-.table__body::-webkit-scrollbar-thumb {
+.tableBody::-webkit-scrollbar-thumb {
   border-radius: 0.5rem;
   background-color: #0004;
   visibility: hidden;
 }
 
-.table__body:hover::-webkit-scrollbar-thumb {
+.tableBody:hover::-webkit-scrollbar-thumb {
   visibility: visible;
 }
 
@@ -215,8 +208,9 @@ tbody tr.hide td img {
 }
 
 .status.checkin {
-  background-color: #86e49d;
-  color: #006b21;
+  color: rgba(36, 219, 149, 1);
+  background-color: #fff;
+  border: 1px solid rgba(36, 219, 149, 1);
 }
 
 .status.cancelled {
@@ -225,11 +219,20 @@ tbody tr.hide td img {
 }
 
 .status.pending {
-  background-color: #ebc474;
+  color: rgba(249, 150, 31, 1);
+  background-color: #fff;
+  border: 1px solid rgba(249, 150, 31, 1);
 }
 
-.status.shipped {
-  background-color: #6fcaea;
+.status.being {
+  color: rgba(0, 178, 255, 1);
+  background-color: #fff;
+  border: 1px solid rgba(0, 178, 255, 1);
+}
+.status.has-result {
+  color: rgba(255, 59, 71, 1);
+  background-color: #fff;
+  border: 1px solid rgba(255, 59, 71, 1);
 }
 
 @media (max-width: 1000px) {
@@ -274,7 +277,7 @@ tbody td.active {
   color: #6c00bd;
 }
 
-.footer-content {
+.numResult {
   margin-top: 20px;
   font-weight: 600;
   font-size: 16px;

@@ -1,10 +1,50 @@
 import React, { useState } from "react";
 import styles from "./styles/Examing.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
+import { RiDeleteBinLine } from "react-icons/ri";
+import "flatpickr/dist/flatpickr.css";
+import Flatpickr from "react-flatpickr";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { FiThermometer } from "react-icons/fi";
 
 const Examing = () => {
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
+  //
+  const [showInfo, setShowInfo] = useState(false);
+  const [showButton, setShowButton] = useState(true);
+
+  //
+  const [date, setDate] = useState(new Date());
+
+  const toggleInfo = () => {
+    setShowInfo(!showInfo);
+    setShowButton(false); // Ẩn nút sau khi nhấp vào
+  };
+
+  const [selectedMedicine, setSelectedMedicine] = useState(""); // State để lưu giá trị đã chọn
+  const [selectedType, setSelectedType] = useState(""); // State để lưu giá trị đã chọn
+  const [selectedAmount, setSelectedAmount] = useState(""); // State để lưu giá trị đã chọn
+  const [selectedUnit, setSelectedUnit] = useState(""); // State để lưu giá trị đã chọn
+  const [selectedDay, setSelectedDay] = useState(""); // State để lưu giá trị đã chọn
+
+  const handleChangeMedicine = (event) => {
+    setSelectedMedicine(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  };
+  const handleChangeType = (event) => {
+    setSelectedType(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  };
+  const handleChangeAmount = (event) => {
+    setSelectedAmount(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  };
+  const handleChangeUnit = (event) => {
+    setSelectedUnit(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  };
+  const handleChangeDay = (event) => {
+    setSelectedDay(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  };
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -106,6 +146,199 @@ const Examing = () => {
                 <div className={styles.serviceItem}>
                   <input type="checkbox" name="temperature" />
                   <label for="temperature">Xét nghiệm bệnh truyền nhiễm</label>
+                </div>
+              </div>
+            )}
+            {tab == 3 && (
+              <div className={styles.examing}>
+                <div className={styles.create}>
+                  {showButton && (
+                    <button className={styles.btnCreate} onClick={toggleInfo}>
+                      + Thêm thuốc
+                    </button>
+                  )}
+                  {showInfo && (
+                    <div className={styles.createAll}>
+                      <div className={styles.contentAll}>
+                        <h1>1.Tên thuốc</h1>
+                        <h3>HDSD: cho ăn trước uống</h3>
+                      </div>
+                      <div className={styles.createFirst}>
+                        <div className={styles.First}>
+                          <p>Tên thuốc *</p>
+                          <select
+                            className={styles.DrugNameList}
+                            value={selectedMedicine}
+                            onChange={handleChangeMedicine}
+                          >
+                            <option value="">Chọn thuốc</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                          </select>
+                        </div>
+                        <div className={styles.First}>
+                          <p>Đơn vị</p>
+                          <select
+                            className={styles.TypeList}
+                            value={selectedType}
+                            onChange={handleChangeType}
+                          >
+                            <option value="">--</option>
+                            <option value="1">Viên</option>
+                            <option value="2">Nước</option>
+                            <option value="3">Bột</option>
+                          </select>
+                        </div>
+                        <div className={styles.First}>
+                          <p>Số liều dùng</p>
+                          <select
+                            className={styles.AmountList}
+                            value={selectedAmount}
+                            onChange={handleChangeAmount}
+                          >
+                            <option value="">--</option>{" "}
+                            {/* Tùy chọn mặc định */}
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className={styles.createSecond}>
+                        <div className={styles.Second}>
+                          <p>Đơn vị</p>
+                          <select
+                            className={styles.UnitList}
+                            value={selectedUnit}
+                            onChange={handleChangeUnit}
+                          >
+                            <option value="">--</option>{" "}
+                            {/* Tùy chọn mặc định */}
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                          </select>
+                        </div>
+                        <div className={styles.Second}>
+                          <p>Ngày</p>
+                          <select
+                            className={styles.DayList}
+                            value={selectedDay}
+                            onChange={handleChangeDay}
+                          >
+                            <option value="">--</option>{" "}
+                            {/* Tùy chọn mặc định */}
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className={styles.createThird}>
+                        <div className={styles.createThird}>
+                          <p>Hướng dẫn sử dụng</p>
+                          <input className={styles.Instruct} type="text" />
+                        </div>
+                      </div>
+                      <button className={styles.AddMedicine}>
+                        + Thêm thuốc
+                      </button>
+                      <Popup
+                        modal
+                        trigger={
+                          <button className={styles.ViewMedicine}>Xem</button>
+                        }
+                      >
+                        <div className={styles.popup}>
+                          <h2>Toa thuốc</h2>
+                          <table>
+                            <tr>
+                              <td>1. Tên thuốc</td>
+                              <td>1 liều trong 7 ngày</td>
+                              <td>4</td>
+                              <td>viên</td>
+                              <RiDeleteBinLine className={styles.btnDelete} />
+                            </tr>
+                            <tr>
+                              <td>2. Tên thuốc</td>
+                              <td>1 liều trong 7 ngày</td>
+                              <td>4</td>
+                              <td>viên</td>
+                              <RiDeleteBinLine className={styles.btnDelete} />
+                            </tr>
+                            <tr>
+                              <td>3. Tên thuốc</td>
+                              <td>1 liều trong 7 ngày</td>
+                              <td>4</td>
+                              <td>viên</td>
+                              <RiDeleteBinLine className={styles.btnDelete} />
+                            </tr>
+                            <tr>
+                              <td>4. Tên thuốc</td>
+                              <td>1 liều trong 7 ngày</td>
+                              <td>4</td>
+                              <td>viên</td>
+                              <RiDeleteBinLine className={styles.btnDelete} />
+                            </tr>
+                          </table>
+                        </div>
+                      </Popup>
+                      <button className={styles.PrintMedicine}>
+                        In đơn thuốc
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {tab == 4 && (
+              <div className={styles.create}>
+                <div className={styles.SelectDate}>
+                  {/* <AiOutlineCalendar/> */}
+                  <Flatpickr
+                    className={styles.Calendar}
+                    value={date} // giá trị ngày tháng
+                    // các option thêm cho thư viện
+                    options={{
+                      dateFormat: "d-m-Y", // format ngày giờ
+                    }}
+                    // event
+                    onChange={(dateSelect) => setDate(dateSelect)}
+                  />
+                  <button className={styles.btnDone}>Done</button>
+                </div>
+                <input className={styles.Note} />
+                <div>
+                  <button className={styles.btnAdd}>+ Tạo</button>
                 </div>
               </div>
             )}

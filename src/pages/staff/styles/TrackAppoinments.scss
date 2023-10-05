@@ -39,6 +39,7 @@
 }
 
 .btn-search {
+  background-color: #fff;
   font-size: 20px;
   align-self: center;
   border: 1px gray solid;
@@ -144,6 +145,7 @@ main.table {
 
 table {
   width: 100%;
+  background-color: #fff;
 }
 
 td img {
@@ -172,13 +174,14 @@ thead th {
   text-transform: capitalize;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #0000000b;
-}
+// tbody tr:nth-child(even) {
+//   background-color: #0000000b;
+// }
 
 tbody tr {
   --delay: 0.1s;
   transition: 0.5s ease-in-out var(--delay), background-color 0s;
+  background-color: #fff;
 }
 
 tbody tr.hide {

@@ -40,9 +40,9 @@
 
 .mainContent .content {
   width: 68%;
-  background-color: #d9d9d9;
+  background-color: #fff;
   padding: 20px;
-  height: 580px;
+  height: 600px;
   border-radius: 5px;
   margin-left: 3.5rem;
 }
@@ -146,7 +146,7 @@ span.active {
 .examing input {
   width: 100%;
   display: block;
-  border: none;
+  border: 2px solid #dddddd;
   padding: 10px;
   margin: 15px 0;
   border-radius: 5px;
@@ -157,7 +157,7 @@ span.active {
 textarea {
   display: block;
   width: 100%;
-  border: 1px solid rgba(128, 128, 128, 0.355);
+  border: 2px solid #dddddd;
   padding: 10px;
   margin: 15px 0;
   border-radius: 5px;
@@ -209,4 +209,226 @@ ion-icon {
 .requireText {
   display: inline-block;
   margin-bottom: 10px;
+}
+
+//rvjwbnwbVWH
+
+.btnCreate {
+  background-color: #32b768;
+  border: #32b768;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+  width: 200px;
+  height: 50px;
+  margin-left: 300px;
+  margin-top: 200px;
+}
+
+.create {
+  position: absolute;
+}
+
+h1 {
+  color: #6c6c6c;
+  font-size: 24px;
+}
+
+h3 {
+  color: #6c6c6c;
+  font-size: 20px;
+}
+
+p {
+  color: #737373;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+option {
+  color: #737373;
+  font-size: 14px;
+}
+
+.contentAll {
+  padding-bottom: 20px;
+}
+
+.createFirst {
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.First {
+  padding-right: 20px;
+}
+
+.DrugNameList {
+  width: 300px;
+  height: 50px;
+  border-radius: 5px;
+  border: 2px solid #dddddd;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  color: #737373;
+}
+
+.TypeList {
+  width: 100px;
+  height: 50px;
+  border-radius: 5px;
+  border: 2px solid #dddddd;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  color: #737373;
+}
+
+.AmountList {
+  width: 100px;
+  height: 50px;
+  border-radius: 5px;
+  border: 2px solid #dddddd;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  color: #737373;
+}
+
+.createSecond {
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.Second {
+  padding-right: 20px;
+}
+
+.UnitList {
+  width: 100px;
+  height: 50px;
+  border-radius: 5px;
+  border: 2px solid #dddddd;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  color: #737373;
+}
+
+.DayList {
+  width: 100px;
+  height: 50px;
+  border-radius: 5px;
+  border: 2px solid #dddddd;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  color: #737373;
+}
+
+.Instruct {
+  width: 650px;
+  height: 80px;
+  border-radius: 5px;
+  border: 2px solid #dddddd;
+  padding-left: 20px;
+  background-color: #f9f9f9;
+  color: #737373;
+}
+
+.btnDelete {
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.AddMedicine {
+  margin-right: 20px;
+  margin-left: 65px;
+  margin-top: 20px;
+  width: 160px;
+  height: 40px;
+  background: #32b768;
+  border-radius: 8px;
+  color: #ffff;
+  font-size: 20px;
+}
+
+.ViewMedicine {
+  margin-right: 20px;
+  width: 160px;
+  height: 40px;
+  background: #32b768;
+  border-radius: 8px;
+  color: #ffff;
+  font-size: 20px;
+}
+
+.PrintMedicine {
+  width: 160px;
+  height: 40px;
+  border: 2px solid #32b768;
+  border-radius: 8px;
+  color: #32b768;
+  font-size: 20px;
+}
+
+.popup {
+  top: 100px;
+  border-radius: 10px;
+  height: 400px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+h2 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.SelectDate {
+  margin-top: 100px;
+  margin-left: 240px;
+  display: flex;
+}
+
+.Calendar {
+  width: 200px;
+  height: 40px;
+  margin-right: 10px;
+  padding-left: 20px;
+  border: 2px solid #32b768;
+  border-radius: 4px;
+}
+
+.btnDone {
+  width: 100px;
+  height: 40px;
+  background-color: #32b768;
+  border: #32b768;
+  border-radius: 4px;
+  color: white;
+  font-size: 20px;
+}
+
+.Note {
+  width: 310px;
+  height: 200px;
+  margin-top: 20px;
+  margin-left: 240px;
+  word-wrap: break-word;
+  border: 2px solid #bdbdbd;
+  border-radius: 4px;
+}
+
+.btnAdd {
+  width: 100px;
+  height: 40px;
+  background-color: #32b768;
+  border: #32b768;
+  border-radius: 4px;
+  color: white;
+  font-size: 20px;
+  margin-top: 20px;
+  margin-left: 350px;
+}
+
+.create {
+  position: absolute;
 }

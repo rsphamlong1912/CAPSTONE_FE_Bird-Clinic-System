@@ -15,7 +15,11 @@ const MainLayout = (props) => {
         </span>
         <div className={styles.datetime}>{currentDate}</div>
         <div className={styles.user}>
-          <span>Staff Nguyễn Lê Hữu</span>
+          <div>
+            <span>Bác sĩ Phạm Ngọc Long</span>
+            <br />
+            <span className={styles.descUser}>Dịch vụ khám tổng quát</span>
+          </div>
           <img
             src="https://kynguyenlamdep.com/wp-content/uploads/2022/06/avatar-cute-meo-con-than-chet-700x695.jpg"
             alt="avatar"

@@ -58,6 +58,10 @@
       border-radius: 50%;
       object-fit: cover;
     }
+    .descUser {
+      font-weight: 300;
+      font-size: 18px;
+    }
   }
 }
 
@@ -88,7 +92,7 @@
 }
 
 .content {
-  background-color: #fff;
+  background-color: #d9d9d9;
   color: black;
   padding: 0;
   margin: 0;

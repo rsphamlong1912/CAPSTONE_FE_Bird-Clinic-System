@@ -9,6 +9,7 @@ import WaitingResult from "./pages/doctor/healthcheck/WaitingResult";
 import AppointmentSchedule from "./pages/doctor/healthcheck/AppointmentSchedule";
 import DoneExamination from "./pages/doctor/healthcheck/DoneExamination";
 import Examing from "./pages/doctor/healthcheck/Examing";
+import Signin from "./pages/Signin";
 
 const listTabsStaff = [
   {
@@ -57,6 +58,7 @@ function App() {
             </MainLayout>
           }
         ></Route>
+        <Route path="/signin" element={<Signin></Signin>}></Route>
         <Route
           path="/checkin"
           element={

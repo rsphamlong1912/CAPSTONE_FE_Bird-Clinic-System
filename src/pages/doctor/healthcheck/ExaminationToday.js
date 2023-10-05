@@ -1,4 +1,5 @@
 import React from "react";
+import { SearchOutlined } from "@ant-design/icons";
 import styles from "./styles/ExaminationToday.module.scss";
 
 const ExaminationToday = () => {
@@ -14,7 +15,9 @@ const ExaminationToday = () => {
           <span>10/10</span>
         </div>
         <div className={styles.right}>
-          <div className={styles.btnSearch}></div>
+          <div className={styles.btnSearch}>
+            <SearchOutlined />
+          </div>
           <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
         </div>
       </div>

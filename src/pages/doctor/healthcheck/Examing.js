@@ -8,10 +8,13 @@ import "flatpickr/dist/flatpickr.css";
 import Flatpickr from "react-flatpickr";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { FiThermometer } from "react-icons/fi";
+import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 
 const Examing = () => {
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
+  const [openModalProfile, setOpenModalProfile] = useState(false);
+
   //
   const [showInfo, setShowInfo] = useState(false);
   const [showButton, setShowButton] = useState(true);
@@ -352,7 +355,10 @@ const Examing = () => {
                 <ion-icon name="thermometer-outline"></ion-icon>
                 <span>Nội dung khám</span>
               </div>
-              <div className={styles.boxDataItem}>
+              <div
+                className={styles.boxDataItem}
+                onClick={() => setOpenModalProfile(true)}
+              >
                 <ion-icon name="calendar-clear-outline"></ion-icon>
                 <span>Hồ sơ chim khám</span>
               </div>
@@ -363,6 +369,10 @@ const Examing = () => {
         </div>
       </div>
       <ExaminationModal open={openModal} onClose={() => setOpenModal(false)} />
+      <ProfileBirdModal
+        open={openModalProfile}
+        onClose={() => setOpenModalProfile(false)}
+      />
       <div className={styles.footerContent}>
         {tab !== 1 && (
           <button

@@ -11,23 +11,37 @@ const ExaminationModal = ({ open, onClose }) => {
         }}
         className={styles.modalContainer}
       >
-        <div className={styles.modalRight}>
-          <p className={styles.closeBtn} onClick={onClose}>
-            X
-          </p>
-          <div className={styles.content}>
-            <p>Do you want a</p>
-            <h1>$20 CREDIT</h1>
-            <p>for your first tade?</p>
+        <p className={styles.closeBtn} onClick={onClose}>
+          X
+        </p>
+        <div className={styles.container}>
+          <div className={styles.InfText}>Nội dung khám</div>
+          <div className={styles.element}>
+            <h5>1. Khám tổng quát</h5>
+            <table>
+              <tr>
+                <th>Cân nặng:</th>
+                <td>1.2 Kg</td>
+              </tr>
+              <th>Nhiệt độ:</th>
+              <td>36 độ C</td>
+              <tr>
+                <th>Biểu hiện lâm sàng:</th>
+                <td>Dừ nhát, biếng ăn</td>
+              </tr>
+              <th>Chuẩn đoán:</th>
+              <td>Thiếu chicken</td>
+              <tr>
+                <th>Ghi chú:</th>
+                <td>0.8 Kg</td>
+              </tr>
+            </table>
+            <h5>2. Yêu cầu dịch vụ</h5>
+            <div className={styles.service}>Xét nghiệm máu</div>
+            <div className={styles.service}>Xét nghiệm phân chim</div>
           </div>
-          <div className={styles.btnContainer}>
-            <button className={styles.btnPrimary}>
-              <span className={styles.bold}>YES</span>, I love NFT's
-            </button>
-            <button className={styles.btnOutline}>
-              <span className={styles.bold}>NO</span>, thanks
-            </button>
-          </div>
+          <img src="https://vnn-imgs-f.vgcloud.vn/2019/12/31/14/bai-thuoc-tu-chim-se-chua-nam-gioi-liet-duong-it-tinh.jpg" />
+          <div className={styles.idBrid}>ID: 1016781</div>
         </div>
       </div>
     </div>

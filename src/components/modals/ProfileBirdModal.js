@@ -44,17 +44,20 @@ const ProfileBirdModal = ({ open, onClose }) => {
             </table>
           </div>
           <div className={styles.history}>
-            <img src="https://vnn-imgs-f.vgcloud.vn/2019/12/31/14/bai-thuoc-tu-chim-se-chua-nam-gioi-liet-duong-it-tinh.jpg" />
+            <img
+              src="https://vnn-imgs-f.vgcloud.vn/2019/12/31/14/bai-thuoc-tu-chim-se-chua-nam-gioi-liet-duong-it-tinh.jpg"
+              className={styles.image}
+            />
             <div className={styles.historyText}>Lịch sử</div>
             <div className={styles.infHS}>
               <p>1. Khám tổng quát</p>
               <p>15/08/2023</p>
-              <button>Xem kết quả</button>
+              <button className={styles.button}>Xem kết quả</button>
             </div>
             <div className={styles.infHS}>
               <p>2. Chụp X-ray</p>
               <p>20/08/2023</p>
-              <button>Xem kết quả</button>
+              <button className={styles.button}>Xem kết quả</button>
             </div>
           </div>
         </div>

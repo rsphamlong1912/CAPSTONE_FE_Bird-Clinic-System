@@ -29,6 +29,7 @@ const Signin = () => {
           <div className={styles.toggle}>
             <div className={`${styles.togglePanel} ${styles.toggleRight}`}>
               <h2>Xin chào</h2>
+              <img src={require("../assets/ve.png")} alt="" />
             </div>
           </div>
         </div>

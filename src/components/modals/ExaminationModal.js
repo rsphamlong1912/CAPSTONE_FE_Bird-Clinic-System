@@ -40,7 +40,10 @@ const ExaminationModal = ({ open, onClose }) => {
             <div className={styles.service}>Xét nghiệm máu</div>
             <div className={styles.service}>Xét nghiệm phân chim</div>
           </div>
-          <img src="https://vnn-imgs-f.vgcloud.vn/2019/12/31/14/bai-thuoc-tu-chim-se-chua-nam-gioi-liet-duong-it-tinh.jpg" />
+          <img
+            src="https://vnn-imgs-f.vgcloud.vn/2019/12/31/14/bai-thuoc-tu-chim-se-chua-nam-gioi-liet-duong-it-tinh.jpg"
+            className={styles.image}
+          />
           <div className={styles.idBrid}>ID: 1016781</div>
         </div>
       </div>

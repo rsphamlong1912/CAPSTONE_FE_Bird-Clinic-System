@@ -150,6 +150,9 @@ const Examing = () => {
                   <input type="checkbox" name="temperature" />
                   <label for="temperature">Xét nghiệm bệnh truyền nhiễm</label>
                 </div>
+                <button className={styles.printService}>
+                  In phiếu dịch vụ
+                </button>
               </div>
             )}
             {tab == 3 && (

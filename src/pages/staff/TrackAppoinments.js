@@ -1,21 +1,21 @@
 import React from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import "./styles/TrackAppoinments.scss";
+import styles from "./styles/TrackAppoinments.module.scss";
 
 const TrackAppoinments = () => {
   return (
-    <div className="container">
-      <div className="header-content">
-        <div className="left"></div>
-        <div className="middle">
-          <span className="active">06/10</span>
+    <div className={styles.container}>
+      <div className={styles.headerContent}>
+        <div className={styles.left}></div>
+        <div className={styles.middle}>
+          <span className={styles.active}>06/10</span>
           <span>07/10</span>
           <span>08/10</span>
           <span>09/10</span>
           <span>10/10</span>
         </div>
-        <div className="right">
-          <div className="btn-search">
+        <div className={styles.right}>
+          <div className={styles.btnSearch}>
             <SearchOutlined />
           </div>
           <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
@@ -46,7 +46,7 @@ const TrackAppoinments = () => {
               <strong>Phạm Ngọc Long</strong>
             </td>
             <td>
-              <p class="status being">Đang khám</p>
+              <p className="status being">Đang khám</p>
             </td>
           </tr>
           <tr>
@@ -60,7 +60,7 @@ const TrackAppoinments = () => {
               <strong>Hải Nam</strong>
             </td>
             <td>
-              <p class="status checkin">Đã checkin</p>
+              <p className="status checkin">Đã checkin</p>
             </td>
           </tr>
           <tr>
@@ -74,7 +74,7 @@ const TrackAppoinments = () => {
               <strong>Hải Nam</strong>
             </td>
             <td>
-              <p class="status pending">Chờ kết quả</p>
+              <p className="status pending">Chờ kết quả</p>
             </td>
           </tr>
           <tr>
@@ -88,13 +88,13 @@ const TrackAppoinments = () => {
               <strong>Phạm Ngọc Long</strong>
             </td>
             <td>
-              <p class="status has-result">Đã có kết quả</p>
+              <p className="status has-result">Đã có kết quả</p>
             </td>
           </tr>
         </tbody>
       </table>
-      <div className="footer-content">
-        <div className="number-result">4 kết quả</div>
+      <div className={styles.footerContent}>
+        <div className={styles.numberResult}>4 kết quả</div>
       </div>
     </div>
   );

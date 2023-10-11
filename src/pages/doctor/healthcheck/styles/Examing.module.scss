@@ -446,3 +446,9 @@ h2 {
 .create {
   position: absolute;
 }
+
+.scrollableblock {
+  width: 820px; /* Độ rộng của khối */
+  height: 410px; /* Độ cao của khối */
+  overflow: auto; /* Tạo thanh cuộn khi nội dung tràn */
+}

@@ -1,9 +1,9 @@
 import React from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import styles from "./styles/ExaminationToday.module.scss";
-import { Link, useNavigate } from "react-router-dom";
+import styles from "./GroomingToday.module.scss";
+import { useNavigate } from "react-router-dom";
 
-const ExaminationToday = () => {
+const GroomingToday = () => {
   const navigate = useNavigate();
   return (
     <div className={styles.container}>
@@ -37,7 +37,7 @@ const ExaminationToday = () => {
           </tr>
         </thead>
         <tbody>
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/grooming/1")}>
             <td> 1 </td>
             <td>Nguyễn Trí Công</td>
             <td>Sáo nâu</td>
@@ -48,11 +48,10 @@ const ExaminationToday = () => {
               <strong>Phạm Ngọc Long</strong>
             </td>
             <td>
-              <p class="status being">Đang khám</p>
+              <p className="status being">Đang khám</p>
             </td>
           </tr>
-
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/grooming/1")}>
             <td> 2 </td>
             <td>Lê Hũu</td>
             <td>Vẹt xanh</td>
@@ -63,10 +62,10 @@ const ExaminationToday = () => {
               <strong>Hải Nam</strong>
             </td>
             <td>
-              <p class="status checkin">Đã checkin</p>
+              <p className="status checkin">Đã checkin</p>
             </td>
           </tr>
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/grooming/1")}>
             <td> 3 </td>
             <td>Nobi Nobita</td>
             <td>Chích choè</td>
@@ -77,10 +76,10 @@ const ExaminationToday = () => {
               <strong>Hải Nam</strong>
             </td>
             <td>
-              <p class="status pending">Chờ kết quả</p>
+              <p className="status pending">Chờ kết quả</p>
             </td>
           </tr>
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/grooming/1")}>
             <td> 4 </td>
             <td>Sakura Chan</td>
             <td>Vành khuyên</td>
@@ -91,16 +90,16 @@ const ExaminationToday = () => {
               <strong>Phạm Ngọc Long</strong>
             </td>
             <td>
-              <p class="status has-result">Đã có kết quả</p>
+              <p className="status has-result">Đã có kết quả</p>
             </td>
           </tr>
         </tbody>
       </table>
-      <div className={styles.numResult}>
-        <div className="number-result">4 kết quả</div>
+      <div className={styles.footerContent}>
+        <div className={styles.numberResult}>4 kết quả</div>
       </div>
     </div>
   );
 };
 
-export default ExaminationToday;
+export default GroomingToday;

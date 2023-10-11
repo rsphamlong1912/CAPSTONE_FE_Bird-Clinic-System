@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./styles/Signin.module.scss";
+import styles from "./Signin.module.scss";
 const Signin = () => {
   const [isActive, setIsActive] = useState(false);
 

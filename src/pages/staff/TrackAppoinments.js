@@ -1,6 +1,6 @@
 import React from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import styles from "./styles/TrackAppoinments.module.scss";
+import styles from "./TrackAppoinments.module.scss";
 
 const TrackAppoinments = () => {
   return (

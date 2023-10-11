@@ -236,7 +236,7 @@ ion-icon {
   width: 200px;
   height: 50px;
   margin-left: 300px;
-  margin-top: 200px;
+  margin-top: 150px;
 }
 
 .create {
@@ -337,7 +337,7 @@ option {
 }
 
 .Instruct {
-  width: 650px;
+  width: 790px;
   height: 80px;
   border-radius: 5px;
   border: 2px solid #dddddd;
@@ -353,8 +353,8 @@ option {
 
 .AddMedicine {
   margin-right: 20px;
-  margin-left: 65px;
-  margin-top: 20px;
+  margin-left: 240px;
+  margin-top: 10px;
   width: 160px;
   height: 40px;
   background: #32b768;
@@ -397,8 +397,8 @@ h2 {
 }
 
 .SelectDate {
-  margin-top: 100px;
-  margin-left: 240px;
+  margin-top: 30px;
+  margin-left: 380px;
   display: flex;
 }
 
@@ -425,7 +425,7 @@ h2 {
   width: 310px;
   height: 200px;
   margin-top: 20px;
-  margin-left: 240px;
+  margin-left: 380px;
   word-wrap: break-word;
   border: 2px solid #bdbdbd;
   border-radius: 4px;
@@ -440,7 +440,7 @@ h2 {
   color: white;
   font-size: 20px;
   margin-top: 20px;
-  margin-left: 350px;
+  margin-left: 490px;
 }
 
 .create {
@@ -449,6 +449,10 @@ h2 {
 
 .scrollableblock {
   width: 820px; /* Độ rộng của khối */
-  height: 410px; /* Độ cao của khối */
+  height: 400px; /* Độ cao của khối */
   overflow: auto; /* Tạo thanh cuộn khi nội dung tràn */
+}
+
+.txtThird {
+  width: 200px;
 }

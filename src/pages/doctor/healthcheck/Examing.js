@@ -157,7 +157,7 @@ const Examing = () => {
         </div>
         <div className={styles.createThird}>
           <div className={styles.createThird}>
-            <p>Hướng dẫn sử dụng</p>
+            <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
             <textarea
               type="text"
               name="temperature"
@@ -392,16 +392,14 @@ const Examing = () => {
                             </select>
                           </div>
                         </div>
-                        <div className={styles.createThird}>
                           <div className={styles.createThird}>
-                            <p>Hướng dẫn sử dụng</p>
+                            <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
                             <textarea
                               type="text"
                               name="temperature"
                               className={styles.Instruct}
                             />
                           </div>
-                        </div>
                         {tables}
                       </div>
 

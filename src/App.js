@@ -14,6 +14,8 @@ import Division from "./pages/staff/Division";
 import CreateAppoinment from "./pages/staff/CreateAppoinment";
 import GroomingToday from "./pages/staff/grooming/GroomingToday";
 import Grooming from "./pages/staff/grooming/Grooming";
+import BoardingToday from "./pages/staff/boarding/BoardingToday";
+import Boarding from "./pages/staff/boarding/Boarding";
 
 const listTabsStaff = [
   {
@@ -75,6 +77,29 @@ const listTabsGrooming = [
     id: 3,
     name: "Lịch sử tiếp nhận",
     to: "/history-grooming",
+  },
+];
+
+const listTabsBoarding = [
+  {
+    id: 1,
+    name: "Khám hôm nay",
+    to: "/boarding-today",
+  },
+  {
+    id: 2,
+    name: "Lịch hẹn",
+    to: "/schedule",
+  },
+  {
+    id: 3,
+    name: "Quản lý và Báo cáo",
+    to: "/manage-report",
+  },
+  {
+    id: 4,
+    name: "Lịch sử tiếp nhận",
+    to: "/history-boarding",
   },
 ];
 
@@ -171,6 +196,23 @@ function App() {
           element={
             <MainLayout listTabs={listTabsGrooming}>
               <Grooming></Grooming>
+            </MainLayout>
+          }
+        ></Route>
+        {/* BOARDING  */}
+        <Route
+          path="/boarding"
+          element={
+            <MainLayout listTabs={listTabsBoarding}>
+              <BoardingToday></BoardingToday>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/boarding/:id"
+          element={
+            <MainLayout listTabs={listTabsBoarding}>
+              <Boarding></Boarding>
             </MainLayout>
           }
         ></Route>

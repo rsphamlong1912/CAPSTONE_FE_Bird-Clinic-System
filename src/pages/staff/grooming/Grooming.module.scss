@@ -42,7 +42,7 @@
   width: 68%;
   background-color: #fff;
   padding: 20px;
-  height: 600px;
+  height: 650px;
   border-radius: 5px;
   margin-left: 3.5rem;
 }
@@ -295,4 +295,194 @@ ion-icon {
   margin-top: 5px;
   cursor: pointer;
   font-size: 18px;
+}
+
+.perform {
+  margin-left: 200px;
+}
+
+.txtService {
+  font-size: 30px;
+  color: #6B7280;
+}
+
+.boxService {
+  font-size: 25px;
+  color: #737373;
+  margin-left: 150px;
+}
+
+.boxService > input {
+  width: 30px;
+  height: 30px;
+  margin-right: 12px;
+}
+
+.dropService {
+  padding-left: 50px;
+}
+
+.DropAndDrag {
+  display: flex;
+}
+
+.dropzone {
+  border: 2px dashed #cccccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  width: 300px;
+  height: 150px;
+  margin-top: 20px;
+  margin-left: 40px;
+}
+
+.dropzone p {
+  width: 250px;
+  height: 100px;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 50px;
+  margin-left: 20px;
+}
+
+/* CSS cho tệp đã được chọn */
+.accepted-file {
+  background-color: #e0f7fa;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #00bcd4;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.showimage {
+  width: 300px;
+  height: 150px;
+}
+
+.BAGrooming {
+  margin-left: 130px;
+  margin-top: 20px;
+
+  font-family: 'Montserrat';
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  /* identical to box height, or 171% */
+  letter-spacing: 0.2px;
+
+  /* text-color */
+  color: #252B42;
+}
+
+.completed {
+  margin-left: 150px;
+}
+
+.completedinf {
+  display: flex;
+}
+
+.txtCompleted {
+  font-size: 20px;
+  line-height: 24px;
+  /* identical to box height, or 171% */
+  letter-spacing: 0.2px;
+
+  color: #000000;
+  width: 200px;
+  padding-left: 50px;
+  padding-bottom: 30px;
+}
+
+.txtInf {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  /* identical to box height, or 171% */
+  letter-spacing: 0.2px;
+
+  color: #000000;
+  width: 200px;
+}
+
+.txtInfSV {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  /* identical to box height, or 171% */
+  letter-spacing: 0.2px;
+
+  color: #000000;
+  width: 600px;
+}
+
+.imageCompleted {
+  display: flex;
+  margin-top: 20px;
+}
+
+.Completedimage {
+  width: 300px;
+  height: 150px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.txtCompletedimage {
+  margin-top: 20px;
+  margin-left: 100px;
+
+  font-family: 'Montserrat';
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  /* identical to box height, or 171% */
+  letter-spacing: 0.2px;
+
+  /* text-color */
+  color: #252B42;
+}
+
+.btnConfirm {
+  width: 100px;
+  height: 50px;
+  border-radius: 10px;
+  background-color: #32B768;
+  color: #ffff;
+  font-size: 15px;
+  border: 1px solid #32B768;
+
+  margin-top: 100px;
+  margin-left: 350px;
+}
+
+.infConfirm {
+  width: 800px;
+  height: 500px;
+
+  margin-left: 150px;
+}
+
+.iconConfirm {
+  width: 100px;
+  height: 100px;
+  margin-left: 350px;
+  margin-top: 50px;
+  color: #32B768;
+}
+
+.txtConfirm {
+  font-size: 25px;
+  margin-left: 200px;
+  margin-top: 50px;
+}
+
+.txtConfirmBack {
+  font-size: 15px;
+  margin-left: 290px;
+  margin-top: 30px;
 }

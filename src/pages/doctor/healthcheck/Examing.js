@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./styles/Examing.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
 import Popup from "reactjs-popup";
@@ -6,9 +6,48 @@ import "reactjs-popup/dist/index.css";
 import { RiDeleteBinLine } from "react-icons/ri";
 import "flatpickr/dist/flatpickr.css";
 import Flatpickr from "react-flatpickr";
-import { AiOutlineCalendar } from "react-icons/ai";
-import { FiThermometer } from "react-icons/fi";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
+
+import { useReactToPrint } from "react-to-print";
+import { PhieuChiDinh } from "../../../components/pdfData/PhieuChiDinh";
+
+const serviceList = [
+  {
+    id: 1,
+    name: "Chụp phim Xray",
+    price: "280000",
+  },
+  {
+    id: 2,
+    name: "Xét nghiệm máu",
+    price: "500000",
+  },
+  {
+    id: 3,
+    name: "Kiểm tra DNA Sexing",
+    price: "260000",
+  },
+  {
+    id: 4,
+    name: "Xét nghiệm phân chim",
+    price: "175000",
+  },
+  {
+    id: 5,
+    name: "Nội soi",
+    price: "320000",
+  },
+  {
+    id: 6,
+    name: "Xét nghiệm bệnh truyền nhiễm",
+    price: "250000",
+  },
+  {
+    id: 7,
+    name: "Phẫu thuật",
+    price: "520000",
+  },
+];
 
 const Examing = () => {
   const [tab, setTab] = useState(1);
@@ -21,6 +60,9 @@ const Examing = () => {
 
   //
   const [date, setDate] = useState(new Date());
+
+  //
+  const [selectedServices, setSelectedServices] = useState([]);
 
   const toggleInfo = () => {
     setShowInfo(!showInfo);
@@ -171,6 +213,32 @@ const Examing = () => {
     // Cập nhật danh sách bảng bằng cách thêm bảng mới vào mảng hiện tại
     setTables([...tables, newTable]);
   };
+
+  //Print
+  const printRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+  });
+
+  const handleChange = (event) => {
+    const serviceName = event.target.value;
+    const selectedService = serviceList.find(
+      (item) => item.name === serviceName
+    );
+
+    if (event.target.checked) {
+      // Nếu checkbox được chọn, thêm dịch vụ vào danh sách đã chọn
+      setSelectedServices([...selectedServices, selectedService]);
+    } else {
+      // Nếu checkbox được bỏ chọn, loại bỏ dịch vụ khỏi danh sách đã chọn
+      setSelectedServices(
+        selectedServices.filter((service) => service.name !== serviceName)
+      );
+    }
+  };
+
+  console.log("array: ", selectedServices);
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -218,24 +286,24 @@ const Examing = () => {
               <div className={styles.examing}>
                 <div className={styles.wtInfo}>
                   <div className={styles.inputItem}>
-                    <label for="weight">Cân nặng</label>
+                    <label htmlFor="weight">Cân nặng</label>
                     <input type="text" name="weight" />
                   </div>
                   <div className={styles.inputItem}>
-                    <label for="temperature">Nhiệt độ</label>
+                    <label htmlFor="temperature">Nhiệt độ</label>
                     <input type="text" name="temperature" />
                   </div>
                 </div>
                 <div className={styles.inputItem}>
-                  <label for="temperature">Triệu chứng</label>
+                  <label htmlFor="temperature">Triệu chứng</label>
                   <input type="text" name="temperature" />
                 </div>
                 <div className={styles.inputItem}>
-                  <label for="temperature">Chẩn đoán</label>
+                  <label htmlFor="temperature">Chẩn đoán</label>
                   <input type="text" name="temperature" />
                 </div>
                 <div className={styles.inputItem}>
-                  <label for="temperature">Ghi chú thêm</label>
+                  <label htmlFor="temperature">Ghi chú thêm</label>
                   <textarea type="text" name="temperature" />
                 </div>
               </div>
@@ -245,35 +313,27 @@ const Examing = () => {
                 <h3 className={styles.requireText}>
                   Yêu cầu các dịch vụ dưới đây (nếu có):
                 </h3>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Chụp phim Xray</label>
+                {serviceList.map((item, index) => (
+                  <div className={styles.serviceItem} key={index}>
+                    <input
+                      type="checkbox"
+                      name="temperature"
+                      value={item.name}
+                      checked={selectedServices.some(
+                        (service) => service.name === item.name
+                      )}
+                      onChange={handleChange}
+                    />
+                    <label htmlFor="temperature">{item.name}</label>
+                  </div>
+                ))}
+                <div style={{ display: "none" }}>
+                  <PhieuChiDinh
+                    ref={printRef}
+                    selectedServices={selectedServices}
+                  ></PhieuChiDinh>
                 </div>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Xét nghiệm máu</label>
-                </div>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Phẫu thuật</label>
-                </div>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Kiểm tra DNA Sexing</label>
-                </div>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Xét nghiệm phân chim</label>
-                </div>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Nội soi</label>
-                </div>
-                <div className={styles.serviceItem}>
-                  <input type="checkbox" name="temperature" />
-                  <label for="temperature">Xét nghiệm bệnh truyền nhiễm</label>
-                </div>
-                <button className={styles.printService}>
+                <button className={styles.printService} onClick={handlePrint}>
                   In phiếu dịch vụ
                 </button>
               </div>
@@ -392,14 +452,14 @@ const Examing = () => {
                             </select>
                           </div>
                         </div>
-                          <div className={styles.createThird}>
-                            <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
-                            <textarea
-                              type="text"
-                              name="temperature"
-                              className={styles.Instruct}
-                            />
-                          </div>
+                        <div className={styles.createThird}>
+                          <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
+                          <textarea
+                            type="text"
+                            name="temperature"
+                            className={styles.Instruct}
+                          />
+                        </div>
                         {tables}
                       </div>
 

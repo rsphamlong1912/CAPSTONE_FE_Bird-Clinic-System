@@ -16,6 +16,8 @@ import GroomingToday from "./pages/staff/grooming/GroomingToday";
 import Grooming from "./pages/staff/grooming/Grooming";
 import BoardingToday from "./pages/staff/boarding/BoardingToday";
 import Boarding from "./pages/staff/boarding/Boarding";
+import ManageAndReport from "./pages/staff/boarding/ManageAndReport"
+import Report from "./pages/staff/boarding/Report";
 
 const listTabsStaff = [
   {
@@ -213,6 +215,23 @@ function App() {
           element={
             <MainLayout listTabs={listTabsBoarding}>
               <Boarding></Boarding>
+            </MainLayout>
+          }
+        ></Route>
+        {/*ManageAndReport*/}
+        <Route
+          path="/manage-report"
+          element={
+            <MainLayout listTabs={listTabsBoarding}>
+              <ManageAndReport></ManageAndReport>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/manage-report/:id"
+          element={
+            <MainLayout listTabs={listTabsBoarding}>
+              <Report></Report>
             </MainLayout>
           }
         ></Route>

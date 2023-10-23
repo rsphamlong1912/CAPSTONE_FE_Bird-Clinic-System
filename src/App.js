@@ -16,7 +16,7 @@ import GroomingToday from "./pages/staff/grooming/GroomingToday";
 import Grooming from "./pages/staff/grooming/Grooming";
 import BoardingToday from "./pages/staff/boarding/BoardingToday";
 import Boarding from "./pages/staff/boarding/Boarding";
-import ManageAndReport from "./pages/staff/boarding/ManageAndReport"
+import ManageAndReport from "./pages/staff/boarding/ManageAndReport";
 import Report from "./pages/staff/boarding/Report";
 
 const listTabsStaff = [
@@ -109,16 +109,16 @@ function App() {
   return (
     <Fragment>
       <Routes>
+        <Route path="/" element={<Signin></Signin>}></Route>
         {/* STAFF  */}
         <Route
-          path="/"
+          path="/track"
           element={
             <MainLayout listTabs={listTabsStaff}>
               <TrackAppoinments></TrackAppoinments>
             </MainLayout>
           }
         ></Route>
-        <Route path="/signin" element={<Signin></Signin>}></Route>
         <Route
           path="/checkin"
           element={
@@ -145,7 +145,7 @@ function App() {
         ></Route>
         {/* HEALTH CHECK  */}
         <Route
-          path="/examination"
+          path="/examing"
           element={
             <MainLayout listTabs={listTabsHealthCheck}>
               <ExaminationToday></ExaminationToday>
@@ -153,7 +153,7 @@ function App() {
           }
         ></Route>
         <Route
-          path="/examination/:id"
+          path="/examing/:id"
           element={
             <MainLayout listTabs={listTabsHealthCheck}>
               <Examing></Examing>

@@ -37,7 +37,7 @@ const ExaminationToday = () => {
           </tr>
         </thead>
         <tbody>
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/examing/1")}>
             <td> 1 </td>
             <td>Nguyễn Trí Công</td>
             <td>Sáo nâu</td>
@@ -52,7 +52,7 @@ const ExaminationToday = () => {
             </td>
           </tr>
 
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/examing/1")}>
             <td> 2 </td>
             <td>Lê Hũu</td>
             <td>Vẹt xanh</td>
@@ -66,7 +66,7 @@ const ExaminationToday = () => {
               <p class="status checkin">Đã checkin</p>
             </td>
           </tr>
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/examing/1")}>
             <td> 3 </td>
             <td>Nobi Nobita</td>
             <td>Chích choè</td>
@@ -80,7 +80,7 @@ const ExaminationToday = () => {
               <p class="status pending">Chờ kết quả</p>
             </td>
           </tr>
-          <tr onClick={() => navigate("/examination/1")}>
+          <tr onClick={() => navigate("/examing/1")}>
             <td> 4 </td>
             <td>Sakura Chan</td>
             <td>Vành khuyên</td>

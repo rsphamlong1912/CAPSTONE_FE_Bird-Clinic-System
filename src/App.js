@@ -45,7 +45,7 @@ const listTabsHealthCheck = [
   {
     id: 1,
     name: "Khám hôm nay",
-    to: "/examination",
+    to: "/examing",
   },
   {
     id: 2,

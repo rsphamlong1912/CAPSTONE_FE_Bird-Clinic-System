@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import styles from "./styles/ExamingToday.module.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 
@@ -78,7 +78,7 @@ const ExamingToday = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr onClick={() => navigate(`/examing/${item.bird_id}`)}>
+              <tr onClick={() => navigate(`/examing/${item.booking_id}`)}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>

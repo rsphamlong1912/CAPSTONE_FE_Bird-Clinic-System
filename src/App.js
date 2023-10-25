@@ -23,7 +23,7 @@ const listTabsStaff = [
   {
     id: 1,
     name: "Theo dõi lịch khám",
-    to: "/",
+    to: "/track",
   },
   {
     id: 2,

@@ -61,7 +61,24 @@ const Examing = () => {
   //
   const [date, setDate] = useState(new Date());
 
-  //
+  //tab 1
+  const [examData, setExamData] = useState({
+    weight: "",
+    temperature: "",
+    symptoms: "",
+    diagnosis: "",
+    additionalNotes: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setExamData({
+      ...examData,
+      [name]: value,
+    });
+  };
+
+  //tab 2
   const [selectedServices, setSelectedServices] = useState([]);
 
   const toggleInfo = () => {
@@ -287,24 +304,48 @@ const Examing = () => {
                 <div className={styles.wtInfo}>
                   <div className={styles.inputItem}>
                     <label htmlFor="weight">Cân nặng</label>
-                    <input type="text" name="weight" />
+                    <input
+                      type="text"
+                      name="weight"
+                      value={examData.weight}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div className={styles.inputItem}>
                     <label htmlFor="temperature">Nhiệt độ</label>
-                    <input type="text" name="temperature" />
+                    <input
+                      type="text"
+                      name="temperature"
+                      value={examData.temperature}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Triệu chứng</label>
-                  <input type="text" name="temperature" />
+                  <input
+                    type="text"
+                    name="symptoms"
+                    value={examData.symptoms}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Chẩn đoán</label>
-                  <input type="text" name="temperature" />
+                  <input
+                    type="text"
+                    name="diagnosis"
+                    value={examData.diagnosis}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Ghi chú thêm</label>
-                  <textarea type="text" name="temperature" />
+                  <textarea
+                    name="additionalNotes"
+                    value={examData.additionalNotes}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
             )}
@@ -565,7 +606,12 @@ const Examing = () => {
           </div>
         </div>
       </div>
-      <ExaminationModal open={openModal} onClose={() => setOpenModal(false)} />
+      <ExaminationModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        examData={examData}
+        selectedServices={selectedServices}
+      />
       <ProfileBirdModal
         open={openModalProfile}
         onClose={() => setOpenModalProfile(false)}

@@ -4,7 +4,7 @@ import MainLayout from "./layouts/MainLayout/MainLayout";
 import { Route, Routes } from "react-router-dom";
 import Checkin from "./pages/staff/Checkin";
 import TrackAppoinments from "./pages/staff/TrackAppoinments";
-import ExaminationToday from "./pages/doctor/healthcheck/ExaminationToday";
+import ExamingToday from "./pages/doctor/healthcheck/ExamingToday";
 import WaitingResult from "./pages/doctor/healthcheck/WaitingResult";
 import AppointmentSchedule from "./pages/doctor/healthcheck/AppointmentSchedule";
 import DoneExamination from "./pages/doctor/healthcheck/DoneExamination";
@@ -148,7 +148,7 @@ function App() {
           path="/examing"
           element={
             <MainLayout listTabs={listTabsHealthCheck}>
-              <ExaminationToday></ExaminationToday>
+              <ExamingToday></ExamingToday>
             </MainLayout>
           }
         ></Route>

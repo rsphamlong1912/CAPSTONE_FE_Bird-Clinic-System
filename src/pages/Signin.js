@@ -21,6 +21,9 @@ const Signin = () => {
       .then((response) => {
         // Xử lý phản hồi từ API khi đăng nhập thành công
         console.log("Đăng nhập thành công:", response.data);
+        console.log(response.data.data);
+        const { account_id } = response.data.data.account;
+        localStorage.setItem("account_id", account_id);
         const role = response.data.data.role;
         if (role === "vet") {
           window.location.href = "/examing";

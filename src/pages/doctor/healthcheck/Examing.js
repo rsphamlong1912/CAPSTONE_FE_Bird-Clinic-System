@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styles from "./styles/Examing.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
 import Popup from "reactjs-popup";
@@ -10,6 +11,7 @@ import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 
 import { useReactToPrint } from "react-to-print";
 import { PhieuChiDinh } from "../../../components/pdfData/PhieuChiDinh";
+import { api } from "../../../services/axios";
 
 const serviceList = [
   {
@@ -50,6 +52,7 @@ const serviceList = [
 ];
 
 const Examing = () => {
+  const { id } = useParams();
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [openModalProfile, setOpenModalProfile] = useState(false);
@@ -80,6 +83,18 @@ const Examing = () => {
 
   //tab 2
   const [selectedServices, setSelectedServices] = useState([]);
+
+  useEffect(() => {
+    const sendDataToApi = async () => {
+      try {
+        const response = await api.put(`/booking/${id}`, examData);
+        console.log("api ne:", response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    sendDataToApi();
+  }, [tab]);
 
   const toggleInfo = () => {
     setShowInfo(!showInfo);
@@ -253,8 +268,6 @@ const Examing = () => {
       );
     }
   };
-
-  console.log("array: ", selectedServices);
 
   return (
     <div className={styles.wrapper}>

@@ -18,6 +18,8 @@ import BoardingToday from "./pages/staff/boarding/BoardingToday";
 import Boarding from "./pages/staff/boarding/Boarding";
 import ManageAndReport from "./pages/staff/boarding/ManageAndReport";
 import Report from "./pages/staff/boarding/Report";
+import ReTestingToday from "./pages/doctor/healthcheck/ReTestingToday";
+import ReTesting from "./pages/doctor/healthcheck/ReTesting";
 
 const listTabsStaff = [
   {
@@ -45,6 +47,29 @@ const listTabsHealthCheck = [
   {
     id: 1,
     name: "Khám hôm nay",
+    to: "/examing",
+  },
+  {
+    id: 2,
+    name: "Chờ kết quả",
+    to: "/wait-result",
+  },
+  {
+    id: 3,
+    name: "Lịch hẹn",
+    to: "/schedule",
+  },
+  {
+    id: 4,
+    name: "Đã khám",
+    to: "/done",
+  },
+];
+
+const listTabsReTesting = [
+  {
+    id: 1,
+    name: "Chờ xét nghiệm",
     to: "/examing",
   },
   {
@@ -144,6 +169,7 @@ function App() {
           }
         ></Route>
         {/* HEALTH CHECK  */}
+        {/* MAIN DOCTOR */}
         <Route
           path="/examing"
           element={
@@ -181,6 +207,23 @@ function App() {
           element={
             <MainLayout listTabs={listTabsHealthCheck}>
               <DoneExamination></DoneExamination>
+            </MainLayout>
+          }
+        ></Route>
+        {/* SIDE DOCTOR  */}
+        <Route
+          path="/retesting"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <ReTestingToday></ReTestingToday>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/retesting/:id"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <ReTesting></ReTesting>
             </MainLayout>
           }
         ></Route>

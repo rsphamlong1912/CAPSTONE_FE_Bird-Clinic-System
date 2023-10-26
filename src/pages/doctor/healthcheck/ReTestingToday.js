@@ -1,27 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import styles from "./styles/ExamingToday.module.scss";
+import styles from "./ReTestingToday.module.scss";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import useCurrentDate from "../../../hooks/useCurrentDate";
+import { api } from "../../../services/axios";
 
-const ExamingToday = () => {
+const ReTestingToday = () => {
+  const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get("/booking");
-        console.log("api ne:", response.data.data);
 
-        const accountId = localStorage.getItem("account_id");
-        const vetCustomers = response.data.data.filter(
-          (booking) => booking.veterinarian_id === accountId
+        const allBookings = response.data.data;
+        const checkedInBookings = allBookings.filter(
+          (booking) => booking.status === "checked_in"
         );
-
-        setCustomerList(vetCustomers);
-        console.log("Updated customerList:", vetCustomers);
+        setCustomerList(checkedInBookings);
       } catch (error) {
         console.log(error);
       }
@@ -32,23 +29,12 @@ const ExamingToday = () => {
     }, 850);
     fetchData();
   }, []);
+  const { currentDate } = useCurrentDate();
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
-        <div className={styles.middle}>
-          <span className={styles.active}>06/10</span>
-          <span>07/10</span>
-          <span>08/10</span>
-          <span>09/10</span>
-          <span>10/10</span>
-        </div>
-        <div className={styles.right}>
-          <div className={styles.btnSearch}>
-            <SearchOutlined />
-          </div>
-          <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
-        </div>
+        <div className={styles.left}>DANH SÁCH XÉT NGHIỆM HÔM NAY</div>
+        <div className={styles.right}>{currentDate}</div>
       </div>
       <table>
         <thead>
@@ -79,7 +65,7 @@ const ExamingToday = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr>
+              <tr onClick={() => navigate(`/retesting/${item.booking_id}`)}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
@@ -98,20 +84,16 @@ const ExamingToday = () => {
                     {item.status === "booked" ? "Chưa checkin" : "Đã checkin"}
                   </p>
                 </td>
+
                 <td>
-                  <div
-                    className={styles.btnExam}
-                    onClick={() => navigate(`/examing/${item.booking_id}`)}
-                  >
-                    Khám
-                  </div>
+                  <div className={styles.btnTesting}>Tiếp nhận</div>
                 </td>
               </tr>
             ))}
         </tbody>
       </table>
-      <div className={styles.numResult}>
-        <div className="number-result">
+      <div className={styles.footerContent}>
+        <div className={styles.numberResult}>
           {!loading && customerList.length} kết quả
         </div>
       </div>
@@ -154,4 +136,4 @@ const Loading = () => {
   );
 };
 
-export default ExamingToday;
+export default ReTestingToday;

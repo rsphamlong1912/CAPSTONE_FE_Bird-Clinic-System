@@ -132,12 +132,7 @@ const Examing = () => {
     const newIndex = tableCount;
 
     // Tạo một instance mới của MedicineTable và truyền vào các prop
-    const newTable = (
-      <MedicineTable
-        key={newIndex}
-        index={newIndex}
-      />
-    );
+    const newTable = <MedicineTable key={newIndex} index={newIndex} />;
     // Tăng giá trị biến đếm để cho lần tạo tiếp theo
     setTableCount(newIndex + 1);
 
@@ -221,6 +216,7 @@ const Examing = () => {
                       name="weight"
                       value={examData.weight}
                       onChange={handleInputChange}
+                      id="weight"
                     />
                   </div>
                   <div className={styles.inputItem}>

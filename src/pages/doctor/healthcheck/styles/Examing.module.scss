@@ -353,7 +353,6 @@ option {
 
 .AddMedicine {
   margin-right: 20px;
-  margin-left: 240px;
   margin-top: 10px;
   width: 160px;
   height: 40px;
@@ -373,13 +372,21 @@ option {
   font-size: 20px;
 }
 
+.boxMedicine {
+  display: flex;
+  margin-left: 200px;
+}
+
 .PrintMedicine {
-  width: 160px;
+  display: flex;
+  align-items: center;
+  width: 200px;
   height: 40px;
   border: 2px solid #32b768;
   border-radius: 8px;
   color: #32b768;
   font-size: 20px;
+  margin-top: 10px;
 }
 
 .popup {

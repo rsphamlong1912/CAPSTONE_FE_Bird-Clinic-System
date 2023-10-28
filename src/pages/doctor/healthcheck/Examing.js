@@ -14,6 +14,7 @@ import { PhieuChiDinh } from "../../../components/pdfData/PhieuChiDinh";
 import { api } from "../../../services/axios";
 
 import MedicineTable from "./tables/MedicineTable";
+import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 
 const serviceList = [
   {
@@ -58,6 +59,7 @@ const Examing = () => {
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [openModalProfile, setOpenModalProfile] = useState(false);
+  const [openModalPrescription, setOpenModalPrescription] = useState(false);
 
   //
   const [showInfo, setShowInfo] = useState(false);
@@ -103,30 +105,31 @@ const Examing = () => {
     setShowButton(false); // Ẩn nút sau khi nhấp vào
   };
 
-  const [selectedMedicine, setSelectedMedicine] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedType, setSelectedType] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedAmount, setSelectedAmount] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedUnit, setSelectedUnit] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedDay, setSelectedDay] = useState(""); // State để lưu giá trị đã chọn
+  //tab 3
+  const [examMedicineFirst, setExamMedicineFirst] = useState({
+    medicine: "",
+    type: "",
+    amount: "",
+    unit: "",
+    day: "",
+  });
 
-  const handleChangeMedicine = (event) => {
-    setSelectedMedicine(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  const handleInputMedicineFirst = (e) => {
+    const { name, value } = e.target;
+    setExamMedicineFirst({
+      ...examMedicineFirst,
+      [name]: value,
+    });
   };
-  const handleChangeType = (event) => {
-    setSelectedType(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeAmount = (event) => {
-    setSelectedAmount(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeUnit = (event) => {
-    setSelectedUnit(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeDay = (event) => {
-    setSelectedDay(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
+  const [examMedicine, setExamMedicine] = useState([]);
+  const updateMedicineData = (index, data) => {
+    // Clone the current state and update the data for a specific index
+    const updatedData = [...examMedicine];
+    updatedData[index] = data;
+    setExamMedicine(updatedData);
   };
   const [tables, setTables] = useState([]);
   const [tableCount, setTableCount] = useState(1);
-
   // Hàm này được sử dụng để thêm một bảng mới vào danh sách
   const createTable = () => {
     const newIndex = tableCount;
@@ -136,6 +139,7 @@ const Examing = () => {
       <MedicineTable
         key={newIndex}
         index={newIndex}
+        onUpdateData={updateMedicineData}
       />
     );
     // Tăng giá trị biến đếm để cho lần tạo tiếp theo
@@ -143,7 +147,26 @@ const Examing = () => {
 
     // Cập nhật danh sách các bảng
     setTables([...tables, newTable]);
+
   };
+  //tab 3 get api
+  const [medicineNames, setMedicineNames] = useState([]);
+
+  useEffect(() => {
+    const sendApiforData = async () => {
+      try {
+        const response = await api.get(`/medicine/`);
+        const medicineData = response.data.data;
+        const names = medicineData.map((medicine) => medicine.name);
+        setMedicineNames(names);
+        console.log("adata:", names);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    sendApiforData();
+    
+  }, [tab]);
 
   //Print
   const printRef = useRef();
@@ -303,115 +326,116 @@ const Examing = () => {
                     <div className={styles.createAll}>
                       <div className={styles.scrollableblock}>
                         <div className={styles.contentAll}>
-                          <h1>1.Tên thuốc</h1>
-                          <h3>HDSD: cho ăn trước uống</h3>
+                            <h1>1.Tên thuốc</h1>
+                            <h3>HDSD: cho ăn trước uống</h3>
                         </div>
                         <div className={styles.createFirst}>
-                          <div className={styles.First}>
+                            <div className={styles.First}>
                             <p>Tên thuốc *</p>
                             <select
-                              className={styles.DrugNameList}
-                              value={selectedMedicine}
-                              onChange={handleChangeMedicine}
+                                className={styles.DrugNameList}
+                                name="medicine"
+                                value={examMedicineFirst.medicine}
+                                onChange={handleInputMedicineFirst}
                             >
-                              <option value="">Chọn thuốc</option>
-                              <option value="1">3B VIP INJ</option>
-                              <option value="2">ACETYL C</option>
-                              <option value="3">ADE BC COMPLEX</option>
-                              <option value="4">ADE BC INJ</option>
-                              <option value="5">ALPHA TRYPSIN</option>
-                              <option value="6">ALPHA TRYPSIN WSP</option>
-                              <option value="7">AMINO PHOSPHORIC</option>
-                              <option value="8">AMOX 15% LA</option>
-                              <option value="9">AMOX AC 50% NEW</option>
+                                <option value="">Chọn thuốc</option>
+                                {medicineNames.map((name) => (
+                                  <option key={name} value={name}>
+                                    {name}
+                                  </option>
+                                ))}
                             </select>
-                          </div>
-                          <div className={styles.First}>
+                            </div>
+                            <div className={styles.First}>
                             <p>Đơn vị</p>
                             <select
-                              className={styles.TypeList}
-                              value={selectedType}
-                              onChange={handleChangeType}
+                                className={styles.TypeList}
+                                name="type"
+                                value={examMedicineFirst.type}
+                                onChange={handleInputMedicineFirst}
                             >
-                              <option value="">--</option>
-                              <option value="1">Viên</option>
-                              <option value="2">Nước</option>
-                              <option value="3">Bột</option>
+                                <option value="">--</option>
+                                <option value="Viên">Viên</option>
+                                <option value="Nước">Nước</option>
+                                <option value="Bột">Bột</option>
                             </select>
-                          </div>
-                          <div className={styles.First}>
+                            </div>
+                            <div className={styles.First}>
                             <p>Số liều dùng</p>
                             <select
-                              className={styles.AmountList}
-                              value={selectedAmount}
-                              onChange={handleChangeAmount}
+                                className={styles.AmountList}
+                                name="amount"
+                                value={examMedicineFirst.amount}
+                                onChange={handleInputMedicineFirst}
                             >
-                              <option value="">--</option>{" "}
-                              {/* Tùy chọn mặc định */}
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10</option>
+                                <option value="">--</option>{" "}
+                                {/* Tùy chọn mặc định */}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                             </select>
-                          </div>
+                            </div>
                         </div>
                         <div className={styles.createSecond}>
-                          <div className={styles.Second}>
+                            <div className={styles.Second}>
                             <p>Đơn vị</p>
                             <select
-                              className={styles.UnitList}
-                              value={selectedUnit}
-                              onChange={handleChangeUnit}
+                                className={styles.UnitList}
+                                name="unit"
+                                value={examMedicineFirst.unit}
+                                onChange={handleInputMedicineFirst}
                             >
-                              <option value="">--</option>{" "}
-                              {/* Tùy chọn mặc định */}
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10</option>
+                                <option value="">--</option>{" "}
+                                {/* Tùy chọn mặc định */}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                             </select>
-                          </div>
-                          <div className={styles.Second}>
+                            </div>
+                            <div className={styles.Second}>
                             <p>Ngày</p>
                             <select
-                              className={styles.DayList}
-                              value={selectedDay}
-                              onChange={handleChangeDay}
+                                className={styles.DayList}
+                                name="day"
+                                value={examMedicineFirst.day}
+                                onChange={handleInputMedicineFirst}
                             >
-                              <option value="">--</option>{" "}
-                              {/* Tùy chọn mặc định */}
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10</option>
+                                <option value="">--</option>{" "}
+                                {/* Tùy chọn mặc định */}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
                             </select>
-                          </div>
+                            </div>
                         </div>
                         <div className={styles.createThird}>
-                          <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
-                          <textarea
+                            <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
+                            <textarea
                             type="text"
                             name="temperature"
                             className={styles.Instruct}
-                          />
+                            />
                         </div>
                         {tables}
                       </div>
@@ -419,55 +443,22 @@ const Examing = () => {
                       {/* <button className={styles.AddMedicine}>
                         + Thêm thuốc
                       </button> */}
-                      <button
-                        onClick={createTable}
-                        className={styles.AddMedicine}
-                      >
-                        + Thêm thuốc
-                      </button>
+                      <div className={styles.boxMedicine}>
+                        <button
+                          onClick={createTable}
+                          className={styles.AddMedicine}
+                        >
+                          + Thêm thuốc
+                        </button>
 
-                      <Popup
-                        modal
-                        trigger={
-                          <button className={styles.PrintMedicine}>
-                            In đơn thuốc
-                          </button>
-                        }
-                      >
-                        <div className={styles.popup}>
-                          <h2>Toa thuốc</h2>
-                          <table>
-                            <tr>
-                              <td>1. Tên thuốc</td>
-                              <td>1 liều trong 7 ngày</td>
-                              <td>4</td>
-                              <td>viên</td>
-                              <RiDeleteBinLine className={styles.btnDelete} />
-                            </tr>
-                            <tr>
-                              <td>2. Tên thuốc</td>
-                              <td>1 liều trong 7 ngày</td>
-                              <td>4</td>
-                              <td>viên</td>
-                              <RiDeleteBinLine className={styles.btnDelete} />
-                            </tr>
-                            <tr>
-                              <td>3. Tên thuốc</td>
-                              <td>1 liều trong 7 ngày</td>
-                              <td>4</td>
-                              <td>viên</td>
-                              <RiDeleteBinLine className={styles.btnDelete} />
-                            </tr>
-                            <tr>
-                              <td>4. Tên thuốc</td>
-                              <td>1 liều trong 7 ngày</td>
-                              <td>4</td>
-                              <td>viên</td>
-                              <RiDeleteBinLine className={styles.btnDelete} />
-                            </tr>
-                          </table>
+                        <div
+                          className={styles.PrintMedicine}
+                          onClick={() => setOpenModalPrescription(true)}
+                        >
+                          <ion-icon name="thermometer-outline"></ion-icon>
+                          <span>Xem đơn thuốc</span>
                         </div>
-                      </Popup>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -527,6 +518,12 @@ const Examing = () => {
       <ProfileBirdModal
         open={openModalProfile}
         onClose={() => setOpenModalProfile(false)}
+      />
+      <PrescriptionModal
+        open={openModalPrescription}
+        onClose={() => setOpenModalPrescription(false)}
+        examMedicine={examMedicine}
+        examMedicineFirst={examMedicineFirst}
       />
       <div className={styles.footerContent}>
         {tab !== 1 && (

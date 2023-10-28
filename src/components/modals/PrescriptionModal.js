@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./PrescriptionModal.module.scss";
 import { RiDeleteBinLine } from "react-icons/ri";
 
-const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst }) => {
+const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst, examMedicineAmount, examMedicineType, selectedDay }) => {
   if (!open) return null;
   
 
@@ -31,9 +31,9 @@ const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst }) =
           <tbody>
             <tr>
               <td>{examMedicineFirst.medicine}</td>
-              <td>{examMedicineFirst.amount} liều trong {examMedicineFirst.day} ngày</td>
+              <td>{examMedicineAmount} liều trong {examMedicineFirst.day} ngày</td>
               <td>{examMedicineFirst.unit}</td>
-              <td>{examMedicineFirst.type}</td>
+              <td>{examMedicineType}</td>
               <td>
                 <RiDeleteBinLine
                   className={styles.btnDelete}
@@ -45,9 +45,9 @@ const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst }) =
               .map((prescription, index) => (
                 <tr key={index}>
                   <td>{prescription.medicine}</td>
-                  <td>{prescription.amount} liều trong {prescription.day} ngày</td>
+                  <td>{examMedicineAmount} liều trong {selectedDay} ngày</td>
                   <td>{prescription.unit}</td>
-                  <td>{prescription.type}</td>
+                  <td>{examMedicineType}</td>
                   <td>
                     <RiDeleteBinLine className={styles.btnDelete} />
                   </td>

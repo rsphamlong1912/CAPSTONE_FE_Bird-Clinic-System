@@ -320,16 +320,18 @@ option {
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
+  padding-top: 13px;
 }
 
 .AmountList {
-  width: 100px;
+  width: 70px;
   height: 50px;
   border-radius: 5px;
   border: 2px solid #dddddd;
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
+  padding-top: 13px;
 }
 
 .createSecond {
@@ -429,9 +431,9 @@ h2 {
 }
 
 .SelectDate {
-  margin-top: 30px;
-  margin-left: 380px;
-  display: flex;
+  height: 150px;
+  // margin-left: 380px;
+  // display: flex;
 }
 
 .Calendar {
@@ -487,4 +489,28 @@ h2 {
 
 .txtThird {
   width: 200px;
+}
+
+.ChooseDay {
+  width: 200px;
+  height: 50px;
+  margin-left: 430px;
+}
+
+.SetTime {
+  width: 500px;
+  height: 50px;
+  margin-top: 20px;
+  display: flex;
+  text-align: center;
+  margin-left: 300px;
+}
+
+.SetTimeSon {
+  background-color: #32b768;
+  margin-left: 30px;
+  margin: 10px;
+  color: #fff;
+  padding-top: 5px;
+  border-radius: 3px;
 }

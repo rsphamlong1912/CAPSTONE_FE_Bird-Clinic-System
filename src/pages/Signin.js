@@ -27,6 +27,8 @@ const Signin = () => {
         const role = response.data.data.role;
         if (role === "vet") {
           window.location.href = "/examing";
+        } else if (role === "staff") {
+          window.location.href = "/track";
         }
       })
       .catch((error) => {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Checkin.module.scss";
-import useCurrentDate from "../../hooks/useCurrentDate";
-import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
+import styles from "./ReTestingToday.module.scss";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../services/axios";
+import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import useCurrentDate from "../../../hooks/useCurrentDate";
+import { api } from "../../../services/axios";
 
-const Checkin = () => {
+const ReTestingToday = () => {
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ const Checkin = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>DANH SÁCH CHECKIN HÔM NAY</div>
+        <div className={styles.left}>DANH SÁCH XÉT NGHIỆM HÔM NAY</div>
         <div className={styles.right}>{currentDate}</div>
       </div>
       <table>
@@ -65,7 +65,7 @@ const Checkin = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr onClick={() => navigate(`/examing/${item.booking_id}`)}>
+              <tr onClick={() => navigate(`/retesting/${item.booking_id}`)}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
@@ -86,7 +86,7 @@ const Checkin = () => {
                 </td>
 
                 <td>
-                  <div className={styles.btnCheckin}>Check in</div>
+                  <div className={styles.btnTesting}>Tiếp nhận</div>
                 </td>
               </tr>
             ))}
@@ -136,4 +136,4 @@ const Loading = () => {
   );
 };
 
-export default Checkin;
+export default ReTestingToday;

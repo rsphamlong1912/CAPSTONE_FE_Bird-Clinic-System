@@ -79,7 +79,7 @@ const ExamingToday = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr>
+              <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
@@ -146,9 +146,9 @@ const Loading = () => {
         </strong>
       </td>
       <td>
-        <p class="status being">
+        <div className="status being">
           <LoadingSkeleton></LoadingSkeleton>
-        </p>
+        </div>
       </td>
     </tr>
   );

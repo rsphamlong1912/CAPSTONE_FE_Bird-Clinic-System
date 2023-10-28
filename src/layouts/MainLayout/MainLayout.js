@@ -27,10 +27,11 @@ const MainLayout = (props) => {
         </div>
       </div>
       <div className={styles.main}>
-        <div class={`${styles.child} ${styles.sidebar}`}>
+        <div className={`${styles.child} ${styles.sidebar}`}>
           <div className={styles.tabContainer}>
-            {props.listTabs.map((item) => (
+            {props.listTabs.map((item, index) => (
               <NavLink
+                key={index}
                 to={item.to}
                 className={`${styles.tabService} ${
                   tab === item.id ? styles.active : ""
@@ -50,7 +51,7 @@ const MainLayout = (props) => {
             </div>
           </div>
         </div>
-        <div class={styles.content}>{props.children}</div>
+        <div className={styles.content}>{props.children}</div>
       </div>
     </div>
   );

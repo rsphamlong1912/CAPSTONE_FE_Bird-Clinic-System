@@ -55,11 +55,16 @@ const serviceList = [
 ];
 
 const Examing = () => {
-  const { id } = useParams();
+  const { bookingId } = useParams();
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [openModalProfile, setOpenModalProfile] = useState(false);
+
+  const [bookingInfo, setBookingInfo] = useState();
+  const [birdProfile, setBirdProfile] = useState();
+
   const [openModalPrescription, setOpenModalPrescription] = useState(false);
+
 
   //
   const [showInfo, setShowInfo] = useState(false);
@@ -91,14 +96,42 @@ const Examing = () => {
   useEffect(() => {
     const sendDataToApi = async () => {
       try {
-        const response = await api.put(`/booking/${id}`, examData);
-        console.log("api ne:", response);
+        const response = await api.put(`/booking/${bookingId}`, examData);
+        console.log("put duoc roi ne:", response);
       } catch (error) {
         console.log(error);
       }
     };
     sendDataToApi();
   }, [tab]);
+
+  useEffect(() => {
+    const getBooking = async () => {
+      try {
+        const response = await api.get(`/booking/${bookingId}`);
+        setBookingInfo(response.data.data);
+        console.log("thong tin booking ne:", response.data.data);
+        // Only call getBirdProfile if bookingInfo is available
+        if (response.data.data && response.data.data.bird_id) {
+          getBirdProfile(response.data.data.bird_id);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getBirdProfile = async (birdId) => {
+      try {
+        const response = await api.get(`/bird/${birdId}`);
+        setBirdProfile(response.data.data);
+        console.log("thong tin chim ne:", response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getBooking();
+  }, [bookingId]); // Assuming bookingId is a dependency needed to fetch data
 
   const toggleInfo = () => {
     setShowInfo(!showInfo);
@@ -202,7 +235,9 @@ const Examing = () => {
             <span>Thoát</span>
           </div>
           <div className={styles.right}>
-            <div className={styles.nameCustomer}>KH: Nguyễn Trí Công</div>
+            <div className={styles.nameCustomer}>
+              KH: {bookingInfo?.customer_name}
+            </div>
           </div>
         </div>
         <div className={styles.mainContent}>
@@ -520,6 +555,7 @@ const Examing = () => {
       />
       <ProfileBirdModal
         open={openModalProfile}
+        birdProfile={birdProfile}
         onClose={() => setOpenModalProfile(false)}
       />
       <PrescriptionModal

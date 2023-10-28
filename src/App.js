@@ -179,7 +179,7 @@ function App() {
           }
         ></Route>
         <Route
-          path="/examing/:id"
+          path="/examing/:bookingId"
           element={
             <MainLayout listTabs={listTabsHealthCheck}>
               <Examing></Examing>

@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./ProfileBirdModal.module.scss";
 
-const ProfileBirdModal = ({ open, onClose }) => {
+const ProfileBirdModal = ({ open, onClose, birdProfile }) => {
   if (!open) return null;
   return (
     <div onClick={onClose} className={styles.overlay}>
@@ -19,34 +19,43 @@ const ProfileBirdModal = ({ open, onClose }) => {
           <div className={styles.element}>
             <h5>THÔNG TIN CHIM</h5>
             <table>
-              <tr>
-                <th>Họ tên</th>
-                <td>Con chim xanh</td>
-              </tr>
-              <th>Ngày nở</th>
-              <td>21/03/2022</td>
-              <tr>
-                <th>Giới tính</th>
-                <td>Đực</td>
-              </tr>
-              <th>Màu sắc</th>
-              <td>Xanh</td>
-              <tr>
-                <th>Cân nặng</th>
-                <td>0.8 Kg</td>
-              </tr>
-              <th>Microchip</th>
-              <td>Không có</td>
-              <tr>
-                <th>Giống</th>
-                <td>Không</td>
-              </tr>
+              <tbody>
+                <tr>
+                  <th>Tên</th>
+                  <td>{birdProfile?.name}</td>
+                </tr>
+                <tr>
+                  <th>Ngày nở</th>
+                  <td>21/03/2022</td>
+                </tr>
+                <tr>
+                  <th>Giới tính</th>
+                  <td>{birdProfile?.gender}</td>
+                </tr>
+                <tr>
+                  <th>Màu sắc</th>
+                  <td>{birdProfile?.color}</td>
+                </tr>
+                <tr>
+                  <th>Cân nặng</th>
+                  <td>{birdProfile?.weight} gam</td>
+                </tr>
+                <tr>
+                  <th>Microchip</th>
+                  <td>{birdProfile?.ISO_microchip}</td>
+                </tr>
+                <tr>
+                  <th>Giống</th>
+                  <td>Không</td>
+                </tr>
+              </tbody>
             </table>
           </div>
           <div className={styles.history}>
             <img
-              src="https://vnn-imgs-f.vgcloud.vn/2019/12/31/14/bai-thuoc-tu-chim-se-chua-nam-gioi-liet-duong-it-tinh.jpg"
+              src={birdProfile?.image}
               className={styles.image}
+              alt={birdProfile?.name}
             />
             <div className={styles.historyText}>Lịch sử</div>
             <div className={styles.infHS}>

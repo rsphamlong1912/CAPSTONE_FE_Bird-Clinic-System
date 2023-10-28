@@ -208,7 +208,7 @@ tbody tr.hide td img {
   text-align: center;
 }
 
-.status.checkin {
+.status.being {
   color: rgba(36, 219, 149, 1);
   background-color: #fff;
   border: 1px solid rgba(36, 219, 149, 1);
@@ -225,7 +225,7 @@ tbody tr.hide td img {
   border: 1px solid rgba(249, 150, 31, 1);
 }
 
-.status.being {
+.status.checkin {
   color: rgba(0, 178, 255, 1);
   background-color: #fff;
   border: 1px solid rgba(0, 178, 255, 1);
@@ -282,4 +282,14 @@ tbody td.active {
   margin-top: 20px;
   font-weight: 600;
   font-size: 16px;
+}
+
+.btnExam {
+  text-align: center;
+  background-color: #32b768;
+  width: 100px;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }

@@ -12,8 +12,8 @@ const Signin = () => {
   // };
 
   const handleLogin = (e) => {
+    //ngăn reload trang
     e.preventDefault();
-    console.log("hje");
 
     // Gửi yêu cầu đăng nhập đến API sử dụng Axios
     api

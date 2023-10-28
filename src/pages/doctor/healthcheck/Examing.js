@@ -15,6 +15,7 @@ import { api } from "../../../services/axios";
 
 import MedicineTable from "./tables/MedicineTable";
 import PrescriptionModal from "../../../components/modals/PrescriptionModal";
+import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 
 const serviceList = [
   {
@@ -64,7 +65,7 @@ const Examing = () => {
   const [birdProfile, setBirdProfile] = useState();
 
   const [openModalPrescription, setOpenModalPrescription] = useState(false);
-
+  const [openModalConfirmService, setOpenModalConfirmService] = useState(false);
 
   //
   const [showInfo, setShowInfo] = useState(false);
@@ -182,7 +183,6 @@ const Examing = () => {
 
     // Cập nhật danh sách các bảng
     setTables([...tables, newTable]);
-
   };
   //tab 3 get api
   const [medicineNames, setMedicineNames] = useState([]);
@@ -200,7 +200,6 @@ const Examing = () => {
       }
     };
     sendApiforData();
-
   }, [tab]);
 
   const [timeSlotDate, setTimeSlotDate] = useState([]);
@@ -397,9 +396,15 @@ const Examing = () => {
                     selectedServices={selectedServices}
                   ></PhieuChiDinh>
                 </div>
-                <button className={styles.printService} onClick={handlePrint}>
-                  In phiếu dịch vụ
+                <button
+                  className={styles.printService}
+                  onClick={() => setOpenModalConfirmService(true)}
+                >
+                  Xác nhận
                 </button>
+                {/* <button className={styles.printService} onClick={handlePrint}>
+                  In phiếu dịch vụ
+                </button> */}
               </div>
             )}
             {tab == 3 && (
@@ -433,6 +438,7 @@ const Examing = () => {
                                   value={medicine.name}
                                 >
                                   {medicine.name}
+
                                 </option>
                               ))}
                             </select>
@@ -457,6 +463,7 @@ const Examing = () => {
                               >{examMedicineFirst.unit * examMedicineFirst.day}</p>
                             </div>
                           )}
+
                         </div>
                         <div className={styles.createSecond}>
                           <div className={styles.Second}>
@@ -498,6 +505,10 @@ const Examing = () => {
                               <option value="5">5</option>
                               <option value="6">6</option>
                               <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+
                             </select>
                           </div>
                         </div>
@@ -610,6 +621,11 @@ const Examing = () => {
         examMedicineFirst={examMedicineFirst}
         examMedicineAmount={examMedicineAmount}
         examMedicineType={selectedUnit}
+      />
+      <ConfirmServiceModal
+        open={openModalConfirmService}
+        onClose={() => setOpenModalConfirmService(false)}
+        selectedServices={selectedServices}
       />
       <div className={styles.footerContent}>
         {tab !== 1 && (

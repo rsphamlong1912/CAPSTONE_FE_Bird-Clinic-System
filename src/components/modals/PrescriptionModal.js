@@ -2,10 +2,11 @@ import React from "react";
 import styles from "./PrescriptionModal.module.scss";
 import { RiDeleteBinLine } from "react-icons/ri";
 
-const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst, examMedicineAmount, examMedicineType, selectedDay }) => {
+const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst, examMedicineAmount, examMedicineType}) => {
   if (!open) return null;
-  
-
+  // console.log('selectedUnit',selectedUnit);
+  // console.log('medicineNames',medicineNames);
+  console.log('examMedicine',examMedicine);
   return (
     <div onClick={onClose} className={styles.overlay}>
       <div
@@ -45,9 +46,9 @@ const PrescriptionModal = ({ open, onClose, examMedicine, examMedicineFirst, exa
               .map((prescription, index) => (
                 <tr key={index}>
                   <td>{prescription.medicine}</td>
-                  <td>{examMedicineAmount} liều trong {selectedDay} ngày</td>
+                  <td>{prescription.amount} liều trong {prescription.day} ngày</td>
                   <td>{prescription.unit}</td>
-                  <td>{examMedicineType}</td>
+                  <td>{prescription.type}</td>
                   <td>
                     <RiDeleteBinLine className={styles.btnDelete} />
                   </td>

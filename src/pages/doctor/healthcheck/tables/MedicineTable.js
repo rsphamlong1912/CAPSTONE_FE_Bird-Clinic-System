@@ -1,16 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./MedicineTable.module.scss";
 import { api } from "../../../../services/axios";
-import PrescriptionModal from "../../../../components/modals/PrescriptionModal";
 
 const MedicineTable = ({ onDelete, index, onUpdateData }) => {
-    const [openModalPrescription, setOpenModalPrescription] = useState(false);
-    const [selectedDay, setSelectedDay] = useState("");
     //tab 3
     const [examMedicine, setExamMedicine] = useState({
         medicine: "",
         type: "",
-        amount: "",
+        amount: 0,
         unit: "",
         day: "",
     });
@@ -21,10 +18,8 @@ const MedicineTable = ({ onDelete, index, onUpdateData }) => {
             ...examMedicine,
             [name]: value,
         });
-        onUpdateData(index, examMedicine);
 
-        const selectedValue = e.target.value;
-        setSelectedDay(selectedValue);
+        onUpdateData(index, examMedicine);
     };
 
     //tab 3 get api
@@ -65,14 +60,18 @@ const MedicineTable = ({ onDelete, index, onUpdateData }) => {
         setSelectedUnit(unit);
     };
 
-    const [examMedicineAmount, setExamMedicineAmount] = useState(0);
+    const [MedicineAmount, setMedicineAmount] = useState(0);
 
     useEffect(() => {
         // Tính toán giá trị amount khi unit hoặc day thay đổi
         if (examMedicine.unit && examMedicine.day) {
-            setExamMedicineAmount(examMedicine.unit * examMedicine.day);
+            setMedicineAmount(examMedicine.unit * examMedicine.day);
         }
     }, [examMedicine.unit, examMedicine.day]);
+
+    // console.log('MedicineAmount',MedicineAmount);
+    // console.log('selectedUnit',selectedUnit);
+    // console.log('examMedicine',examMedicine);
 
     return (
         <div>
@@ -145,7 +144,7 @@ const MedicineTable = ({ onDelete, index, onUpdateData }) => {
                     </select>
                 </div>
                 <div className={styles.Second}>
-                    <p>Ngày</p>
+                <p>Ngày</p>
                     <select
                         className={styles.DayList}
                         name="day"
@@ -161,6 +160,9 @@ const MedicineTable = ({ onDelete, index, onUpdateData }) => {
                         <option value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
                     </select>
                 </div>
             </div>
@@ -172,14 +174,6 @@ const MedicineTable = ({ onDelete, index, onUpdateData }) => {
                     className={styles.Instruct}
                 />
             </div>
-            <PrescriptionModal
-                open={openModalPrescription}
-                onClose={() => setOpenModalPrescription(false)}
-                examMedicine={examMedicine} // Pass the array of examMedicine from your state
-                examMedicineAmount={examMedicineAmount}
-                examMedicineType={selectedUnit} // Truyền selectedUnit
-                selectedDay={selectedDay}
-            />
         </div>
     );
 };

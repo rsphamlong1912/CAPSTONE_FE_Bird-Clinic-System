@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { LogoutOutlined } from "@ant-design/icons";
 import styles from "./MainLayout.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const MainLayout = (props) => {
+  const navigate = useNavigate();
   const [tab, setTab] = useState(1);
   const { currentDate } = useCurrentDate();
   return (
@@ -43,7 +44,7 @@ const MainLayout = (props) => {
             ))}
           </div>
           <div className={styles.bottomSidebar}>
-            <div className="tab-service" onClick={() => {}}>
+            <div className="tab-service" onClick={() => navigate(`/`)}>
               <LogoutOutlined
                 style={{ fontSize: "20px", marginRight: "5px", color: "white" }}
               />

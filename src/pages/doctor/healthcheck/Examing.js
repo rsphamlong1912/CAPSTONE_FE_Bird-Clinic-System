@@ -17,6 +17,9 @@ import MedicineTable from "./tables/MedicineTable";
 import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 
+
+import { message } from 'antd';
+
 const Examing = () => {
   const { bookingId } = useParams();
   const [tab, setTab] = useState(1);
@@ -37,6 +40,7 @@ const Examing = () => {
   //
   const [date, setDate] = useState(new Date());
 
+
   //GET DỊCH VỤ TỪ API
   useEffect(() => {
     const fetchServiceList = async () => {
@@ -54,6 +58,28 @@ const Examing = () => {
     };
     fetchServiceList();
   }, []);
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Đặt lịch tái khám thành công',
+    });
+  };
+  const successAddmedicine = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Thêm thuốc thành công',
+    });
+  };
+
+  const showError = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Vui lòng chọn ngày tái khám',
+    });
+  };
+
 
   //tab 1
   const [examData, setExamData] = useState({
@@ -86,6 +112,74 @@ const Examing = () => {
   // }, [tab]);
 
   //LẤY THÔNG TIN BOOKING
+
+  useEffect(() => {
+    const sendDataToApi = async () => {
+      try {
+        const response = await api.put(`/booking/${bookingId}`, examData);
+        console.log("put duoc roi ne:", response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    sendDataToApi();
+  }, [tab]);
+
+  const [accountId, setAccountId] = useState([]);
+  const [birdId, setBirdId] = useState([]);
+  const [veterinarianId, setVeterinarianId] = useState([]);
+  const [customerName, setCustomerName] = useState([]);
+  const [serviceType, setServiceType] = useState([]);
+  const [serviceTypeId, setServiceTypeId] = useState([]);
+
+  const [bookingData, setBookingData] = useState({
+    account_id: "",
+    bird_id: "",
+    veterinarian_id: "",
+    status: "re_exam",
+    customer_name: "",
+    note: "",
+    service_type: "",
+    service_type_id: "",
+    arrival_date: "",
+  });
+
+  const handleInputSave = (e) => {
+    const { name, value } = e.target;
+    setBookingData({
+      ...bookingData,
+      [name]: value,
+    });
+  };
+
+  const addBookingRe = () => {
+    if (!bookingData.arrival_date) {
+      showError();
+      return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
+    }
+    try {
+
+      const requestData = {
+        account_id: accountId,
+        bird_id: birdId,
+        veterinarian_id: veterinarianId,
+        status: bookingData.status,
+        customer_name: customerName,
+        note: bookingData.note,
+        service_type: serviceType,
+        service_type_id: serviceTypeId,
+        arrival_date: bookingData.arrival_date,
+      };
+
+      const response = api.post(`/booking/re_exam`, requestData);
+      console.log("Re-exam thanh cong:", response);
+      success();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   useEffect(() => {
     const getBooking = async () => {
       try {
@@ -94,6 +188,15 @@ const Examing = () => {
         );
         setBookingInfo(response.data.data[0]);
         console.log("thong tin booking ne:", response.data.data);
+
+        //cong them
+        setAccountId(response.data.data.account_id);
+        setBirdId(response.data.data.bird_id);
+        setVeterinarianId(response.data.data.veterinarian_id);
+        setCustomerName(response.data.data.customer_name);
+        setServiceType(response.data.data.service_type);
+        setServiceTypeId(response.data.data.service_type_id);
+
         // Only call getBirdProfile if bookingInfo is available
         if (response.data.data && response.data.data.bird_id) {
           getBirdProfile(response.data.data.bird_id);
@@ -145,6 +248,11 @@ const Examing = () => {
     const { name, value } = e.target;
     setExamMedicineFirst({
       ...examMedicineFirst,
+      [name]: value,
+    });
+
+    setPrescriptionData({
+      ...prescriptionData,
       [name]: value,
     });
   };
@@ -217,8 +325,12 @@ const Examing = () => {
     new Set(timeSlotDate.map((timeSlot) => timeSlot.date))
   );
 
+  const uniqueDates = Array.from(new Set(timeSlotDate.map((timeSlot) => timeSlot.date)));
+
+
   const [selectedMedicine, setSelectedMedicine] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
+  const [selectedMedicineId, setSelectedMedicineId] = useState("");
 
   // Thêm sự kiện xử lý khi tên thuốc được chọn
   const handleMedicineSelect = (e) => {
@@ -236,6 +348,17 @@ const Examing = () => {
       (timeSlot) => timeSlot.name === selectedMedicineName
     )[0]?.unit;
     setSelectedUnit(unit);
+
+    // Find the selected medicine and get its medicine_id
+    const selectedMedicine = medicineNames.find(
+      (medicine) => medicine.name === selectedMedicineName
+    );
+
+    if (selectedMedicine) {
+      setSelectedMedicineId(selectedMedicine.medicine_id);
+    } else {
+      setSelectedMedicineId(""); // Reset to empty if no medicine is selected
+    }
   };
 
   const [examMedicineAmount, setExamMedicineAmount] = useState(0);
@@ -373,6 +496,55 @@ const Examing = () => {
 
   console.log("bao oiiii", selectedServices);
 
+
+
+  ///
+  const [prescriptionData, setPrescriptionData] = useState({
+    booking_id: "",
+    note: "",
+    usage: "",
+    arr_medicine: [
+      {
+        medicine_id: "",
+        usage: "",
+        total_dose: 0,
+        dose: 0,
+        day: 0,
+      },
+    ],
+  });
+
+  const addPrescriptionData = () => {
+    // if (!prescriptionData.arrival_date) {
+    //   showError();
+    //   return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
+    // }
+    try {
+
+      const requestData = {
+        booking_id: bookingId,
+        note: prescriptionData.note,
+        // usage: "",
+        arr_medicine: [
+          {
+            medicine_id: selectedMedicineId,
+            // usage: "",
+            total_dose: examMedicineAmount,
+            dose: prescriptionData.unit,
+            day: prescriptionData.day,
+          },
+        ],
+      };
+
+      const response = api.post(`/prescription/`, requestData);
+      console.log("Add medicine thanh cong:", response);
+      successAddmedicine();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -509,7 +681,7 @@ const Examing = () => {
                           </div>
                           {selectedMedicine && ( // Hiển thị đơn vị khi đã chọn tên thuốc
                             <div className={styles.First}>
-                              <p>Đơn vị</p>
+                              <p>Loại</p>
                               {medicineNames
                                 .filter(
                                   (timeSlot) =>
@@ -596,6 +768,11 @@ const Examing = () => {
                         + Thêm thuốc
                       </button> */}
                       <div className={styles.boxMedicine}>
+                        <div>
+                          <button className={styles.AddMedicine} onClick={addPrescriptionData}>Xác nhận</button>
+                          {contextHolder}
+                        </div>
+
                         <button
                           onClick={createTable}
                           className={styles.AddMedicine}
@@ -621,15 +798,14 @@ const Examing = () => {
                 <div className={styles.SelectDate}>
                   <select
                     className={styles.ChooseDay}
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                    name="arrival_date"
+                    value={bookingData.arrival_date}
+                    onChange={handleInputSave}
                   >
                     <option value="">Select a Date</option>
-                    {uniqueDates.map((uniqueDate, index) => (
-                      <option key={index} value={uniqueDate}>
-                        {uniqueDate}
-                      </option>
-                    ))}
+                    <option value="2023-11-01">2023-11-01</option>
+                    <option value="2023-11-02">2023-11-02</option>
+                    <option value="2023-11-03">2023-11-03</option>
                   </select>
 
                   {selectedDate && (
@@ -643,11 +819,19 @@ const Examing = () => {
                         ))}
                     </div>
                   )}
-                </div>
 
-                <input className={styles.Note} />
+                </div>
+                <textarea
+                  type="text"
+                  rows={5}
+                  name="note"
+                  className={styles.Note}
+                  value={bookingData.note}
+                  onChange={handleInputSave}
+                />
                 <div>
-                  <button className={styles.btnAdd}>+ Tạo</button>
+                  <button className={styles.btnAdd} onClick={addBookingRe}>+ Tạo</button>
+                  {contextHolder}
                 </div>
               </div>
             )}

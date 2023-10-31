@@ -31,7 +31,7 @@ const ConfirmServiceModal = ({ open, onClose, selectedServices }) => {
         <div className={styles.container}>
           <div className={styles.element}>
             {selectedServices.map((item, index) => (
-              <div>{item.name}</div>
+              <div key={index}>{item.package_name}</div>
             ))}
 
             <button className={styles.printService} onClick={handlePrint}>

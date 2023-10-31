@@ -17,44 +17,6 @@ import MedicineTable from "./tables/MedicineTable";
 import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 
-const serviceList = [
-  {
-    id: 1,
-    name: "Chụp phim Xray",
-    price: "280000",
-  },
-  {
-    id: 2,
-    name: "Xét nghiệm máu",
-    price: "500000",
-  },
-  {
-    id: 3,
-    name: "Kiểm tra DNA Sexing",
-    price: "260000",
-  },
-  {
-    id: 4,
-    name: "Xét nghiệm phân chim",
-    price: "175000",
-  },
-  {
-    id: 5,
-    name: "Nội soi",
-    price: "320000",
-  },
-  {
-    id: 6,
-    name: "Xét nghiệm bệnh truyền nhiễm",
-    price: "250000",
-  },
-  {
-    id: 7,
-    name: "Phẫu thuật",
-    price: "520000",
-  },
-];
-
 const Examing = () => {
   const { bookingId } = useParams();
   const [tab, setTab] = useState(1);
@@ -62,11 +24,12 @@ const Examing = () => {
   const [openModalProfile, setOpenModalProfile] = useState(false);
 
   const [bookingInfo, setBookingInfo] = useState();
+  const [serviceFormDetail, setServiceFormDetail] = useState();
   const [birdProfile, setBirdProfile] = useState();
 
   const [openModalPrescription, setOpenModalPrescription] = useState(false);
   const [openModalConfirmService, setOpenModalConfirmService] = useState(false);
-
+  const [serviceList, setServiceList] = useState([]);
   //
   const [showInfo, setShowInfo] = useState(false);
   const [showButton, setShowButton] = useState(true);
@@ -74,10 +37,26 @@ const Examing = () => {
   //
   const [date, setDate] = useState(new Date());
 
+  //GET DỊCH VỤ TỪ API
+  useEffect(() => {
+    const fetchServiceList = async () => {
+      try {
+        const response = await api.get(`/servicePackage/?size_id=SZ005`);
+
+        const filteredServiceList = response.data.data.filter(
+          (servicePackage) =>
+            !["SP1", "SP9", "SP10"].includes(servicePackage.service_package_id)
+        );
+        setServiceList(filteredServiceList);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchServiceList();
+  }, []);
+
   //tab 1
   const [examData, setExamData] = useState({
-    weight: "",
-    temperature: "",
     symptoms: "",
     diagnosis: "",
     additionalNotes: "",
@@ -94,28 +73,43 @@ const Examing = () => {
   //tab 2
   const [selectedServices, setSelectedServices] = useState([]);
 
-  useEffect(() => {
-    const sendDataToApi = async () => {
-      try {
-        const response = await api.put(`/booking/${bookingId}`, examData);
-        console.log("put duoc roi ne:", response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    sendDataToApi();
-  }, [tab]);
+  // useEffect(() => {
+  //   const sendDataToApi = async () => {
+  //     try {
+  //       const response = await api.put(`/booking/${bookingId}`, examData);
+  //       console.log("put duoc roi ne:", response);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   sendDataToApi();
+  // }, [tab]);
 
+  //LẤY THÔNG TIN BOOKING
   useEffect(() => {
     const getBooking = async () => {
       try {
-        const response = await api.get(`/booking/${bookingId}`);
-        setBookingInfo(response.data.data);
+        const response = await api.get(
+          `/booking/${bookingId}?service_type_id=ST001`
+        );
+        setBookingInfo(response.data.data[0]);
         console.log("thong tin booking ne:", response.data.data);
         // Only call getBirdProfile if bookingInfo is available
         if (response.data.data && response.data.data.bird_id) {
           getBirdProfile(response.data.data.bird_id);
         }
+        if (response.data.data && response.data.data.process_at) {
+          setTab(response.data.data.process_at);
+        }
+
+        //GET SERVICE FORM DETAIL
+        const responseServiceFormDetail = await api.get(
+          `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
+            "account_id"
+          )}&booking_id=${bookingId}&service_type_id=ST001`
+        );
+        setServiceFormDetail(responseServiceFormDetail.data.data[0]);
+        setTab(responseServiceFormDetail.data.data[0].process_at);
       } catch (error) {
         console.log(error);
       }
@@ -125,7 +119,6 @@ const Examing = () => {
       try {
         const response = await api.get(`/bird/${birdId}`);
         setBirdProfile(response.data.data);
-        console.log("thong tin chim ne:", response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -216,12 +209,13 @@ const Examing = () => {
       }
     };
     sendApiforData();
-
   }, [tab]);
 
   const [selectedDate, setSelectedDate] = useState(""); // State to store the selected date
 
-  const uniqueDates = Array.from(new Set(timeSlotDate.map((timeSlot) => timeSlot.date)));
+  const uniqueDates = Array.from(
+    new Set(timeSlotDate.map((timeSlot) => timeSlot.date))
+  );
 
   const [selectedMedicine, setSelectedMedicine] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
@@ -238,8 +232,9 @@ const Examing = () => {
     });
 
     // Tìm đơn vị và cập nhật selectedUnit
-    const unit = medicineNames
-      .filter((timeSlot) => timeSlot.name === selectedMedicineName)[0]?.unit;
+    const unit = medicineNames.filter(
+      (timeSlot) => timeSlot.name === selectedMedicineName
+    )[0]?.unit;
     setSelectedUnit(unit);
   };
 
@@ -261,7 +256,7 @@ const Examing = () => {
   const handleChange = (event) => {
     const serviceName = event.target.value;
     const selectedService = serviceList.find(
-      (item) => item.name === serviceName
+      (item) => item.package_name === serviceName
     );
 
     if (event.target.checked) {
@@ -270,10 +265,113 @@ const Examing = () => {
     } else {
       // Nếu checkbox được bỏ chọn, loại bỏ dịch vụ khỏi danh sách đã chọn
       setSelectedServices(
-        selectedServices.filter((service) => service.name !== serviceName)
+        selectedServices.filter(
+          (service) => service.package_name !== serviceName
+        )
       );
     }
   };
+
+  const handleBackTab = async () => {
+    const newTabValue = tab - 1; // Lấy giá trị mới của tab
+    console.log("hdvaciaydcyj", newTabValue);
+
+    setTab(newTabValue); // Cập nhật giá trị tab
+
+    try {
+      const sendProcessToApi = await api.put(
+        `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
+        {
+          status: "any",
+          veterinarian_id: localStorage.getItem("account_id"),
+          process_at: newTabValue, // Sử dụng giá trị mới của tab
+        }
+      );
+      console.log("Change Tab Successful");
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Error:", error);
+      // Đảm bảo quay lại giá trị trước đó nếu có lỗi xảy ra
+      setTab((tab) => tab + 1);
+    }
+  };
+
+  const handleNextTab = async () => {
+    const newTabValue = tab + 1; // Lấy giá trị mới của tab
+    setTab(newTabValue); // Cập nhật giá trị tab
+
+    try {
+      const sendProcessToApi = await api.put(
+        `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
+        {
+          status: "any",
+          veterinarian_id: localStorage.getItem("account_id"),
+          process_at: newTabValue, // Sử dụng giá trị mới của tab
+        }
+      );
+      console.log("Change Tab Successfull");
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Error:", error);
+      // Đảm bảo quay lại giá trị trước đó nếu có lỗi xảy ra
+      setTab((tab) => tab - 1);
+    }
+  };
+
+  const handleOpenConfirm = () => {
+    setOpenModalConfirmService(true);
+    createNewServiceForm(bookingInfo);
+  };
+
+  const createNewServiceForm = async (item) => {
+    try {
+      // Tạo service_Form
+      const createdResponse = await api.post(`/service_Form/`, {
+        bird_id: item.bird_id,
+        booking_id: item.booking_id,
+        reason_referral: "any",
+        status: "any",
+        date: "any",
+        veterinarian_referral: "any",
+        total_price: "any",
+        qr_code: "any",
+        num_ser_must_do: selectedServices.length,
+        num_ser_has_done: 0,
+        arr_service_pack: selectedServices,
+      });
+
+      for (const service of selectedServices) {
+        const createdDetailResponse = await api.post(`/service_Form_detail/`, {
+          service_package_id: service.service_package_id,
+          service_form_id: createdResponse.data.data.service_form_id,
+          note: "any",
+          status: "any",
+          veterinarian_id: "any",
+          booking_id: item.booking_id,
+          process_at: 1,
+          checkin_time: "any",
+        });
+        console.log("vong lap ne", createdDetailResponse);
+      }
+
+      // Sử dụng ID để tạo service_Form_detail
+      const createdBill = await api.post(`/bill/`, {
+        title: "Kham thuong nè",
+        total_price: "0",
+        service_form_id: createdResponse.data.data.service_form_id,
+        booking_id: item.booking_id,
+        payment_method: "paypal",
+        paypal_transaction_id: "any",
+        status: "any",
+      });
+
+      console.log("create new bill:", createdBill);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  console.log("bao oiiii", selectedServices);
 
   return (
     <div className={styles.wrapper}>
@@ -292,57 +390,24 @@ const Examing = () => {
         <div className={styles.mainContent}>
           <div className={styles.content}>
             <div className={styles.procedureTab}>
-              <span
-                className={`${tab === 1 ? styles.active : ""}`}
-                onClick={() => setTab(1)}
-              >
+              <span className={`${tab === 1 ? styles.active : ""}`}>
                 Khám tổng thể
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
-              <span
-                className={`${tab === 2 ? styles.active : ""}`}
-                onClick={() => setTab(2)}
-              >
+              <span className={`${tab === 2 ? styles.active : ""}`}>
                 Yêu cầu dịch vụ
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
-              <span
-                className={`${tab === 3 ? styles.active : ""}`}
-                onClick={() => setTab(3)}
-              >
+              <span className={`${tab === 3 ? styles.active : ""}`}>
                 Kê thuốc
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
-              <span
-                className={`${tab === 4 ? styles.active : ""}`}
-                onClick={() => setTab(4)}
-              >
+              <span className={`${tab === 4 ? styles.active : ""}`}>
                 Hẹn tái khám
               </span>
             </div>
             {tab == 1 && (
               <div className={styles.examing}>
-                <div className={styles.wtInfo}>
-                  <div className={styles.inputItem}>
-                    <label htmlFor="weight">Cân nặng</label>
-                    <input
-                      type="text"
-                      name="weight"
-                      value={examData.weight}
-                      onChange={handleInputChange}
-                      id="weight"
-                    />
-                  </div>
-                  <div className={styles.inputItem}>
-                    <label htmlFor="temperature">Nhiệt độ</label>
-                    <input
-                      type="text"
-                      name="temperature"
-                      value={examData.temperature}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Triệu chứng</label>
                   <input
@@ -362,7 +427,7 @@ const Examing = () => {
                   />
                 </div>
                 <div className={styles.inputItem}>
-                  <label htmlFor="temperature">Ghi chú thêm</label>
+                  <label htmlFor="temperature">Lời khuyên</label>
                   <textarea
                     name="additionalNotes"
                     value={examData.additionalNotes}
@@ -381,13 +446,13 @@ const Examing = () => {
                     <input
                       type="checkbox"
                       name="temperature"
-                      value={item.name}
+                      value={item.package_name}
                       checked={selectedServices.some(
-                        (service) => service.name === item.name
+                        (service) => service.package_name === item.package_name
                       )}
                       onChange={handleChange}
                     />
-                    <label htmlFor="temperature">{item.name}</label>
+                    <label htmlFor="temperature">{item.package_name}</label>
                   </div>
                 ))}
                 <div style={{ display: "none" }}>
@@ -398,7 +463,7 @@ const Examing = () => {
                 </div>
                 <button
                   className={styles.printService}
-                  onClick={() => setOpenModalConfirmService(true)}
+                  onClick={handleOpenConfirm}
                 >
                   Xác nhận
                 </button>
@@ -438,18 +503,22 @@ const Examing = () => {
                                   value={medicine.name}
                                 >
                                   {medicine.name}
-
                                 </option>
                               ))}
                             </select>
                           </div>
-                          {selectedMedicine && (  // Hiển thị đơn vị khi đã chọn tên thuốc
+                          {selectedMedicine && ( // Hiển thị đơn vị khi đã chọn tên thuốc
                             <div className={styles.First}>
                               <p>Đơn vị</p>
                               {medicineNames
-                                .filter((timeSlot) => timeSlot.name === selectedMedicine)
+                                .filter(
+                                  (timeSlot) =>
+                                    timeSlot.name === selectedMedicine
+                                )
                                 .map((filteredSlot, index) => (
-                                  <p className={styles.TypeList} key={index}>{filteredSlot.unit}</p>
+                                  <p className={styles.TypeList} key={index}>
+                                    {filteredSlot.unit}
+                                  </p>
                                 ))}
                             </div>
                           )}
@@ -460,10 +529,11 @@ const Examing = () => {
                                 className={styles.AmountList}
                                 name="amount"
                                 value={examMedicineFirst.amount}
-                              >{examMedicineFirst.unit * examMedicineFirst.day}</p>
+                              >
+                                {examMedicineFirst.unit * examMedicineFirst.day}
+                              </p>
                             </div>
                           )}
-
                         </div>
                         <div className={styles.createSecond}>
                           <div className={styles.Second}>
@@ -508,7 +578,6 @@ const Examing = () => {
                               <option value="8">8</option>
                               <option value="9">9</option>
                               <option value="10">10</option>
-
                             </select>
                           </div>
                         </div>
@@ -568,7 +637,9 @@ const Examing = () => {
                       {timeSlotDate
                         .filter((timeSlot) => timeSlot.date === selectedDate)
                         .map((filteredSlot, index) => (
-                          <p className={styles.SetTimeSon} key={index}>{filteredSlot.slot_clinic.time}</p>
+                          <p className={styles.SetTimeSon} key={index}>
+                            {filteredSlot.slot_clinic.time}
+                          </p>
                         ))}
                     </div>
                   )}
@@ -629,18 +700,12 @@ const Examing = () => {
       />
       <div className={styles.footerContent}>
         {tab !== 1 && (
-          <button
-            className={styles.btnBack}
-            onClick={() => setTab((tab) => tab - 1)}
-          >
+          <button className={styles.btnBack} onClick={handleBackTab}>
             Quay lại
           </button>
         )}
 
-        <button
-          className={styles.btnCont}
-          onClick={() => setTab((tab) => tab + 1)}
-        >
+        <button className={styles.btnCont} onClick={handleNextTab}>
           Tiếp tục
         </button>
       </div>

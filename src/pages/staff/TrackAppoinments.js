@@ -25,14 +25,67 @@ const TrackAppoinments = () => {
     fetchData();
   });
 
-  const handleChangeStatusCheckin = async (bookingId) => {
+  const handleChangeStatusCheckin = async (item) => {
     try {
-      const response = await api.put(`/booking/${bookingId}`, {
+      const response = await api.put(`/booking/${item.booking_id}`, {
         status: "checked_in",
       });
-      setCustomerList(response.data.data);
+      console.log("response doi status ne", response.data);
+      // setCustomerList(response.data.data);
+      createNewServiceForm(item);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const createNewServiceForm = async (item) => {
+    try {
+      // Tạo service_Form
+      const createdResponse = await api.post(`/service_Form/`, {
+        bird_id: item.bird_id,
+        booking_id: item.booking_id,
+        reason_referral: "any",
+        status: "any",
+        date: "any",
+        veterinarian_referral: "any",
+        total_price: "any",
+        qr_code: "any",
+        num_ser_must_do: 1,
+        num_ser_has_done: 0,
+        arr_service_pack: [
+          {
+            service_package_id: "SP1",
+            note: "SP2",
+          },
+        ],
+      });
+
+      // Sử dụng ID để tạo service_Form_detail
+      const createdDetailResponse = await api.post(`/service_Form_detail/`, {
+        service_package_id: "SP1",
+        service_form_id: createdResponse.data.data.service_form_id, // Sử dụng ID từ service_Form
+        note: "any",
+        status: "any",
+        veterinarian_id: item.veterinarian_id,
+        booking_id: item.booking_id,
+        process_at: 1,
+        checkin_time: "any",
+      });
+
+      // Sử dụng ID để tạo service_Form_detail
+      const createdBill = await api.post(`/bill/`, {
+        title: "Kham thuong nè",
+        total_price: "0",
+        service_form_id: createdResponse.data.data.service_form_id,
+        booking_id: item.booking_id,
+        payment_method: "paypal",
+        paypal_transaction_id: "any",
+        status: "any",
+      });
+
+      console.log("create new bill:", createdBill);
+    } catch (err) {
+      console.log(err);
     }
   };
   return (
@@ -82,7 +135,7 @@ const TrackAppoinments = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr>
+              <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
@@ -105,7 +158,7 @@ const TrackAppoinments = () => {
                   {item.status === "booked" ? (
                     <div
                       className={styles.btnCheckin}
-                      onClick={() => handleChangeStatusCheckin(item.booking_id)}
+                      onClick={() => handleChangeStatusCheckin(item)}
                     >
                       Check in
                     </div>
@@ -153,9 +206,9 @@ const Loading = () => {
         </strong>
       </td>
       <td>
-        <p class="status being">
+        <div className="status being">
           <LoadingSkeleton></LoadingSkeleton>
-        </p>
+        </div>
       </td>
     </tr>
   );

@@ -102,7 +102,7 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
           </tr>
           {selectedServices.map((item, index) => (
             <tr>
-              <td>{item.name}</td>
+              <td>{item.package_name}</td>
               <td>{formattedPrice(item.price)}</td>
             </tr>
           ))}

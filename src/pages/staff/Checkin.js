@@ -65,7 +65,10 @@ const Checkin = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr onClick={() => navigate(`/examing/${item.booking_id}`)}>
+              <tr
+                key={index}
+                onClick={() => navigate(`/examing/${item.booking_id}`)}
+              >
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
@@ -128,9 +131,9 @@ const Loading = () => {
         </strong>
       </td>
       <td>
-        <p class="status being">
+        <div className="status being">
           <LoadingSkeleton></LoadingSkeleton>
-        </p>
+        </div>
       </td>
     </tr>
   );

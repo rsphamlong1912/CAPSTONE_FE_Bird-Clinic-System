@@ -17,8 +17,7 @@ import MedicineTable from "./tables/MedicineTable";
 import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 
-
-import { message } from 'antd';
+import { message } from "antd";
 
 const Examing = () => {
   const { bookingId } = useParams();
@@ -39,7 +38,6 @@ const Examing = () => {
 
   //
   const [date, setDate] = useState(new Date());
-
 
   //GET DỊCH VỤ TỪ API
   useEffect(() => {
@@ -62,24 +60,23 @@ const Examing = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
     messageApi.open({
-      type: 'success',
-      content: 'Đặt lịch tái khám thành công',
+      type: "success",
+      content: "Đặt lịch tái khám thành công",
     });
   };
   const successAddmedicine = () => {
     messageApi.open({
-      type: 'success',
-      content: 'Thêm thuốc thành công',
+      type: "success",
+      content: "Thêm thuốc thành công",
     });
   };
 
   const showError = () => {
     messageApi.open({
-      type: 'error',
-      content: 'Vui lòng chọn ngày tái khám',
+      type: "error",
+      content: "Vui lòng chọn ngày tái khám",
     });
   };
-
 
   //tab 1
   const [examData, setExamData] = useState({
@@ -110,20 +107,6 @@ const Examing = () => {
   //   };
   //   sendDataToApi();
   // }, [tab]);
-
-  //LẤY THÔNG TIN BOOKING
-
-  useEffect(() => {
-    const sendDataToApi = async () => {
-      try {
-        const response = await api.put(`/booking/${bookingId}`, examData);
-        console.log("put duoc roi ne:", response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    sendDataToApi();
-  }, [tab]);
 
   const [accountId, setAccountId] = useState([]);
   const [birdId, setBirdId] = useState([]);
@@ -158,7 +141,6 @@ const Examing = () => {
       return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
     }
     try {
-
       const requestData = {
         account_id: accountId,
         bird_id: birdId,
@@ -179,7 +161,7 @@ const Examing = () => {
     }
   };
 
-
+  //LẤY THÔNG TIN BOOKING
   useEffect(() => {
     const getBooking = async () => {
       try {
@@ -187,22 +169,23 @@ const Examing = () => {
           `/booking/${bookingId}?service_type_id=ST001`
         );
         setBookingInfo(response.data.data[0]);
-        console.log("thong tin booking ne:", response.data.data);
+        console.log("thong tin booking ne:", response.data.data[0]);
 
         //cong them
-        setAccountId(response.data.data.account_id);
-        setBirdId(response.data.data.bird_id);
-        setVeterinarianId(response.data.data.veterinarian_id);
-        setCustomerName(response.data.data.customer_name);
-        setServiceType(response.data.data.service_type);
-        setServiceTypeId(response.data.data.service_type_id);
+        setAccountId(response.data.data[0].account_id);
+        setBirdId(response.data.data[0].bird_id);
+        setVeterinarianId(response.data.data[0].veterinarian_id);
+        setCustomerName(response.data.data[0].customer_name);
+        setServiceType(response.data.data[0].service_type);
+        setServiceTypeId(response.data.data[0].service_type_id);
 
         // Only call getBirdProfile if bookingInfo is available
-        if (response.data.data && response.data.data.bird_id) {
-          getBirdProfile(response.data.data.bird_id);
+        if (response.data.data[0] && response.data.data[0].bird_id) {
+          getBirdProfile(response.data.data[0].bird_id);
         }
-        if (response.data.data && response.data.data.process_at) {
-          setTab(response.data.data.process_at);
+        if (response.data.data[0] && response.data.data[0].process_at) {
+          setTab(response.data.data[0].process_at);
+          console.log("Set tab r nha", response.data.data[0].process_at);
         }
 
         //GET SERVICE FORM DETAIL
@@ -212,7 +195,6 @@ const Examing = () => {
           )}&booking_id=${bookingId}&service_type_id=ST001`
         );
         setServiceFormDetail(responseServiceFormDetail.data.data[0]);
-        setTab(responseServiceFormDetail.data.data[0].process_at);
       } catch (error) {
         console.log(error);
       }
@@ -321,7 +303,6 @@ const Examing = () => {
   }, [tab]);
 
   const [selectedDate, setSelectedDate] = useState(""); // State to store the selected date
-
   const [selectedMedicine, setSelectedMedicine] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
   const [selectedMedicineId, setSelectedMedicineId] = useState("");
@@ -436,61 +417,51 @@ const Examing = () => {
   };
 
   const handleOpenConfirm = () => {
+    console.log(selectedServices);
     setOpenModalConfirmService(true);
     createNewServiceForm(bookingInfo);
   };
 
-  const createNewServiceForm = async (item) => {
+  const createNewServiceForm = async (bookingInfo) => {
+    const newArray = selectedServices.map((obj) => {
+      return {
+        service_package_id: obj.service_package_id,
+        note: obj.package_name,
+      };
+    });
+    console.log("new", newArray);
+    console.log("booking in4", bookingInfo.bird_id);
     try {
       // Tạo service_Form
       const createdResponse = await api.post(`/service_Form/`, {
-        bird_id: item.bird_id,
-        booking_id: item.booking_id,
+        bird_id: bookingInfo.bird_id,
+        booking_id: bookingInfo.booking_id,
         reason_referral: "any",
-        status: "any",
-        date: "any",
+        status: "pending",
+        date: "2023-02-10",
         veterinarian_referral: "any",
-        total_price: "any",
+        total_price: "107000",
         qr_code: "any",
-        num_ser_must_do: selectedServices.length,
-        num_ser_has_done: 0,
-        arr_service_pack: selectedServices,
+        num_ser_must_do: newArray.length,
+        num_ser_has_done: "0",
+        arr_service_pack: newArray,
       });
-
-      for (const service of selectedServices) {
-        const createdDetailResponse = await api.post(`/service_Form_detail/`, {
-          service_package_id: service.service_package_id,
-          service_form_id: createdResponse.data.data.service_form_id,
-          note: "any",
-          status: "any",
-          veterinarian_id: "any",
-          booking_id: item.booking_id,
-          process_at: 1,
-          checkin_time: "any",
-        });
-        console.log("vong lap ne", createdDetailResponse);
-      }
-
+      console.log("created response", createdResponse.data.data);
       // Sử dụng ID để tạo service_Form_detail
       const createdBill = await api.post(`/bill/`, {
         title: "Kham thuong nè",
         total_price: "0",
         service_form_id: createdResponse.data.data.service_form_id,
-        booking_id: item.booking_id,
+        booking_id: bookingInfo.booking_id,
         payment_method: "paypal",
         paypal_transaction_id: "any",
         status: "any",
       });
-
       console.log("create new bill:", createdBill);
     } catch (err) {
       console.log(err);
     }
   };
-
-  console.log("bao oiiii", selectedServices);
-
-
 
   ///
   const [prescriptionData, setPrescriptionData] = useState({
@@ -514,7 +485,6 @@ const Examing = () => {
     //   return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
     // }
     try {
-
       const requestData = {
         booking_id: bookingId,
         note: prescriptionData.note,
@@ -538,7 +508,6 @@ const Examing = () => {
     }
   };
 
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -548,9 +517,7 @@ const Examing = () => {
             <span>Thoát</span>
           </div>
           <div className={styles.right}>
-            <div className={styles.nameCustomer}>
-              KH: {bookingInfo?.customer_name}
-            </div>
+            <div className={styles.nameCustomer}>KH: {customerName}</div>
           </div>
         </div>
         <div className={styles.mainContent}>
@@ -764,7 +731,12 @@ const Examing = () => {
                       </button> */}
                       <div className={styles.boxMedicine}>
                         <div>
-                          <button className={styles.AddMedicine} onClick={addPrescriptionData}>Xác nhận</button>
+                          <button
+                            className={styles.AddMedicine}
+                            onClick={addPrescriptionData}
+                          >
+                            Xác nhận
+                          </button>
                           {contextHolder}
                         </div>
 
@@ -814,7 +786,6 @@ const Examing = () => {
                         ))}
                     </div>
                   )}
-
                 </div>
                 <p className={styles.txtNote}>Ghi chú thêm</p>
                 <textarea
@@ -826,7 +797,9 @@ const Examing = () => {
                   onChange={handleInputSave}
                 />
                 <div>
-                  <button className={styles.btnAdd} onClick={addBookingRe}>+ Tạo</button>
+                  <button className={styles.btnAdd} onClick={addBookingRe}>
+                    + Tạo
+                  </button>
                   {contextHolder}
                 </div>
               </div>

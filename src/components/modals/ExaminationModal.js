@@ -19,22 +19,28 @@ const ExaminationModal = ({ open, onClose, examData, selectedServices }) => {
           <div className={styles.element}>
             <h5>1. Khám tổng quát</h5>
             <table>
-              <tr>
-                <th>Cân nặng:</th>
-                <td>{examData.weight} Kg</td>
-              </tr>
-              <th>Nhiệt độ:</th>
-              <td>{examData.temperature} độ C</td>
-              <tr>
-                <th>Biểu hiện lâm sàng:</th>
-                <td>{examData.symptoms}</td>
-              </tr>
-              <th>Chuẩn đoán:</th>
-              <td>{examData.diagnosis}</td>
-              <tr>
-                <th>Ghi chú:</th>
-                <td>{examData.additionalNotes}</td>
-              </tr>
+              <tbody>
+                <tr>
+                  <th>Cân nặng:</th>
+                  <td>{examData.weight} Kg</td>
+                </tr>
+                <tr>
+                  <th>Nhiệt độ:</th>
+                  <td>{examData.temperature} độ C</td>
+                </tr>
+                <tr>
+                  <th>Biểu hiện lâm sàng:</th>
+                  <td>{examData.symptoms}</td>
+                </tr>
+                <tr>
+                  <th>Chuẩn đoán:</th>
+                  <td>{examData.diagnosis}</td>
+                </tr>
+                <tr>
+                  <th>Ghi chú:</th>
+                  <td>{examData.additionalNotes}</td>
+                </tr>
+              </tbody>
             </table>
             <h5>2. Yêu cầu dịch vụ</h5>
             {selectedServices.map((item, index) => (

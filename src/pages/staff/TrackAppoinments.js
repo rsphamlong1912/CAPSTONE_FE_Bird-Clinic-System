@@ -55,7 +55,7 @@ const TrackAppoinments = () => {
         arr_service_pack: [
           {
             service_package_id: "SP1",
-            note: "SP2",
+            note: "null",
           },
         ],
       });
@@ -69,10 +69,9 @@ const TrackAppoinments = () => {
         veterinarian_id: item.veterinarian_id,
         booking_id: item.booking_id,
         process_at: 1,
-        checkin_time: "any",
+        checkin_time: item.checkin_time,
       });
 
-      // Sử dụng ID để tạo service_Form_detail
       const createdBill = await api.post(`/bill/`, {
         title: "Kham thuong nè",
         total_price: "0",
@@ -83,7 +82,14 @@ const TrackAppoinments = () => {
         status: "any",
       });
 
-      console.log("create new bill:", createdBill);
+      const createdBillDetail = await api.post(`/billDetail/`, {
+        bill_id: createdBill.data.data.bill_id,
+        service_package_id: "SP1",
+        price: 50000,
+        quantity: 1,
+      });
+
+      console.log("create new bill:", createdBillDetail);
     } catch (err) {
       console.log(err);
     }

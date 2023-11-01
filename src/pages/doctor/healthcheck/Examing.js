@@ -233,6 +233,7 @@ const Examing = () => {
     amount: "",
     unit: "",
     day: "",
+    note:"",
   });
 
   const handleInputMedicineFirst = (e) => {
@@ -569,7 +570,7 @@ const Examing = () => {
                       <div className={styles.scrollableblock}>
                         <div className={styles.contentAll}>
                           <h1>1.Tên thuốc</h1>
-                          <h3>HDSD: cho ăn trước uống</h3>
+                          <h3>HDSD: {examMedicineFirst.note}</h3>
                         </div>
                         <div className={styles.createFirst}>
                           <div className={styles.First}>
@@ -665,8 +666,9 @@ const Examing = () => {
                           <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
                           <textarea
                             type="text"
-                            name="temperature"
+                            name="note"
                             className={styles.Instruct}
+                            onChange={handleInputMedicineFirst}
                           />
                         </div>
                         {tables}
@@ -716,6 +718,7 @@ const Examing = () => {
                     <option value="2023-11-03">2023-11-03</option>
                   </select>
                 </div>
+                <p className={styles.txtNote}>Ghi chú thêm</p>
                 <textarea
                   type="text"
                   rows={5}

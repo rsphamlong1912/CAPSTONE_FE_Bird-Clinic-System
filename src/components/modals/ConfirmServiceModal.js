@@ -2,8 +2,10 @@ import React, { useRef } from "react";
 import styles from "./ConfirmServiceModal.module.scss";
 import { useReactToPrint } from "react-to-print";
 import { PhieuChiDinh } from "../pdfData/PhieuChiDinh";
+import { useNavigate } from "react-router-dom";
 
 const ConfirmServiceModal = ({ open, onClose, selectedServices }) => {
+  const navigate = useNavigate();
   const printRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
@@ -33,6 +35,12 @@ const ConfirmServiceModal = ({ open, onClose, selectedServices }) => {
             {selectedServices.map((item, index) => (
               <div key={index}>{item.package_name}</div>
             ))}
+            <button
+              className={styles.printService}
+              onClick={() => navigate("/examing")}
+            >
+              Hoàn tất
+            </button>
 
             <button className={styles.printService} onClick={handlePrint}>
               In phiếu chỉ định

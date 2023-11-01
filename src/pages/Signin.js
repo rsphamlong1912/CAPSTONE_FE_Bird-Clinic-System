@@ -20,11 +20,12 @@ const Signin = () => {
       .post(`/login/?phone=${phone}&password=${password}`)
       .then((response) => {
         // Xử lý phản hồi từ API khi đăng nhập thành công
-        console.log("Đăng nhập thành công:", response.data);
-        console.log(response.data.data);
-        const { account_id } = response.data.data.account;
+        console.log("Đăng nhập thành công:", response.data.data.data);
+        const { account_id, name } = response.data.data.data;
         localStorage.setItem("account_id", account_id);
+        localStorage.setItem("name", name);
         const role = response.data.data.role;
+        console.log(role);
         if (role === "vet") {
           window.location.href = "/examing";
         } else if (role === "staff") {

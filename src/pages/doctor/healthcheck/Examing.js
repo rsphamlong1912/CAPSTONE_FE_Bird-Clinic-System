@@ -322,13 +322,6 @@ const Examing = () => {
 
   const [selectedDate, setSelectedDate] = useState(""); // State to store the selected date
 
-  const uniqueDates = Array.from(
-    new Set(timeSlotDate.map((timeSlot) => timeSlot.date))
-  );
-
-  const uniqueDates = Array.from(new Set(timeSlotDate.map((timeSlot) => timeSlot.date)));
-
-
   const [selectedMedicine, setSelectedMedicine] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
   const [selectedMedicineId, setSelectedMedicineId] = useState("");

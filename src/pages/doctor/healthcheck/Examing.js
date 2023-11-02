@@ -190,10 +190,9 @@ const Examing = () => {
 
         //GET SERVICE FORM DETAIL
         const responseServiceFormDetail = await api.get(
-          `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
-            "account_id"
-          )}&booking_id=${bookingId}&service_type_id=ST001`
+          `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
         );
+        console.log("form detail ne", responseServiceFormDetail.data.data[0]);
         setServiceFormDetail(responseServiceFormDetail.data.data[0]);
       } catch (error) {
         console.log(error);
@@ -224,7 +223,7 @@ const Examing = () => {
     amount: "",
     unit: "",
     day: "",
-    note:"",
+    note: "",
   });
 
   const handleInputMedicineFirst = (e) => {
@@ -417,7 +416,6 @@ const Examing = () => {
   };
 
   const handleOpenConfirm = () => {
-    console.log(selectedServices);
     setOpenModalConfirmService(true);
     createNewServiceForm(bookingInfo);
   };
@@ -429,8 +427,22 @@ const Examing = () => {
         note: obj.package_name,
       };
     });
-    console.log("new", newArray);
-    console.log("booking in4", bookingInfo.bird_id);
+
+    const totalPrice = selectedServices.reduce(
+      (acc, service) => acc + parseFloat(service.price),
+      0
+    );
+
+    //ĐỔI THÀNH TRẠNG THÁI TEST_REQUEST
+    try {
+      const response = await api.put(`/booking/${bookingInfo.booking_id}`, {
+        status: "test_requested",
+      });
+      console.log("response doi status ne", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+
     try {
       // Tạo service_Form
       const createdResponse = await api.post(`/service_Form/`, {
@@ -440,7 +452,7 @@ const Examing = () => {
         status: "pending",
         date: "2023-02-10",
         veterinarian_referral: "any",
-        total_price: "107000",
+        total_price: totalPrice,
         qr_code: "any",
         num_ser_must_do: newArray.length,
         num_ser_has_done: "0",
@@ -449,11 +461,11 @@ const Examing = () => {
       console.log("created response", createdResponse.data.data);
       // Sử dụng ID để tạo service_Form_detail
       const createdBill = await api.post(`/bill/`, {
-        title: "Kham thuong nè",
-        total_price: "0",
+        title: "Thanh toán",
+        total_price: totalPrice,
         service_form_id: createdResponse.data.data.service_form_id,
         booking_id: bookingInfo.booking_id,
-        payment_method: "paypal",
+        payment_method: "cast",
         paypal_transaction_id: "any",
         status: "any",
       });

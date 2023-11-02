@@ -21,13 +21,17 @@ const Signin = () => {
       .then((response) => {
         // Xử lý phản hồi từ API khi đăng nhập thành công
         console.log("Đăng nhập thành công:", response.data.data.data);
-        const { account_id, name } = response.data.data.data;
+        const { account_id, name, service_id } = response.data.data.data;
         localStorage.setItem("account_id", account_id);
         localStorage.setItem("name", name);
         const role = response.data.data.role;
         console.log(role);
         if (role === "vet") {
-          window.location.href = "/examing";
+          if (service_id === "S001") {
+            window.location.href = "/examing";
+          } else {
+            window.location.href = "/retesting";
+          }
         } else if (role === "staff") {
           window.location.href = "/track";
         }

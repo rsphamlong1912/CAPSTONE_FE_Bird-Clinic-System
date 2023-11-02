@@ -225,6 +225,12 @@ tbody tr.hide td img {
   border: 1px solid rgba(249, 150, 31, 1);
 }
 
+.status.booked {
+  color: rgb(249, 31, 114);
+  background-color: #fff;
+  border: 1px solid rgb(249, 31, 114);
+}
+
 .status.checkin {
   color: rgba(0, 178, 255, 1);
   background-color: #fff;

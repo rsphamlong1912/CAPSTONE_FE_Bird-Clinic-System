@@ -9,6 +9,19 @@ const ExamingToday = () => {
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const handleChangeStatusBooking = async (item) => {
+    try {
+      const response = await api.put(`/booking/${item.booking_id}`, {
+        status: "on_going",
+      });
+      console.log("response doi status ne", response.data);
+      navigate(`/examing/${item.booking_id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -92,16 +105,27 @@ const ExamingToday = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "booked" ? styles.pending : styles.checkin
+                      item.status === "checked_in"
+                        ? styles.checkin
+                        : item.status === "on_going" ||
+                          item.status === "test_requested"
+                        ? styles.being
+                        : styles.booked
                     } `}
                   >
-                    {item.status === "booked" ? "Chưa checkin" : "Đã checkin"}
+                    {item.status === "checked_in"
+                      ? "Đã checkin"
+                      : item.status === "on_going"
+                      ? "Đang khám"
+                      : item.status === "test_requested"
+                      ? "Chờ xét nghiệm"
+                      : "Chưa checkin"}
                   </p>
                 </td>
                 <td>
                   <div
                     className={styles.btnExam}
-                    onClick={() => navigate(`/examing/${item.booking_id}`)}
+                    onClick={() => handleChangeStatusBooking(item)}
                   >
                     Khám
                   </div>

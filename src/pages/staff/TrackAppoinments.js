@@ -13,7 +13,10 @@ const TrackAppoinments = () => {
     const fetchData = async () => {
       try {
         const response = await api.get("/booking");
-        setCustomerList(response.data.data);
+        const exceptPendingBookings = response.data.data.filter(
+          (booking) => booking.status !== "pending"
+        );
+        setCustomerList(exceptPendingBookings);
       } catch (error) {
         console.log(error);
       }
@@ -45,10 +48,10 @@ const TrackAppoinments = () => {
         bird_id: item.bird_id,
         booking_id: item.booking_id,
         reason_referral: "any",
-        status: "any",
-        date: "any",
-        veterinarian_referral: "any",
-        total_price: "any",
+        status: "pending",
+        date: item.arrival_date,
+        veterinarian_referral: item.veterinarian_id,
+        total_price: 50000,
         qr_code: "any",
         num_ser_must_do: 1,
         num_ser_has_done: 0,
@@ -60,36 +63,17 @@ const TrackAppoinments = () => {
         ],
       });
 
-      // Sử dụng ID để tạo service_Form_detail
-      const createdDetailResponse = await api.post(`/service_Form_detail/`, {
-        service_package_id: "SP1",
-        service_form_id: createdResponse.data.data.service_form_id, // Sử dụng ID từ service_Form
-        note: "any",
-        status: "any",
-        veterinarian_id: item.veterinarian_id,
-        booking_id: item.booking_id,
-        process_at: 1,
-        checkin_time: item.checkin_time,
-      });
-
       const createdBill = await api.post(`/bill/`, {
-        title: "Kham thuong nè",
-        total_price: "0",
+        title: "Thanh toán lần 1",
+        total_price: createdResponse.data.data.total_price,
         service_form_id: createdResponse.data.data.service_form_id,
         booking_id: item.booking_id,
-        payment_method: "paypal",
+        payment_method: "cash",
         paypal_transaction_id: "any",
         status: "any",
       });
 
-      const createdBillDetail = await api.post(`/billDetail/`, {
-        bill_id: createdBill.data.data.bill_id,
-        service_package_id: "SP1",
-        price: 50000,
-        quantity: 1,
-      });
-
-      console.log("create new bill:", createdBillDetail);
+      console.log("create new bill:", createdBill);
     } catch (err) {
       console.log(err);
     }
@@ -154,10 +138,27 @@ const TrackAppoinments = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "booked" ? styles.pending : styles.checkin
+                      item.status === "pending"
+                        ? styles.pending
+                        : item.status === "booked"
+                        ? styles.booked
+                        : item.status === "checked_in"
+                        ? styles.checkin
+                        : item.status === "on_going" ||
+                          item.status === "test_requested"
+                        ? styles.being
+                        : ""
                     } `}
                   >
-                    {item.status === "booked" ? "Chưa checkin" : "Đã checkin"}
+                    {item.status === "pending"
+                      ? "Chờ duyệt"
+                      : item.status === "booked"
+                      ? "Chưa checkin"
+                      : item.status === "checked_in"
+                      ? "Đã checkin"
+                      : item.status === "test_requested"
+                      ? "Chờ xét nghiệm"
+                      : "Không xác định"}
                   </p>
                 </td>
                 <td>

@@ -20,6 +20,8 @@ import ManageAndReport from "./pages/staff/boarding/ManageAndReport";
 import Report from "./pages/staff/boarding/Report";
 import ReTestingToday from "./pages/doctor/healthcheck/ReTestingToday";
 import ReTesting from "./pages/doctor/healthcheck/ReTesting";
+import PendingBooking from "./pages/staff/PendingBooking";
+import Billing from "./pages/staff/Billing";
 
 const listTabsStaff = [
   {
@@ -39,8 +41,13 @@ const listTabsStaff = [
   },
   {
     id: 4,
-    name: "Tạo cuộc hẹn",
-    to: "/create-appoinment",
+    name: "Duyệt hẹn",
+    to: "/approve",
+  },
+  {
+    id: 5,
+    name: "Thanh toán",
+    to: "/billing",
   },
 ];
 const listTabsHealthCheck = [
@@ -70,7 +77,7 @@ const listTabsReTesting = [
   {
     id: 1,
     name: "Chờ xét nghiệm",
-    to: "/examing",
+    to: "/retesting",
   },
   {
     id: 2,
@@ -161,10 +168,18 @@ function App() {
           }
         ></Route>
         <Route
-          path="/create-appoinment"
+          path="/approve"
           element={
             <MainLayout listTabs={listTabsStaff}>
-              <CreateAppoinment></CreateAppoinment>
+              <PendingBooking></PendingBooking>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/billing"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <Billing></Billing>
             </MainLayout>
           }
         ></Route>
@@ -220,7 +235,7 @@ function App() {
           }
         ></Route>
         <Route
-          path="/retesting/:id"
+          path="/retesting/:serviceFormDetailId"
           element={
             <MainLayout listTabs={listTabsReTesting}>
               <ReTesting></ReTesting>

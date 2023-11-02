@@ -15,151 +15,124 @@ import { api } from "../../../services/axios";
 
 import MedicineTable from "./tables/MedicineTable";
 
-const serviceList = [
-  {
-    id: 1,
-    name: "Chụp phim Xray",
-    price: "280000",
-  },
-  {
-    id: 2,
-    name: "Xét nghiệm máu",
-    price: "500000",
-  },
-  {
-    id: 3,
-    name: "Kiểm tra DNA Sexing",
-    price: "260000",
-  },
-  {
-    id: 4,
-    name: "Xét nghiệm phân chim",
-    price: "175000",
-  },
-  {
-    id: 5,
-    name: "Nội soi",
-    price: "320000",
-  },
-  {
-    id: 6,
-    name: "Xét nghiệm bệnh truyền nhiễm",
-    price: "250000",
-  },
-  {
-    id: 7,
-    name: "Phẫu thuật",
-    price: "520000",
-  },
-];
-
 const ReTesting = () => {
-  const { id } = useParams();
+  const { serviceFormDetailId } = useParams();
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [openModalProfile, setOpenModalProfile] = useState(false);
 
-  //
-  const [showInfo, setShowInfo] = useState(false);
-  const [showButton, setShowButton] = useState(true);
+  const [serviceFormDetailInfo, setServiceFormDetailInfo] = useState();
 
-  //
-  const [date, setDate] = useState(new Date());
-
-  //tab 1
-  const [examData, setExamData] = useState({
-    weight: "",
-    temperature: "",
-    symptoms: "",
+  const [testingData, setTestingData] = useState({
+    description: "",
+    suggestion: "",
     diagnosis: "",
-    additionalNotes: "",
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setExamData({
-      ...examData,
+    setTestingData({
+      ...testingData,
       [name]: value,
     });
   };
 
-  //tab 2
-  const [selectedServices, setSelectedServices] = useState([]);
+  // const handleFormSubmit = async (e) => {
+  //   e.preventDefault();
 
+  //   try {
+  //     const response = await api.post(`/medicalRecord/`, testingData); // Directly use testingData from the state
+  //     console.log("Data has been successfully submitted:", response.data);
+  //     // Additional handling if required
+  //   } catch (error) {
+  //     console.error("Error submitting data:", error);
+  //     // Error handling, if needed
+  //   }
+  // };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0]; // Giả sử chỉ chọn một tệp
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await api.post(`/medicalRecord/`, formData, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        symptom: "any",
+        diagnose: "any",
+        recommendations: "any",
+        type: "any",
+        type_id: "any",
+        is_before: "any",
+        is_after: "any",
+        type_service: "any",
+      });
+      console.log("Tệp đã được tải lên thành công:", response.data);
+      // Xử lý thành công, nếu cần
+    } catch (error) {
+      console.error("Lỗi khi tải lên tệp:", error);
+      // Xử lý lỗi, nếu cần
+    }
+  };
+
+  //LẤY THÔNG TIN SERVICE FORM DETAIL
   useEffect(() => {
-    const sendDataToApi = async () => {
+    const getServiceFormDetail = async () => {
       try {
-        const response = await api.put(`/booking/${id}`, examData);
-        console.log("api ne:", response);
+        const response = await api.get(
+          `/service_Form_detail/${serviceFormDetailId}`
+        );
+        // serviceFormDetailInfo()
+        setServiceFormDetailInfo(response.data.data);
+        setTab(response.data.data.process_at);
       } catch (error) {
         console.log(error);
       }
     };
-    sendDataToApi();
-  }, [tab]);
 
-  const toggleInfo = () => {
-    setShowInfo(!showInfo);
-    setShowButton(false); // Ẩn nút sau khi nhấp vào
-  };
+    getServiceFormDetail();
+  }, [serviceFormDetailId]);
 
-  const [selectedMedicine, setSelectedMedicine] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedType, setSelectedType] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedAmount, setSelectedAmount] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedUnit, setSelectedUnit] = useState(""); // State để lưu giá trị đã chọn
-  const [selectedDay, setSelectedDay] = useState(""); // State để lưu giá trị đã chọn
+  const handleBackTab = async () => {
+    const newTabValue = tab - 1; // Lấy giá trị mới của tab
 
-  const handleChangeMedicine = (event) => {
-    setSelectedMedicine(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeType = (event) => {
-    setSelectedType(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeAmount = (event) => {
-    setSelectedAmount(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeUnit = (event) => {
-    setSelectedUnit(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const handleChangeDay = (event) => {
-    setSelectedDay(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-  };
-  const [tables, setTables] = useState([]);
-  const [tableCount, setTableCount] = useState(1);
+    setTab(newTabValue); // Cập nhật giá trị tab
 
-  // Hàm này được sử dụng để thêm một bảng mới vào danh sách
-  const createTable = () => {
-    const newIndex = tableCount;
-
-    // Tạo một instance mới của MedicineTable và truyền vào các prop
-    const newTable = <MedicineTable key={newIndex} index={newIndex} />;
-    // Tăng giá trị biến đếm để cho lần tạo tiếp theo
-    setTableCount(newIndex + 1);
-
-    // Cập nhật danh sách các bảng
-    setTables([...tables, newTable]);
-  };
-
-  //Print
-  const printRef = useRef();
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-  });
-
-  const handleChange = (event) => {
-    const serviceName = event.target.value;
-    const selectedService = serviceList.find(
-      (item) => item.name === serviceName
-    );
-
-    if (event.target.checked) {
-      // Nếu checkbox được chọn, thêm dịch vụ vào danh sách đã chọn
-      setSelectedServices([...selectedServices, selectedService]);
-    } else {
-      // Nếu checkbox được bỏ chọn, loại bỏ dịch vụ khỏi danh sách đã chọn
-      setSelectedServices(
-        selectedServices.filter((service) => service.name !== serviceName)
+    try {
+      const sendProcessToApi = await api.put(
+        `/service_Form_detail/${serviceFormDetailId}`,
+        {
+          process_at: newTabValue, // Sử dụng giá trị mới của tab
+        }
       );
+      console.log("Change Tab Successful");
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Error:", error);
+      // Đảm bảo quay lại giá trị trước đó nếu có lỗi xảy ra
+      setTab((tab) => tab + 1);
+    }
+  };
+
+  const handleNextTab = async () => {
+    const newTabValue = tab + 1; // Lấy giá trị mới của tab
+    setTab(newTabValue); // Cập nhật giá trị tab
+
+    try {
+      const sendProcessToApi = await api.put(
+        `/service_Form_detail/${serviceFormDetailId}`,
+        {
+          process_at: newTabValue, // Sử dụng giá trị mới của tab
+        }
+      );
+      console.log("Change Tab Successfull");
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Error:", error);
+      // Đảm bảo quay lại giá trị trước đó nếu có lỗi xảy ra
+      setTab((tab) => tab - 1);
     }
   };
 
@@ -178,30 +151,23 @@ const ReTesting = () => {
         <div className={styles.mainContent}>
           <div className={styles.content}>
             <div className={styles.procedureTab}>
-              <span
-                className={`${tab === 1 ? styles.active : ""}`}
-                onClick={() => setTab(1)}
-              >
+              <span className={`${tab === 1 ? styles.active : ""}`}>
                 Thông tin tiếp nhận
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
-              <span
-                className={`${tab === 2 ? styles.active : ""}`}
-                onClick={() => setTab(2)}
-              >
+              <span className={`${tab === 2 ? styles.active : ""}`}>
                 Trả kết quả
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
-              <span
-                className={`${tab === 3 ? styles.active : ""}`}
-                onClick={() => setTab(3)}
-              >
+              <span className={`${tab === 3 ? styles.active : ""}`}>
                 Hoàn tất
               </span>
             </div>
             {tab == 1 && (
               <div className={styles.retesting}>
-                <h2 className={styles.title}>Xét nghiệm</h2>
+                <h2 className={styles.title}>
+                  Xét nghiệm {serviceFormDetailInfo?.note}
+                </h2>
                 <div className={styles.lineItem}>
                   <span className={styles.label}>Mã số:</span>
                   <span>HCO012J6</span>
@@ -214,13 +180,6 @@ const ReTesting = () => {
                   <span className={styles.label}>Tên chim:</span>
                   <span>Vẹt xanh</span>
                 </div>
-                <div className={styles.lineItem}>
-                  <span className={styles.label}>Chỉ định:</span>
-                  <div className={styles.selectServices}>
-                    <span>Nội soi</span>
-                    <span>Xét nghiệm ADN</span>
-                  </div>
-                </div>
               </div>
             )}
             {tab == 2 && (
@@ -228,24 +187,45 @@ const ReTesting = () => {
                 <h2 className={styles.title}>Trả kết quả xét nghiệm</h2>
                 <form>
                   <div className={styles.fileInput}>
-                    <label for="file">Tải lên file xét nghiệm</label>
-                    <input type="file" name="file" id="file" />
+                    <label htmlFor="file">Tải lên file xét nghiệm</label>
+                    <input
+                      type="file"
+                      name="file"
+                      id="file"
+                      onChange={handleFileUpload}
+                    />
                     <p className={styles.fileInfo}>
                       *Dung lượng không vượt quá 5mb
                     </p>
                   </div>
                   <div className={styles.fileInput}>
-                    <label for="description">Mô tả</label>
-                    <input type="text" name="description" id="description" />
+                    <label htmlFor="description">Mô tả</label>
+                    <input
+                      type="text"
+                      name="description"
+                      id="description"
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div className={styles.fileInput}>
-                    <label for="suggestion">Đề nghị</label>
-                    <input type="text" name="suggestion" id="suggestion" />
+                    <label htmlFor="suggestion">Đề nghị</label>
+                    <input
+                      type="text"
+                      name="suggestion"
+                      id="suggestion"
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div className={styles.fileInput}>
-                    <label for="diagnosis">Chẩn đoán</label>
-                    <input type="text" name="diagnosis" id="diagnosis" />
+                    <label htmlFor="diagnosis">Chẩn đoán</label>
+                    <input
+                      type="text"
+                      name="diagnosis"
+                      id="diagnosis"
+                      onChange={handleInputChange}
+                    />
                   </div>
+                  <button type="submit">Gửi</button>
                 </form>
               </div>
             )}
@@ -275,8 +255,8 @@ const ReTesting = () => {
       <ExaminationModal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        examData={examData}
-        selectedServices={selectedServices}
+        // examData={examData}
+        // selectedServices={selectedServices}
       />
       <ProfileBirdModal
         open={openModalProfile}
@@ -284,18 +264,12 @@ const ReTesting = () => {
       />
       <div className={styles.footerContent}>
         {tab !== 1 && (
-          <button
-            className={styles.btnBack}
-            onClick={() => setTab((tab) => tab - 1)}
-          >
+          <button className={styles.btnBack} onClick={handleBackTab}>
             Quay lại
           </button>
         )}
 
-        <button
-          className={styles.btnCont}
-          onClick={() => setTab((tab) => tab + 1)}
-        >
+        <button className={styles.btnCont} onClick={handleNextTab}>
           Tiếp tục
         </button>
       </div>

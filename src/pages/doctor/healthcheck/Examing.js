@@ -13,7 +13,6 @@ import { useReactToPrint } from "react-to-print";
 import { PhieuChiDinh } from "../../../components/pdfData/PhieuChiDinh";
 import { api } from "../../../services/axios";
 
-import MedicineTable from "./tables/MedicineTable";
 import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 
@@ -216,57 +215,6 @@ const Examing = () => {
     setShowButton(false); // Ẩn nút sau khi nhấp vào
   };
 
-  //tab 3
-  const [examMedicineFirst, setExamMedicineFirst] = useState({
-    medicine: "",
-    type: "",
-    amount: "",
-    unit: "",
-    day: "",
-    note: "",
-  });
-
-  const handleInputMedicineFirst = (e) => {
-    const { name, value } = e.target;
-    setExamMedicineFirst({
-      ...examMedicineFirst,
-      [name]: value,
-    });
-
-    setPrescriptionData({
-      ...prescriptionData,
-      [name]: value,
-    });
-  };
-  const [examMedicine, setExamMedicine] = useState([]);
-  const updateMedicineData = (index, data) => {
-    // Clone the current state and update the data for a specific index
-    const updatedData = [...examMedicine];
-    updatedData[index] = data;
-    setExamMedicine(updatedData);
-  };
-  const [tables, setTables] = useState([]);
-  const [tableCount, setTableCount] = useState(1);
-  // Hàm này được sử dụng để thêm một bảng mới vào danh sách
-  const createTable = () => {
-    const newIndex = tableCount;
-
-    // Tạo một instance mới của MedicineTable và truyền vào các prop
-
-    const newTable = (
-      <MedicineTable
-        key={newIndex}
-        index={newIndex}
-        onUpdateData={updateMedicineData}
-      />
-    );
-
-    // Tăng giá trị biến đếm để cho lần tạo tiếp theo
-    setTableCount(newIndex + 1);
-
-    // Cập nhật danh sách các bảng
-    setTables([...tables, newTable]);
-  };
   //tab 3 get api
   const [medicineNames, setMedicineNames] = useState([]);
 
@@ -302,47 +250,117 @@ const Examing = () => {
   }, [tab]);
 
   const [selectedDate, setSelectedDate] = useState(""); // State to store the selected date
-  const [selectedMedicine, setSelectedMedicine] = useState("");
-  const [selectedUnit, setSelectedUnit] = useState("");
   const [selectedMedicineId, setSelectedMedicineId] = useState("");
 
-  // Thêm sự kiện xử lý khi tên thuốc được chọn
-  const handleMedicineSelect = (e) => {
-    const selectedMedicineName = e.target.value;
-    setSelectedMedicine(selectedMedicineName);
+  //tab 3
+  const [forms, setForms] = useState([{
+    selectedMedicine: '',
+    type: '',
+    unit: '',
+    day: '',
+    amount: 0,
+    note: '',
+  }]);
+  // const medicineNames = [/* Your array of medicine names */];
+  const calculateAmount = (unit, day) => {
+    return unit * day;
+  };
 
-    const { name, value } = e.target;
-    setExamMedicineFirst({
-      ...examMedicineFirst,
-      [name]: value,
+  useEffect(() => {
+    // Tính toán giá trị amount cho tất cả các form
+    const updatedForms = forms.map((form) => {
+      return {
+        ...form,
+        amount: calculateAmount(form.unit, form.day),
+      };
     });
+    setForms(updatedForms);
+  }, [forms]);
 
-    // Tìm đơn vị và cập nhật selectedUnit
-    const unit = medicineNames.filter(
-      (timeSlot) => timeSlot.name === selectedMedicineName
-    )[0]?.unit;
-    setSelectedUnit(unit);
+  const handleMedicineSelect = (index, selectedMedicine) => {
+    const updatedForms = [...forms];
+    updatedForms[index].selectedMedicine = selectedMedicine;
+    // Tìm loại (type) dựa trên selectedMedicine và cập nhật giá trị cho type
+    const selectedType = medicineNames.find(
+      (medicine) => medicine.name === selectedMedicine
+    )?.unit;
+    updatedForms[index].type = selectedType || '';
+
+    setForms(updatedForms);
 
     // Find the selected medicine and get its medicine_id
-    const selectedMedicine = medicineNames.find(
-      (medicine) => medicine.name === selectedMedicineName
+    const searchMedicine = medicineNames.find(
+      (medicine) => medicine.name === selectedMedicine
     );
 
-    if (selectedMedicine) {
-      setSelectedMedicineId(selectedMedicine.medicine_id);
+    if (searchMedicine) {
+      setSelectedMedicineId(searchMedicine.medicine_id);
+      console.log('hahaha', searchMedicine.medicine_id)
     } else {
       setSelectedMedicineId(""); // Reset to empty if no medicine is selected
     }
   };
 
-  const [examMedicineAmount, setExamMedicineAmount] = useState(0);
+  const handleInputMedicineFirst = (index, e) => {
+    const { name, value } = e.target;
+    const updatedForms = [...forms];
+    updatedForms[index][name] = value;
+    setForms(updatedForms);
 
-  useEffect(() => {
-    // Tính toán giá trị amount khi unit hoặc day thay đổi
-    if (examMedicineFirst.unit && examMedicineFirst.day) {
-      setExamMedicineAmount(examMedicineFirst.unit * examMedicineFirst.day);
+    setPrescriptionData({
+      ...prescriptionData,
+      [name]: value,
+    });
+  };
+
+  const addForm = () => {
+    setForms([...forms, { selectedMedicine: '', type: '', unit: '', day: '', amount: '', note: '' }]);
+  };
+
+  ///
+  const [prescriptionData, setPrescriptionData] = useState({
+    booking_id: "",
+    note: "",
+    usage: "",
+    arr_medicine: [
+      {
+        medicine_id: "",
+        usage: "",
+        total_dose: 0,
+        dose: 0,
+        day: 0,
+      },
+    ],
+  });
+
+  const addPrescriptionData = () => {
+    // if (!prescriptionData.arrival_date) {
+    //   showError();
+    //   return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
+    // }
+    try {
+      // Tạo một mảng các đối tượng arr_medicine từ prescriptionData
+    const arrMedicineData = prescriptionData.arr_medicine.map((medicine) => ({
+      medicine_id: selectedMedicineId,
+      // usage: medicine.usage,
+      total_dose: medicine.amount,
+      dose: medicine.dose,
+      day: medicine.day,
+    }));
+      const requestData = {
+        booking_id: bookingId,
+        note: prescriptionData.note,
+        // usage: "",
+        arr_medicine: arrMedicineData,
+      };
+
+      const response = api.post(`/prescription/`, requestData);
+      console.log("Add medicine thanh cong:", response);
+      successAddmedicine();
+    } catch (error) {
+      console.log(error);
     }
-  }, [examMedicineFirst.unit, examMedicineFirst.day]);
+  };
 
   //Print
   const printRef = useRef();
@@ -475,51 +493,6 @@ const Examing = () => {
     }
   };
 
-  ///
-  const [prescriptionData, setPrescriptionData] = useState({
-    booking_id: "",
-    note: "",
-    usage: "",
-    arr_medicine: [
-      {
-        medicine_id: "",
-        usage: "",
-        total_dose: 0,
-        dose: 0,
-        day: 0,
-      },
-    ],
-  });
-
-  const addPrescriptionData = () => {
-    // if (!prescriptionData.arrival_date) {
-    //   showError();
-    //   return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
-    // }
-    try {
-      const requestData = {
-        booking_id: bookingId,
-        note: prescriptionData.note,
-        // usage: "",
-        arr_medicine: [
-          {
-            medicine_id: selectedMedicineId,
-            // usage: "",
-            total_dose: examMedicineAmount,
-            dose: prescriptionData.unit,
-            day: prescriptionData.day,
-          },
-        ],
-      };
-
-      const response = api.post(`/prescription/`, requestData);
-      console.log("Add medicine thanh cong:", response);
-      successAddmedicine();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -628,114 +601,120 @@ const Examing = () => {
                   {showInfo && (
                     <div className={styles.createAll}>
                       <div className={styles.scrollableblock}>
-                        <div className={styles.contentAll}>
-                          <h1>1.Tên thuốc</h1>
-                          <h3>HDSD: {examMedicineFirst.note}</h3>
-                        </div>
-                        <div className={styles.createFirst}>
-                          <div className={styles.First}>
-                            <p>Tên thuốc *</p>
-                            <select
-                              className={styles.DrugNameList}
-                              name="medicine"
-                              value={selectedMedicine}
-                              onChange={handleMedicineSelect}
-                            >
-                              <option value="">Chọn thuốc</option>
-                              {medicineNames.map((medicine) => (
-                                <option
-                                  key={medicine.medicine_id}
-                                  value={medicine.name}
-                                >
-                                  {medicine.name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          {selectedMedicine && ( // Hiển thị đơn vị khi đã chọn tên thuốc
-                            <div className={styles.First}>
-                              <p>Loại</p>
-                              {medicineNames
-                                .filter(
-                                  (timeSlot) =>
-                                    timeSlot.name === selectedMedicine
-                                )
-                                .map((filteredSlot, index) => (
-                                  <p className={styles.TypeList} key={index}>
-                                    {filteredSlot.unit}
-                                  </p>
-                                ))}
+                        <div>
+                          {forms.map((form, index) => (
+                            <div key={index} className={styles.contentAll}>
+                              <h1>{index + 1}. Tên thuốc</h1>
+                              <h3>HDSD: {form.note}</h3>
+
+                              <div className={styles.createFirst}>
+                                <div className={styles.First}>
+                                  <p>Tên thuốc *</p>
+                                  <select
+                                    className={styles.DrugNameList}
+                                    name="selectedMedicine"
+                                    value={form.selectedMedicine}
+                                    onChange={(e) => handleMedicineSelect(index, e.target.value)}
+                                  >
+                                    <option value="">Chọn thuốc</option>
+                                    {medicineNames.map((medicine) => (
+                                      <option
+                                        key={medicine.medicine_id}
+                                        value={medicine.name}
+                                      >
+                                        {medicine.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                                {form.selectedMedicine && (
+                                  <div className={styles.First}>
+                                    <p>Loại</p>
+                                    {medicineNames
+                                      .filter(
+                                        (timeSlot) =>
+                                          timeSlot.name === form.selectedMedicine
+                                      )
+                                      .map((filteredSlot, index) => (
+                                        <p className={styles.TypeList} key={index}>
+                                          {filteredSlot.unit}
+                                        </p>
+                                      ))}
+                                  </div>
+                                )}
+
+                                {form.unit && form.day && (
+                                  <div className={styles.First}>
+                                    <p>Số liều dùng</p>
+                                    <p
+                                      className={styles.AmountList}
+                                      name="amount"
+                                      value={form.unit * form.day}
+                                    >
+                                      {form.unit * form.day}
+                                    </p>
+                                    { }
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className={styles.createSecond}>
+                                <div className={styles.Second}>
+                                  <p>Đơn vị</p>
+                                  <select
+                                    className={styles.UnitList}
+                                    name="unit"
+                                    value={form.unit}
+                                    onChange={(e) => handleInputMedicineFirst(index, e)}
+                                  >
+                                    <option value="">--</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
+                                </div>
+                                <div className={styles.Second}>
+                                  <p>Ngày</p>
+                                  <select
+                                    className={styles.DayList}
+                                    name="day"
+                                    value={form.day}
+                                    onChange={(e) => handleInputMedicineFirst(index, e)}
+                                  >
+                                    <option value="">--</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div className={styles.createThird}>
+                                <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
+                                <textarea
+                                  type="text"
+                                  name="note"
+                                  className={styles.Instruct}
+                                  value={form.note}
+                                  onChange={(e) => handleInputMedicineFirst(index, e)}
+                                />
+                              </div>
                             </div>
-                          )}
-                          {examMedicineFirst.unit && examMedicineFirst.day && (
-                            <div className={styles.First}>
-                              <p>Số liều dùng</p>
-                              <p
-                                className={styles.AmountList}
-                                name="amount"
-                                value={examMedicineFirst.amount}
-                              >
-                                {examMedicineFirst.unit * examMedicineFirst.day}
-                              </p>
-                            </div>
-                          )}
+                          ))}
                         </div>
-                        <div className={styles.createSecond}>
-                          <div className={styles.Second}>
-                            <p>Đơn vị</p>
-                            <select
-                              className={styles.UnitList}
-                              name="unit"
-                              value={examMedicineFirst.unit}
-                              onChange={handleInputMedicineFirst}
-                            >
-                              <option value="">--</option>{" "}
-                              {/* Tùy chọn mặc định */}
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10</option>
-                            </select>
-                          </div>
-                          <div className={styles.Second}>
-                            <p>Ngày</p>
-                            <select
-                              className={styles.DayList}
-                              name="day"
-                              value={examMedicineFirst.day}
-                              onChange={handleInputMedicineFirst}
-                            >
-                              <option value="">--</option>{" "}
-                              {/* Tùy chọn mặc định */}
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className={styles.createThird}>
-                          <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
-                          <textarea
-                            type="text"
-                            name="note"
-                            className={styles.Instruct}
-                            onChange={handleInputMedicineFirst}
-                          />
-                        </div>
-                        {tables}
                       </div>
 
                       {/* <button className={styles.AddMedicine}>
@@ -753,7 +732,7 @@ const Examing = () => {
                         </div>
 
                         <button
-                          onClick={createTable}
+                          onClick={addForm}
                           className={styles.AddMedicine}
                         >
                           + Thêm thuốc
@@ -853,10 +832,7 @@ const Examing = () => {
       <PrescriptionModal
         open={openModalPrescription}
         onClose={() => setOpenModalPrescription(false)}
-        examMedicine={examMedicine}
-        examMedicineFirst={examMedicineFirst}
-        examMedicineAmount={examMedicineAmount}
-        examMedicineType={selectedUnit}
+        forms={forms}
       />
       <ConfirmServiceModal
         open={openModalConfirmService}

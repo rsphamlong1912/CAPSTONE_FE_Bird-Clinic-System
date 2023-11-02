@@ -13,7 +13,6 @@ import { useReactToPrint } from "react-to-print";
 import { PhieuChiDinh } from "../../../components/pdfData/PhieuChiDinh";
 import { api } from "../../../services/axios";
 
-import MedicineTable from "./tables/MedicineTable";
 
 const ReTesting = () => {
   const { serviceFormDetailId } = useParams();

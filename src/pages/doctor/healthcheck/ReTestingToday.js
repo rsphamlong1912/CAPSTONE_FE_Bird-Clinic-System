@@ -98,7 +98,7 @@ const ReTestingToday = () => {
                         : styles.hasResult
                     } `}
                   >
-                    {item.status === "pending"
+                    {item.status === "checked_in" || item.status === "pending"
                       ? "Chưa xét nghiệm"
                       : item.status === "on_going"
                       ? "Đang xét nghiệm"

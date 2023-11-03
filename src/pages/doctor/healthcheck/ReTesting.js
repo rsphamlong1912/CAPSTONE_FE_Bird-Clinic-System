@@ -1,18 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./ReTesting.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
-import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
-import { RiDeleteBinLine } from "react-icons/ri";
 import "flatpickr/dist/flatpickr.css";
-import Flatpickr from "react-flatpickr";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
-
-import { useReactToPrint } from "react-to-print";
-import { PhieuChiDinh } from "../../../components/pdfData/PhieuChiDinh";
 import { api } from "../../../services/axios";
-
+import { toast } from "react-toastify";
 
 const ReTesting = () => {
   const { serviceFormDetailId } = useParams();
@@ -23,10 +17,22 @@ const ReTesting = () => {
   const [serviceFormDetailInfo, setServiceFormDetailInfo] = useState();
 
   const [testingData, setTestingData] = useState({
-    description: "",
-    suggestion: "",
-    diagnosis: "",
+    symptom: "",
+    diagnose: "",
+    recommendations: "",
   });
+
+  // const notify = () =>
+  //   toast.error("🦄 Wow so easy!", {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //     theme: "light",
+  //   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,43 +42,77 @@ const ReTesting = () => {
     });
   };
 
-  // const handleFormSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await api.post(`/medicalRecord/`, testingData); // Directly use testingData from the state
-  //     console.log("Data has been successfully submitted:", response.data);
-  //     // Additional handling if required
-  //   } catch (error) {
-  //     console.error("Error submitting data:", error);
-  //     // Error handling, if needed
-  //   }
-  // };
-
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0]; // Giả sử chỉ chọn một tệp
-    const formData = new FormData();
-    formData.append("file", file);
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-      const response = await api.post(`/medicalRecord/`, formData, {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
-        symptom: "any",
-        diagnose: "any",
-        recommendations: "any",
-        type: "any",
-        type_id: "any",
-        is_before: "any",
-        is_after: "any",
-        type_service: "any",
+      const response = await api.post(`/medicalRecord/`, {
+        ...testingData,
+        service_form_detail_id: serviceFormDetailId,
+      }); // Directly use testingData from the state
+      console.log("Data has been successfully submitted:", response.data);
+      toast.success("Gửi thành công!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
-      console.log("Tệp đã được tải lên thành công:", response.data);
-      // Xử lý thành công, nếu cần
+
+      // Additional handling if required
     } catch (error) {
-      console.error("Lỗi khi tải lên tệp:", error);
-      // Xử lý lỗi, nếu cần
+      console.error("Error submitting data:", error);
+      // Error handling, if needed
+    }
+  };
+
+  const handleDoneServiceFormDetail = async () => {
+    try {
+      const doneResponse = await api.put(
+        `/service_Form_detail/${serviceFormDetailId}`,
+        {
+          status: "done",
+          veterinarian_id: localStorage.getItem("account_id"),
+          process_at: 0,
+        }
+      );
+
+      //TĂNG SERVICE HAS DONE LÊN 1
+      const serviceFormId = serviceFormDetailInfo.service_form_id;
+      // Lấy thông tin hiện tại của service form
+      const serviceFormDetails = await api.get(
+        `/service_Form/${serviceFormId}`
+      );
+      // Lấy giá trị hiện tại của num_ser_has_done từ response
+      const currentNumSerHasDone =
+        serviceFormDetails.data.data[0].num_ser_has_done;
+      // Tăng giá trị lên 1
+      const updatedNumSerHasDone = currentNumSerHasDone + 1;
+      // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
+      const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
+        num_ser_has_done: updatedNumSerHasDone,
+      });
+
+      console.log("increaseRes", increaseResponse.data);
+
+      //TOAST THÔNG BÁO
+      toast.success("Hoàn thành khám thành công!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      // Additional handling if required
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      // Error handling, if needed
     }
   };
 
@@ -155,11 +195,11 @@ const ReTesting = () => {
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
               <span className={`${tab === 2 ? styles.active : ""}`}>
-                Trả kết quả
+                Điều trị
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
               <span className={`${tab === 3 ? styles.active : ""}`}>
-                Hoàn tất
+                Trả kết quả
               </span>
             </div>
             {tab == 1 && (
@@ -186,45 +226,56 @@ const ReTesting = () => {
                 <h2 className={styles.title}>Trả kết quả xét nghiệm</h2>
                 <form>
                   <div className={styles.fileInput}>
-                    <label htmlFor="file">Tải lên file xét nghiệm</label>
+                    <label htmlFor="symptom">Triệu chứng</label>
                     <input
-                      type="file"
-                      name="file"
-                      id="file"
-                      onChange={handleFileUpload}
+                      type="text"
+                      name="symptom"
+                      id="symptom"
+                      onChange={handleInputChange}
                     />
+                  </div>
+                  <div className={styles.fileInput}>
+                    <label htmlFor="diagnose">Chẩn đoán</label>
+                    <input
+                      type="text"
+                      name="diagnose"
+                      id="diagnose"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className={styles.fileInput}>
+                    <label htmlFor="recommendations">Đề nghị</label>
+                    <input
+                      type="text"
+                      name="recommendations"
+                      id="recommendations"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className={styles.btnSubmit}
+                    onClick={handleFormSubmit}
+                  >
+                    Gửi
+                  </button>
+                </form>
+              </div>
+            )}
+            {tab == 3 && (
+              <div className={styles.retesting}>
+                <h2 className={styles.title}>Trả kết quả xét nghiệm</h2>
+                <form>
+                  <div className={styles.fileInput}>
+                    <label htmlFor="file">Tải lên file xét nghiệm</label>
+                    <input type="file" name="file" id="file" />
                     <p className={styles.fileInfo}>
                       *Dung lượng không vượt quá 5mb
                     </p>
                   </div>
-                  <div className={styles.fileInput}>
-                    <label htmlFor="description">Mô tả</label>
-                    <input
-                      type="text"
-                      name="description"
-                      id="description"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className={styles.fileInput}>
-                    <label htmlFor="suggestion">Đề nghị</label>
-                    <input
-                      type="text"
-                      name="suggestion"
-                      id="suggestion"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className={styles.fileInput}>
-                    <label htmlFor="diagnosis">Chẩn đoán</label>
-                    <input
-                      type="text"
-                      name="diagnosis"
-                      id="diagnosis"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <button type="submit">Gửi</button>
+                  <button type="submit" className={styles.btnSubmit}>
+                    Gửi
+                  </button>
                 </form>
               </div>
             )}
@@ -246,7 +297,12 @@ const ReTesting = () => {
                 <span>Hồ sơ chim khám</span>
               </div>
             </div>
-            <button className={styles.btnComplete}>Hoàn thành khám</button>
+            <button
+              className={styles.btnComplete}
+              onClick={handleDoneServiceFormDetail}
+            >
+              Hoàn thành khám
+            </button>
             <button className={styles.btnHospitalize}>Nhập viện</button>
           </div>
         </div>

@@ -95,18 +95,6 @@ const Examing = () => {
   //tab 2
   const [selectedServices, setSelectedServices] = useState([]);
 
-  // useEffect(() => {
-  //   const sendDataToApi = async () => {
-  //     try {
-  //       const response = await api.put(`/booking/${bookingId}`, examData);
-  //       console.log("put duoc roi ne:", response);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   sendDataToApi();
-  // }, [tab]);
-
   const [accountId, setAccountId] = useState([]);
   const [birdId, setBirdId] = useState([]);
   const [veterinarianId, setVeterinarianId] = useState([]);
@@ -253,14 +241,16 @@ const Examing = () => {
   const [selectedMedicineId, setSelectedMedicineId] = useState("");
 
   //tab 3
-  const [forms, setForms] = useState([{
-    selectedMedicine: '',
-    type: '',
-    unit: '',
-    day: '',
-    amount: 0,
-    note: '',
-  }]);
+  const [forms, setForms] = useState([
+    {
+      selectedMedicine: "",
+      type: "",
+      unit: "",
+      day: "",
+      amount: 0,
+      note: "",
+    },
+  ]);
   // const medicineNames = [/* Your array of medicine names */];
   const calculateAmount = (unit, day) => {
     return unit * day;
@@ -284,7 +274,7 @@ const Examing = () => {
     const selectedType = medicineNames.find(
       (medicine) => medicine.name === selectedMedicine
     )?.unit;
-    updatedForms[index].type = selectedType || '';
+    updatedForms[index].type = selectedType || "";
 
     setForms(updatedForms);
 
@@ -295,7 +285,7 @@ const Examing = () => {
 
     if (searchMedicine) {
       setSelectedMedicineId(searchMedicine.medicine_id);
-      console.log('hahaha', searchMedicine.medicine_id)
+      console.log("hahaha", searchMedicine.medicine_id);
     } else {
       setSelectedMedicineId(""); // Reset to empty if no medicine is selected
     }
@@ -314,7 +304,17 @@ const Examing = () => {
   };
 
   const addForm = () => {
-    setForms([...forms, { selectedMedicine: '', type: '', unit: '', day: '', amount: '', note: '' }]);
+    setForms([
+      ...forms,
+      {
+        selectedMedicine: "",
+        type: "",
+        unit: "",
+        day: "",
+        amount: "",
+        note: "",
+      },
+    ]);
   };
 
   ///
@@ -340,13 +340,13 @@ const Examing = () => {
     // }
     try {
       // Tạo một mảng các đối tượng arr_medicine từ prescriptionData
-    const arrMedicineData = prescriptionData.arr_medicine.map((medicine) => ({
-      medicine_id: selectedMedicineId,
-      // usage: medicine.usage,
-      total_dose: medicine.amount,
-      dose: medicine.dose,
-      day: medicine.day,
-    }));
+      const arrMedicineData = prescriptionData.arr_medicine.map((medicine) => ({
+        medicine_id: selectedMedicineId,
+        // usage: medicine.usage,
+        total_dose: medicine.amount,
+        dose: medicine.dose,
+        day: medicine.day,
+      }));
       const requestData = {
         booking_id: bookingId,
         note: prescriptionData.note,
@@ -614,7 +614,12 @@ const Examing = () => {
                                     className={styles.DrugNameList}
                                     name="selectedMedicine"
                                     value={form.selectedMedicine}
-                                    onChange={(e) => handleMedicineSelect(index, e.target.value)}
+                                    onChange={(e) =>
+                                      handleMedicineSelect(
+                                        index,
+                                        e.target.value
+                                      )
+                                    }
                                   >
                                     <option value="">Chọn thuốc</option>
                                     {medicineNames.map((medicine) => (
@@ -633,10 +638,14 @@ const Examing = () => {
                                     {medicineNames
                                       .filter(
                                         (timeSlot) =>
-                                          timeSlot.name === form.selectedMedicine
+                                          timeSlot.name ===
+                                          form.selectedMedicine
                                       )
                                       .map((filteredSlot, index) => (
-                                        <p className={styles.TypeList} key={index}>
+                                        <p
+                                          className={styles.TypeList}
+                                          key={index}
+                                        >
                                           {filteredSlot.unit}
                                         </p>
                                       ))}
@@ -653,7 +662,7 @@ const Examing = () => {
                                     >
                                       {form.unit * form.day}
                                     </p>
-                                    { }
+                                    {}
                                   </div>
                                 )}
                               </div>
@@ -665,7 +674,9 @@ const Examing = () => {
                                     className={styles.UnitList}
                                     name="unit"
                                     value={form.unit}
-                                    onChange={(e) => handleInputMedicineFirst(index, e)}
+                                    onChange={(e) =>
+                                      handleInputMedicineFirst(index, e)
+                                    }
                                   >
                                     <option value="">--</option>
                                     <option value="1">1</option>
@@ -686,7 +697,9 @@ const Examing = () => {
                                     className={styles.DayList}
                                     name="day"
                                     value={form.day}
-                                    onChange={(e) => handleInputMedicineFirst(index, e)}
+                                    onChange={(e) =>
+                                      handleInputMedicineFirst(index, e)
+                                    }
                                   >
                                     <option value="">--</option>
                                     <option value="1">1</option>
@@ -703,13 +716,17 @@ const Examing = () => {
                                 </div>
                               </div>
                               <div className={styles.createThird}>
-                                <p className={styles.txtThird}>Hướng dẫn sử dụng</p>
+                                <p className={styles.txtThird}>
+                                  Hướng dẫn sử dụng
+                                </p>
                                 <textarea
                                   type="text"
                                   name="note"
                                   className={styles.Instruct}
                                   value={form.note}
-                                  onChange={(e) => handleInputMedicineFirst(index, e)}
+                                  onChange={(e) =>
+                                    handleInputMedicineFirst(index, e)
+                                  }
                                 />
                               </div>
                             </div>

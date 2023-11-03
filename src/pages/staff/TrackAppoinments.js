@@ -31,7 +31,7 @@ const TrackAppoinments = () => {
   const handleChangeStatusCheckin = async (item) => {
     try {
       const response = await api.put(`/booking/${item.booking_id}`, {
-        status: "checked_in",
+        status: "check_in",
       });
       console.log("response doi status ne", response.data);
       // setCustomerList(response.data.data);
@@ -142,7 +142,7 @@ const TrackAppoinments = () => {
                         ? styles.pending
                         : item.status === "booked"
                         ? styles.booked
-                        : item.status === "checked_in"
+                        : item.status === "check_in"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
@@ -154,10 +154,12 @@ const TrackAppoinments = () => {
                       ? "Chờ duyệt"
                       : item.status === "booked"
                       ? "Chưa checkin"
-                      : item.status === "checked_in"
+                      : item.status === "check_in"
                       ? "Đã checkin"
                       : item.status === "test_requested"
                       ? "Chờ xét nghiệm"
+                      : item.status === "on_going"
+                      ? "Đang khám"
                       : "Không xác định"}
                   </p>
                 </td>

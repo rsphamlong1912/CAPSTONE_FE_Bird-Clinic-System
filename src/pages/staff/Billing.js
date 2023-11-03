@@ -142,7 +142,7 @@ const Billing = () => {
                   const detailResponse = await api.put(
                     `/service_Form_detail/${item.service_form_detail_id}`,
                     {
-                      status: "wait_result",
+                      status: "checked_in",
                       veterinarian_id: item.veterinarian_id,
                       process_at: item.process_at,
                     }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./Signin.module.scss";
 import { api } from "../services/axios";
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const [phone, setPhone] = useState("");
@@ -40,6 +41,16 @@ const Signin = () => {
         // Xử lý lỗi khi đăng nhập không thành công
         console.error("Đăng nhập không thành công:", error);
         setError("Đăng nhập không thành công");
+        toast.error("Đăng nhập thất bại!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       });
   };
   return (

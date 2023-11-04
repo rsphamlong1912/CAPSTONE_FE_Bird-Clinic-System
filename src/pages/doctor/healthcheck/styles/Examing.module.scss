@@ -518,3 +518,15 @@ h2 {
 .txtNote {
   margin-left: 485px;
 }
+
+.deleteMedicine {
+  font-size: 25px;
+  margin-left: 600px;
+  margin-top: 3px;
+  color: red;
+  cursor: pointer;
+}
+
+.headerDelete {
+  display: flex;
+}

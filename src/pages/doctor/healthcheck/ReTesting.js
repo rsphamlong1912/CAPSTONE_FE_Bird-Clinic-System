@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./ReTesting.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
 import "reactjs-popup/dist/index.css";
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 const ReTesting = () => {
   const { serviceFormDetailId } = useParams();
+  const navigate = useNavigate();
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [openModalProfile, setOpenModalProfile] = useState(false);
@@ -83,17 +84,21 @@ const ReTesting = () => {
       //TĂNG SERVICE HAS DONE LÊN 1
       const serviceFormId = serviceFormDetailInfo.service_form_id;
       // Lấy thông tin hiện tại của service form
-      const serviceFormDetails = await api.get(
-        `/service_Form/${serviceFormId}`
-      );
+      const serviceFormResult = await api.get(`/service_Form/${serviceFormId}`);
       // Lấy giá trị hiện tại của num_ser_has_done từ response
+
       const currentNumSerHasDone =
-        serviceFormDetails.data.data[0].num_ser_has_done;
+        serviceFormResult.data.data[0].num_ser_has_done;
       // Tăng giá trị lên 1
       const updatedNumSerHasDone = currentNumSerHasDone + 1;
+
+      const isDone =
+        serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
+
       // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
       const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
         num_ser_has_done: updatedNumSerHasDone,
+        status: isDone ? "done" : "paid",
       });
 
       console.log("increaseRes", increaseResponse.data);
@@ -109,6 +114,8 @@ const ReTesting = () => {
         progress: undefined,
         theme: "light",
       });
+
+      setTimeout(navigate(`/retesting/`), 500);
       // Additional handling if required
     } catch (error) {
       console.error("Error submitting data:", error);

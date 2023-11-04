@@ -18,6 +18,9 @@ import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal"
 
 import { message } from "antd";
 
+// import Flatpickr from 'react-flatpickr';
+// import 'flatpickr/dist/themes/material_blue.css';
+
 const Examing = () => {
   const { bookingId } = useParams();
   const [tab, setTab] = useState(1);
@@ -112,6 +115,7 @@ const Examing = () => {
     service_type: "",
     service_type_id: "",
     arrival_date: "",
+    is_re_exam: "true",
   });
 
   const handleInputSave = (e) => {
@@ -138,6 +142,7 @@ const Examing = () => {
         service_type: serviceType,
         service_type_id: serviceTypeId,
         arrival_date: bookingData.arrival_date,
+        is_re_exam: bookingData.is_re_exam,
       };
 
       const response = api.post(`/booking/re_exam`, requestData);
@@ -297,10 +302,6 @@ const Examing = () => {
     updatedForms[index][name] = value;
     setForms(updatedForms);
 
-    setPrescriptionData({
-      ...prescriptionData,
-      [name]: value,
-    });
   };
 
   const addForm = () => {
@@ -317,21 +318,11 @@ const Examing = () => {
     ]);
   };
 
-  ///
-  const [prescriptionData, setPrescriptionData] = useState({
-    booking_id: "",
-    note: "",
-    usage: "",
-    arr_medicine: [
-      {
-        medicine_id: "",
-        usage: "",
-        total_dose: 0,
-        dose: 0,
-        day: 0,
-      },
-    ],
-  });
+  const removeForm = (index) => {
+    const updatedForms = [...forms];
+    updatedForms.splice(index, 1);
+    setForms(updatedForms);
+  };
 
   const addPrescriptionData = () => {
     // if (!prescriptionData.arrival_date) {
@@ -340,22 +331,29 @@ const Examing = () => {
     // }
     try {
       // Tạo một mảng các đối tượng arr_medicine từ prescriptionData
-      const arrMedicineData = prescriptionData.arr_medicine.map((medicine) => ({
-        medicine_id: selectedMedicineId,
-        // usage: medicine.usage,
-        total_dose: medicine.amount,
-        dose: medicine.dose,
-        day: medicine.day,
-      }));
+    const arrMedicineData = prescriptionData.arr_medicine.map((medicine) => ({
+      medicine_id: selectedMedicineId,
+      // usage: medicine.usage,
+      total_dose: medicine.amount,
+      dose: medicine.dose,
+      day: medicine.day,
+    }));
       const requestData = {
         booking_id: bookingId,
-        note: prescriptionData.note,
+        // note: prescriptionData.note,
         // usage: "",
-        arr_medicine: arrMedicineData,
+        arr_medicine: forms.map((medicineData) => ({
+          medicine_id: selectedMedicineId,
+          total_dose: medicineData.amount,
+          dose: medicineData.unit,
+          day: medicineData.day,
+          note: medicineData.note,
+        })),
       };
 
       const response = api.post(`/prescription/`, requestData);
       console.log("Add medicine thanh cong:", response);
+      console.log("requestData:", requestData);
       successAddmedicine();
     } catch (error) {
       console.log(error);
@@ -604,7 +602,10 @@ const Examing = () => {
                         <div>
                           {forms.map((form, index) => (
                             <div key={index} className={styles.contentAll}>
-                              <h1>{index + 1}. Tên thuốc</h1>
+                              <div className={styles.headerDelete}>
+                                <h1>{index + 1}. Tên thuốc</h1>
+                                <RiDeleteBinLine className={styles.deleteMedicine} onClick={() => removeForm(index)}/>
+                              </div>
                               <h3>HDSD: {form.note}</h3>
 
                               <div className={styles.createFirst}>
@@ -771,19 +772,15 @@ const Examing = () => {
             {tab == 4 && (
               <div className={styles.create}>
                 <div className={styles.SelectDate}>
-                  <select
+                  <input 
                     className={styles.ChooseDay}
                     name="arrival_date"
                     value={bookingData.arrival_date}
                     onChange={handleInputSave}
-                  >
-                    <option value="">Select a Date</option>
-                    <option value="2023-11-01">2023-11-01</option>
-                    <option value="2023-11-02">2023-11-02</option>
-                    <option value="2023-11-03">2023-11-03</option>
-                  </select>
+                    placeholder="yyyy-mm-dd"
+                  />
 
-                  {selectedDate && (
+                  {/* {selectedDate && (
                     <div className={styles.SetTime}>
                       {timeSlotDate
                         .filter((timeSlot) => timeSlot.date === selectedDate)
@@ -793,7 +790,7 @@ const Examing = () => {
                           </p>
                         ))}
                     </div>
-                  )}
+                  )} */}
                 </div>
                 <p className={styles.txtNote}>Ghi chú thêm</p>
                 <textarea

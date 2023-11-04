@@ -456,7 +456,7 @@ const Examing = () => {
       const response = await api.put(`/booking/${bookingInfo.booking_id}`, {
         status: "test_requested",
       });
-      console.log("response doi status ne", response.data);
+      console.log("response doi status neeee", response.data);
     } catch (error) {
       console.log(error);
     }

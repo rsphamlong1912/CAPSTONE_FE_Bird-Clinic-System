@@ -30,7 +30,9 @@ const ExamingToday = () => {
 
         const accountId = localStorage.getItem("account_id");
         const vetCustomers = response.data.data.filter(
-          (booking) => booking.veterinarian_id === accountId
+          (booking) =>
+            booking.veterinarian_id === accountId &&
+            booking.status === "check_in"
         );
 
         setCustomerList(vetCustomers);
@@ -97,7 +99,7 @@ const ExamingToday = () => {
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
                 <td>Khám tổng quát</td>
-                <td>{item.checkin_time}</td>
+                <td>{item.estimate_time}</td>
                 <td></td>
                 <td>
                   <strong>Phạm Ngọc Long</strong>
@@ -105,7 +107,7 @@ const ExamingToday = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "checked_in"
+                      item.status === "check_in"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
@@ -113,7 +115,7 @@ const ExamingToday = () => {
                         : styles.booked
                     } `}
                   >
-                    {item.status === "checked_in"
+                    {item.status === "check_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
                       ? "Đang khám"

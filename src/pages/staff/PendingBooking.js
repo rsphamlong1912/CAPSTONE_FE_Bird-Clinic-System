@@ -4,6 +4,8 @@ import styles from "./TrackAppoinments.module.scss";
 import { api } from "../../services/axios";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
 
 const PendingBooking = () => {
   const navigate = useNavigate();
@@ -29,16 +31,65 @@ const PendingBooking = () => {
     fetchData();
   });
 
-  const handleApprove = async (item) => {
-    try {
-      const response = await api.put(`/booking/${item.booking_id}`, {
-        status: "booked",
-      });
-      console.log("response doi status ne", response.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const options = {
+    title: "Xác nhận!",
+    message: "Bạn có muốn xác nhận cuộc hẹn?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: "overlay-custom-class-name",
   };
+
+  const handleConfirmAlert = (item) => {
+    const updatedOptions = {
+      ...options,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const response = await api.put(`/booking/${item.booking_id}`, {
+                status: "booked",
+              });
+              toast.success("Xác nhận lịch hẹn thành công!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
@@ -90,7 +141,7 @@ const PendingBooking = () => {
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
                 <td>Khám tổng quát</td>
-                <td></td>
+                <td>{item.estimate_time}</td>
                 <td>
                   <strong>Phạm Ngọc Long</strong>
                 </td>
@@ -101,8 +152,6 @@ const PendingBooking = () => {
                         ? styles.pending
                         : item.status === "booked"
                         ? styles.booked
-                        : item.status === "checked_in"
-                        ? styles.checkin
                         : ""
                     } `}
                   >
@@ -112,7 +161,7 @@ const PendingBooking = () => {
                 <td>
                   <div
                     className={styles.btnCheckin}
-                    onClick={() => handleApprove(item)}
+                    onClick={() => handleConfirmAlert(item)}
                   >
                     Duyệt
                   </div>

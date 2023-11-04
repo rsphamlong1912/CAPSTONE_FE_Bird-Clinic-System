@@ -330,14 +330,6 @@ const Examing = () => {
     //   return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
     // }
     try {
-      // Tạo một mảng các đối tượng arr_medicine từ prescriptionData
-    const arrMedicineData = prescriptionData.arr_medicine.map((medicine) => ({
-      medicine_id: selectedMedicineId,
-      // usage: medicine.usage,
-      total_dose: medicine.amount,
-      dose: medicine.dose,
-      day: medicine.day,
-    }));
       const requestData = {
         booking_id: bookingId,
         // note: prescriptionData.note,

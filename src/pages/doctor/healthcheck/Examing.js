@@ -18,8 +18,8 @@ import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal"
 
 import { message } from "antd";
 
-// import Flatpickr from 'react-flatpickr';
-// import 'flatpickr/dist/themes/material_blue.css';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const Examing = () => {
   const { bookingId } = useParams();
@@ -38,8 +38,21 @@ const Examing = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [showButton, setShowButton] = useState(true);
 
-  //
+  //cong
   const [date, setDate] = useState(new Date());
+  const [formattedDate, setFormattedDate] = useState('');
+  const onChange = (newDate) => {
+    setDate(newDate);
+
+    // Lấy năm, tháng và ngày từ đối tượng Date và in ra console
+    const year = newDate.getFullYear();
+    const month = newDate.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+    const day = newDate.getDate();
+    // Tạo chuỗi định dạng
+    const formatted = `${year}-${month}-${day}`;
+    setFormattedDate(formatted);
+    console.log(`Selected Date: ${formatted}`);
+  };
 
   //GET DỊCH VỤ TỪ API
   useEffect(() => {
@@ -127,7 +140,7 @@ const Examing = () => {
   };
 
   const addBookingRe = () => {
-    if (!bookingData.arrival_date) {
+    if (!formattedDate) {
       showError();
       return; // Ngăn việc thực hiện Re-exam nếu arrival_date trống
     }
@@ -141,7 +154,7 @@ const Examing = () => {
         note: bookingData.note,
         service_type: serviceType,
         service_type_id: serviceTypeId,
-        arrival_date: bookingData.arrival_date,
+        arrival_date: formattedDate,
         is_re_exam: bookingData.is_re_exam,
       };
 
@@ -242,7 +255,6 @@ const Examing = () => {
     sendApiforData();
   }, [tab]);
 
-  const [selectedDate, setSelectedDate] = useState(""); // State to store the selected date
   const [selectedMedicineId, setSelectedMedicineId] = useState("");
 
   //tab 3
@@ -595,11 +607,10 @@ const Examing = () => {
                           {forms.map((form, index) => (
                             <div key={index} className={styles.contentAll}>
                               <div className={styles.headerDelete}>
-                                <h1>{index + 1}. Tên thuốc</h1>
-                                <RiDeleteBinLine className={styles.deleteMedicine} onClick={() => removeForm(index)}/>
+                                <div className={styles.numberMedicine}>{index + 1}. {form.selectedMedicine}</div>
+                                <RiDeleteBinLine className={styles.deleteMedicine} onClick={() => removeForm(index)} />
                               </div>
-                              <h3>HDSD: {form.note}</h3>
-
+                              <div className={styles.hsdMedicine}>HDSD: {form.note}</div>
                               <div className={styles.createFirst}>
                                 <div className={styles.First}>
                                   <p>Tên thuốc *</p>
@@ -625,9 +636,9 @@ const Examing = () => {
                                     ))}
                                   </select>
                                 </div>
-                                {form.selectedMedicine && (
-                                  <div className={styles.First}>
-                                    <p>Loại</p>
+                                <div className={styles.First}>
+                                  <p>Loại</p>
+                                  <p className={styles.TypeList}>
                                     {medicineNames
                                       .filter(
                                         (timeSlot) =>
@@ -636,30 +647,14 @@ const Examing = () => {
                                       )
                                       .map((filteredSlot, index) => (
                                         <p
-                                          className={styles.TypeList}
                                           key={index}
                                         >
                                           {filteredSlot.unit}
                                         </p>
                                       ))}
-                                  </div>
-                                )}
-
-                                {form.unit && form.day && (
-                                  <div className={styles.First}>
-                                    <p>Số liều dùng</p>
-                                    <p
-                                      className={styles.AmountList}
-                                      name="amount"
-                                      value={form.unit * form.day}
-                                    >
-                                      {form.unit * form.day}
-                                    </p>
-                                    {}
-                                  </div>
-                                )}
+                                  </p>
+                                </div>
                               </div>
-
                               <div className={styles.createSecond}>
                                 <div className={styles.Second}>
                                   <p>Đơn vị</p>
@@ -707,6 +702,17 @@ const Examing = () => {
                                     <option value="10">10</option>
                                   </select>
                                 </div>
+                                <div className={styles.Second}>
+                                  <p>Số liều dùng</p>
+                                  <p
+                                    className={styles.AmountList}
+                                    name="amount"
+                                    value={form.unit * form.day}
+                                  >
+                                    {form.unit * form.day}
+                                  </p>
+                                  { }
+                                </div>
                               </div>
                               <div className={styles.createThird}>
                                 <p className={styles.txtThird}>
@@ -720,16 +726,13 @@ const Examing = () => {
                                   onChange={(e) =>
                                     handleInputMedicineFirst(index, e)
                                   }
+                                  placeholder="Vd: Uống sau khi ăn no"
                                 />
                               </div>
                             </div>
                           ))}
                         </div>
                       </div>
-
-                      {/* <button className={styles.AddMedicine}>
-                        + Thêm thuốc
-                      </button> */}
                       <div className={styles.boxMedicine}>
                         <div>
                           <button
@@ -740,14 +743,12 @@ const Examing = () => {
                           </button>
                           {contextHolder}
                         </div>
-
                         <button
                           onClick={addForm}
                           className={styles.AddMedicine}
                         >
                           + Thêm thuốc
                         </button>
-
                         <div
                           className={styles.PrintMedicine}
                           onClick={() => setOpenModalPrescription(true)}
@@ -764,36 +765,22 @@ const Examing = () => {
             {tab == 4 && (
               <div className={styles.create}>
                 <div className={styles.SelectDate}>
-                  <input 
-                    className={styles.ChooseDay}
-                    name="arrival_date"
-                    value={bookingData.arrival_date}
-                    onChange={handleInputSave}
-                    placeholder="yyyy-mm-dd"
-                  />
-
-                  {/* {selectedDate && (
-                    <div className={styles.SetTime}>
-                      {timeSlotDate
-                        .filter((timeSlot) => timeSlot.date === selectedDate)
-                        .map((filteredSlot, index) => (
-                          <p className={styles.SetTimeSon} key={index}>
-                            {filteredSlot.slot_clinic.time}
-                          </p>
-                        ))}
-                    </div>
-                  )} */}
+                  <div>
+                    <div className={styles.expectedDate}>Ngày dự kiến: {formattedDate}</div>
+                    <Calendar className={styles.calendar} onChange={onChange} value={date} />
+                  </div>
                 </div>
-                <p className={styles.txtNote}>Ghi chú thêm</p>
-                <textarea
-                  type="text"
-                  rows={5}
-                  name="note"
-                  className={styles.Note}
-                  value={bookingData.note}
-                  onChange={handleInputSave}
-                />
                 <div>
+                  <div className={styles.txtNote}>Ghi chú thêm:</div>
+                  <textarea
+                    type="text"
+                    rows={13}
+                    name="note"
+                    placeholder="Vd: Nhớ tới hẹn đúng giờ"
+                    className={styles.Note}
+                    value={bookingData.note}
+                    onChange={handleInputSave}
+                  />
                   <button className={styles.btnAdd} onClick={addBookingRe}>
                     + Tạo
                   </button>

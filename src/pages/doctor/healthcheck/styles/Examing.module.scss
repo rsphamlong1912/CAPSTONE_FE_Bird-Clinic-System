@@ -265,6 +265,7 @@ ion-icon {
 
 .create {
   position: absolute;
+  display: flex;
 }
 
 h1 {
@@ -289,12 +290,13 @@ option {
 }
 
 .contentAll {
-  padding-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #bdbdbd;
 }
 
 .createFirst {
   display: flex;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
 }
 
 .First {
@@ -302,10 +304,10 @@ option {
 }
 
 .DrugNameList {
-  width: 300px;
-  height: 50px;
+  width: 500px;
+  height: 40px;
   border-radius: 5px;
-  border: 2px solid #dddddd;
+  border: 1px solid #dddddd;
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
@@ -313,60 +315,58 @@ option {
 
 .TypeList {
   width: 100px;
-  height: 50px;
+  height: 40px;
   border-radius: 5px;
-  border: 2px solid #dddddd;
   padding-left: 20px;
-  background-color: #f9f9f9;
-  color: #737373;
-  padding-top: 13px;
+  background-color: rgba(217, 217, 217, 0.4);
+  color: black;
+  padding-top: 10px;
 }
 
 .AmountList {
-  width: 70px;
-  height: 50px;
+  width: 130px;
+  height: 40px;
   border-radius: 5px;
-  border: 2px solid #dddddd;
   padding-left: 20px;
-  background-color: #f9f9f9;
+  background-color: rgba(217, 217, 217, 0.4);
   color: #737373;
-  padding-top: 13px;
+  padding-top: 10px;
 }
 
 .createSecond {
   display: flex;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
 }
 
 .Second {
-  padding-right: 20px;
+  padding-right: 53px;
 }
 
 .UnitList {
-  width: 100px;
-  height: 50px;
+  width: 130px;
+  height: 40px;
   border-radius: 5px;
-  border: 2px solid #dddddd;
+  border: 1px solid #dddddd;
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
 }
 
 .DayList {
-  width: 100px;
-  height: 50px;
+  width: 130px;
+  height: 40px;
   border-radius: 5px;
-  border: 2px solid #dddddd;
+  border: 1px solid #dddddd;
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
 }
 
 .Instruct {
-  width: 790px;
+  width: 770px;
   height: 80px;
   border-radius: 5px;
-  border: 2px solid #dddddd;
+  border: 1px solid #dddddd;
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
@@ -456,24 +456,23 @@ h2 {
 
 .Note {
   width: 310px;
-  // height: 200px;
-  margin-top: 20px;
-  margin-left: 380px;
+  // height: 223px;
   word-wrap: break-word;
   border: 2px solid #bdbdbd;
   border-radius: 4px;
+  margin-left: 45px;
 }
 
 .btnAdd {
-  width: 100px;
+  width: 310px;
   height: 40px;
   background-color: #32b768;
   border: #32b768;
   border-radius: 4px;
   color: white;
   font-size: 20px;
-  margin-top: 20px;
-  margin-left: 490px;
+  margin-top:8px;
+  margin-left: 45px;
 }
 
 .create {
@@ -516,12 +515,11 @@ h2 {
 
 
 .txtNote {
-  margin-left: 485px;
+  margin-left: 45px;
 }
 
 .deleteMedicine {
   font-size: 25px;
-  margin-left: 600px;
   margin-top: 3px;
   color: red;
   cursor: pointer;
@@ -529,4 +527,25 @@ h2 {
 
 .headerDelete {
   display: flex;
+}
+
+.numberMedicine {
+  width: 750px;
+}
+
+.hsdMedicine {
+  margin-bottom: 10px;
+}
+
+.expectedDate {
+  padding-bottom: 15px;
+  margin-left: 170px;
+}
+
+.calendar {
+  width: 350px;
+  box-shadow: 1px 2px 3px 4px rgba(0, 0, 0, .1);
+  border-radius: 6px;
+  background-color: rgba(217, 217, 217, 0.4);
+  margin-left: 170px;
 }

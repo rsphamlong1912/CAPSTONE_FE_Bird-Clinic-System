@@ -19,7 +19,7 @@ const Checkin = () => {
         const response = await api.get("/booking");
         const filterBookings = response.data.data.filter(
           (booking) =>
-            booking.status === "booked" || booking.status === "check_in"
+            booking.status === "booked" || booking.status === "checked_in"
         );
         setCustomerList(filterBookings);
       } catch (error) {
@@ -63,7 +63,7 @@ const Checkin = () => {
           onClick: async () => {
             try {
               const response = await api.put(`/booking/${item.booking_id}`, {
-                status: "check_in",
+                status: "checked_in",
               });
               toast.success("Check-in thành công!", {
                 position: "top-right",
@@ -111,20 +111,10 @@ const Checkin = () => {
         arr_service_pack: [
           {
             service_package_id: "SP1",
-            note: "null",
+            note: "Khám tổng quát",
           },
         ],
       });
-      const createdBill = await api.post(`/bill/`, {
-        title: "Thanh toán lần 1",
-        total_price: createdResponse.data.data.total_price,
-        service_form_id: createdResponse.data.data.service_form_id,
-        booking_id: item.booking_id,
-        payment_method: "cash",
-        paypal_transaction_id: "any",
-        status: "any",
-      });
-      console.log("create new bill:", createdBill);
     } catch (err) {
       console.log(err);
     }

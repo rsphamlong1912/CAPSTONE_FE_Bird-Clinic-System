@@ -301,7 +301,6 @@ const Examing = () => {
     const updatedForms = [...forms];
     updatedForms[index][name] = value;
     setForms(updatedForms);
-
   };
 
   const addForm = () => {
@@ -467,17 +466,16 @@ const Examing = () => {
         arr_service_pack: newArray,
       });
       console.log("created response", createdResponse.data.data);
-      // Sử dụng ID để tạo service_Form_detail
-      const createdBill = await api.post(`/bill/`, {
-        title: "Thanh toán",
-        total_price: totalPrice,
-        service_form_id: createdResponse.data.data.service_form_id,
-        booking_id: bookingInfo.booking_id,
-        payment_method: "cast",
-        paypal_transaction_id: "any",
-        status: "any",
-      });
-      console.log("create new bill:", createdBill);
+
+      // const createdBill = await api.post(`/bill/`, {
+      //   title: "Thanh toán",
+      //   total_price: totalPrice,
+      //   service_form_id: createdResponse.data.data.service_form_id,
+      //   booking_id: bookingInfo.booking_id,
+      //   payment_method: "cast",
+      //   paypal_transaction_id: "any",
+      //   status: "any",
+      // });
     } catch (err) {
       console.log(err);
     }
@@ -596,7 +594,10 @@ const Examing = () => {
                             <div key={index} className={styles.contentAll}>
                               <div className={styles.headerDelete}>
                                 <h1>{index + 1}. Tên thuốc</h1>
-                                <RiDeleteBinLine className={styles.deleteMedicine} onClick={() => removeForm(index)}/>
+                                <RiDeleteBinLine
+                                  className={styles.deleteMedicine}
+                                  onClick={() => removeForm(index)}
+                                />
                               </div>
                               <h3>HDSD: {form.note}</h3>
 
@@ -764,7 +765,7 @@ const Examing = () => {
             {tab == 4 && (
               <div className={styles.create}>
                 <div className={styles.SelectDate}>
-                  <input 
+                  <input
                     className={styles.ChooseDay}
                     name="arrival_date"
                     value={bookingData.arrival_date}

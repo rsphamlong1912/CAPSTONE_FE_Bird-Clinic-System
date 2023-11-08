@@ -18,8 +18,8 @@ import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal"
 
 import { message } from "antd";
 
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 const Examing = () => {
   const { bookingId } = useParams();
@@ -40,7 +40,7 @@ const Examing = () => {
 
   //cong
   const [date, setDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState('');
+  const [formattedDate, setFormattedDate] = useState("");
   const onChange = (newDate) => {
     setDate(newDate);
 
@@ -313,7 +313,6 @@ const Examing = () => {
     const updatedForms = [...forms];
     updatedForms[index][name] = value;
     setForms(updatedForms);
-
   };
 
   const addForm = () => {
@@ -470,7 +469,7 @@ const Examing = () => {
         booking_id: bookingInfo.booking_id,
         reason_referral: "any",
         status: "pending",
-        date: "2023-02-10",
+        date: bookingInfo.arrival_date,
         veterinarian_referral: "any",
         total_price: totalPrice,
         qr_code: "any",
@@ -479,17 +478,16 @@ const Examing = () => {
         arr_service_pack: newArray,
       });
       console.log("created response", createdResponse.data.data);
-      // Sử dụng ID để tạo service_Form_detail
-      const createdBill = await api.post(`/bill/`, {
-        title: "Thanh toán",
-        total_price: totalPrice,
-        service_form_id: createdResponse.data.data.service_form_id,
-        booking_id: bookingInfo.booking_id,
-        payment_method: "cast",
-        paypal_transaction_id: "any",
-        status: "any",
-      });
-      console.log("create new bill:", createdBill);
+
+      // const createdBill = await api.post(`/bill/`, {
+      //   title: "Thanh toán",
+      //   total_price: totalPrice,
+      //   service_form_id: createdResponse.data.data.service_form_id,
+      //   booking_id: bookingInfo.booking_id,
+      //   payment_method: "cast",
+      //   paypal_transaction_id: "any",
+      //   status: "any",
+      // });
     } catch (err) {
       console.log(err);
     }
@@ -607,10 +605,23 @@ const Examing = () => {
                           {forms.map((form, index) => (
                             <div key={index} className={styles.contentAll}>
                               <div className={styles.headerDelete}>
-                                <div className={styles.numberMedicine}>{index + 1}. {form.selectedMedicine}</div>
-                                <RiDeleteBinLine className={styles.deleteMedicine} onClick={() => removeForm(index)} />
+                                <h1>{index + 1}. Tên thuốc</h1>
+                                <RiDeleteBinLine
+                                  className={styles.deleteMedicine}
+                                  onClick={() => removeForm(index)}
+                                />
+
+                                <div className={styles.numberMedicine}>
+                                  {index + 1}. {form.selectedMedicine}
+                                </div>
+                                <RiDeleteBinLine
+                                  className={styles.deleteMedicine}
+                                  onClick={() => removeForm(index)}
+                                />
                               </div>
-                              <div className={styles.hsdMedicine}>HDSD: {form.note}</div>
+                              <div className={styles.hsdMedicine}>
+                                HDSD: {form.note}
+                              </div>
                               <div className={styles.createFirst}>
                                 <div className={styles.First}>
                                   <p>Tên thuốc *</p>
@@ -646,11 +657,7 @@ const Examing = () => {
                                           form.selectedMedicine
                                       )
                                       .map((filteredSlot, index) => (
-                                        <p
-                                          key={index}
-                                        >
-                                          {filteredSlot.unit}
-                                        </p>
+                                        <p key={index}>{filteredSlot.unit}</p>
                                       ))}
                                   </p>
                                 </div>
@@ -711,7 +718,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  { }
+                                  {}
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -765,9 +772,35 @@ const Examing = () => {
             {tab == 4 && (
               <div className={styles.create}>
                 <div className={styles.SelectDate}>
+                  <input
+                    className={styles.ChooseDay}
+                    name="arrival_date"
+                    value={bookingData.arrival_date}
+                    onChange={handleInputSave}
+                    placeholder="yyyy-mm-dd"
+                  />
+
+                  {/* {selectedDate && (
+                    <div className={styles.SetTime}>
+                      {timeSlotDate
+                        .filter((timeSlot) => timeSlot.date === selectedDate)
+                        .map((filteredSlot, index) => (
+                          <p className={styles.SetTimeSon} key={index}>
+                            {filteredSlot.slot_clinic.time}
+                          </p>
+                        ))}
+                    </div>
+                  )} */}
+
                   <div>
-                    <div className={styles.expectedDate}>Ngày dự kiến: {formattedDate}</div>
-                    <Calendar className={styles.calendar} onChange={onChange} value={date} />
+                    <div className={styles.expectedDate}>
+                      Ngày dự kiến: {formattedDate}
+                    </div>
+                    <Calendar
+                      className={styles.calendar}
+                      onChange={onChange}
+                      value={date}
+                    />
                   </div>
                 </div>
                 <div>

@@ -30,6 +30,8 @@ const Signin = () => {
         if (role === "vet") {
           if (service_id === "S001") {
             window.location.href = "/examing";
+          } else if (service_id === "S013") {
+            window.location.href = "/boarding";
           } else {
             window.location.href = "/retesting";
           }

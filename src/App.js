@@ -10,8 +10,6 @@ import AppointmentSchedule from "./pages/doctor/healthcheck/AppointmentSchedule"
 import DoneExamination from "./pages/doctor/healthcheck/DoneExamination";
 import Examing from "./pages/doctor/healthcheck/Examing";
 import Signin from "./pages/Signin";
-import Division from "./pages/staff/Division";
-import CreateAppoinment from "./pages/staff/CreateAppoinment";
 import GroomingToday from "./pages/staff/grooming/GroomingToday";
 import Grooming from "./pages/staff/grooming/Grooming";
 import BoardingToday from "./pages/staff/boarding/BoardingToday";
@@ -22,6 +20,7 @@ import ReTestingToday from "./pages/doctor/healthcheck/ReTestingToday";
 import ReTesting from "./pages/doctor/healthcheck/ReTesting";
 import PendingBooking from "./pages/staff/PendingBooking";
 import Billing from "./pages/staff/Billing";
+import BillingHistory from "./pages/staff/BillingHistory";
 
 const listTabsStaff = [
   {
@@ -36,18 +35,18 @@ const listTabsStaff = [
   },
   {
     id: 3,
-    name: "Phân công",
-    to: "/division",
-  },
-  {
-    id: 4,
     name: "Duyệt hẹn",
     to: "/approve",
   },
   {
-    id: 5,
-    name: "Thanh toán",
+    id: 4,
+    name: "Cần thanh toán",
     to: "/billing",
+  },
+  {
+    id: 5,
+    name: "Đã thanh toán",
+    to: "/billing-history",
   },
 ];
 const listTabsHealthCheck = [
@@ -160,14 +159,6 @@ function App() {
           }
         ></Route>
         <Route
-          path="/division"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <Division></Division>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
           path="/approve"
           element={
             <MainLayout listTabs={listTabsStaff}>
@@ -180,6 +171,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsStaff}>
               <Billing></Billing>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/billing-history"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <BillingHistory></BillingHistory>
             </MainLayout>
           }
         ></Route>

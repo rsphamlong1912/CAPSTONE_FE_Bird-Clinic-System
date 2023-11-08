@@ -32,7 +32,8 @@ const ExamingToday = () => {
         const vetCustomers = response.data.data.filter(
           (booking) =>
             booking.veterinarian_id === accountId &&
-            booking.status === "check_in"
+            booking.status === "checked_in" &&
+            booking.service_type_id === "ST001"
         );
 
         setCustomerList(vetCustomers);
@@ -107,7 +108,7 @@ const ExamingToday = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "check_in"
+                      item.status === "checked_in"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
@@ -115,7 +116,7 @@ const ExamingToday = () => {
                         : styles.booked
                     } `}
                   >
-                    {item.status === "check_in"
+                    {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
                       ? "Đang khám"

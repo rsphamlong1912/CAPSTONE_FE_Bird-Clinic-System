@@ -192,21 +192,25 @@ const ReTesting = () => {
 
     // Tạo formData chứa dữ liệu cần gửi
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("image", file);
+    formData.append("type", serviceFormDetailInfo.note);
+    formData.append("type_id", serviceFormDetailInfo.service_package_id);
+    formData.append("type_service", serviceFormDetailInfo.service_package_id);
 
-    const requestData = {
-      type: serviceFormDetailInfo.note,
-      type_id: serviceFormDetailInfo.service_package_id,
-      is_before: "any",
-      is_after: "any",
-      type_service: "ST001",
-    };
+    // const requestData = {
+    //   type: serviceFormDetailInfo.note,
+    //   type_id: serviceFormDetailInfo.service_package_id,
+    //   is_before: "any",
+    //   is_after: "any",
+    //   type_service: "ST001",
+    //   image: file,
+    // };
 
-    console.log("form data ne: ", requestData);
+    console.log("file ne: ", file);
 
     // Thực hiện gọi API sử dụng axios
     try {
-      const response = await api.post("/media", formData, requestData, {
+      const response = await api.post("/media", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

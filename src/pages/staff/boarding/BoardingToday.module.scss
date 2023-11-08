@@ -64,7 +64,7 @@ main.table {
   overflow: hidden;
 }
 
-.table__header {
+.tableHeader {
   width: 100%;
   height: 10%;
   background-color: #fff4;
@@ -75,7 +75,7 @@ main.table {
   align-items: center;
 }
 
-.table__header .input-group {
+.tableHeader .inputGroup {
   width: 35%;
   height: 100%;
   background-color: #fff5;
@@ -89,18 +89,18 @@ main.table {
   transition: 0.2s;
 }
 
-.table__header .input-group:hover {
+.tableHeader .inputGroup:hover {
   width: 45%;
   background-color: #fff8;
   box-shadow: 0 0.1rem 0.4rem #0002;
 }
 
-.table__header .input-group img {
+.tableHeader .inputGroup img {
   width: 1.2rem;
   height: 1.2rem;
 }
 
-.table__header .input-group input {
+.tableHeader .inputGroup input {
   width: 100%;
   padding: 0 0.5rem 0 0.3rem;
   background-color: transparent;
@@ -108,7 +108,7 @@ main.table {
   outline: none;
 }
 
-.table__body {
+.tableBody {
   width: 95%;
   max-height: calc(89% - 1.6rem);
   background-color: #fffb;
@@ -120,24 +120,23 @@ main.table {
   overflow: overlay;
 }
 
-.table__body::-webkit-scrollbar {
+.tableBody::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
 
-.table__body::-webkit-scrollbar-thumb {
+.tableBody::-webkit-scrollbar-thumb {
   border-radius: 0.5rem;
   background-color: #0004;
   visibility: hidden;
 }
 
-.table__body:hover::-webkit-scrollbar-thumb {
+.tableBody:hover::-webkit-scrollbar-thumb {
   visibility: visible;
 }
 
 table {
   width: 100%;
-  background-color: #fff;
 }
 
 td img {
@@ -166,14 +165,13 @@ thead th {
   text-transform: capitalize;
 }
 
-// tbody tr:nth-child(even) {
-//   background-color: #0000000b;
-// }
+tbody tr:nth-child(even) {
+  background-color: #0000000b;
+}
 
 tbody tr {
   --delay: 0.1s;
   transition: 0.5s ease-in-out var(--delay), background-color 0s;
-  background-color: #fff;
 }
 
 tbody tr.hide {
@@ -210,7 +208,7 @@ tbody tr.hide td img {
   text-align: center;
 }
 
-.status.checkin {
+.status.being {
   color: rgba(36, 219, 149, 1);
   background-color: #fff;
   border: 1px solid rgba(36, 219, 149, 1);
@@ -227,7 +225,13 @@ tbody tr.hide td img {
   border: 1px solid rgba(249, 150, 31, 1);
 }
 
-.status.being {
+.status.booked {
+  color: rgb(249, 31, 114);
+  background-color: #fff;
+  border: 1px solid rgb(249, 31, 114);
+}
+
+.status.checkin {
   color: rgba(0, 178, 255, 1);
   background-color: #fff;
   border: 1px solid rgba(0, 178, 255, 1);
@@ -280,8 +284,18 @@ tbody td.active {
   color: #6c00bd;
 }
 
-.footerContent {
+.numResult {
   margin-top: 20px;
   font-weight: 600;
   font-size: 16px;
+}
+
+.btnExam {
+  text-align: center;
+  background-color: #32b768;
+  width: 100px;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }

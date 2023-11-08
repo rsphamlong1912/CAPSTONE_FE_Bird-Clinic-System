@@ -20,7 +20,8 @@ const WaitingResult = () => {
         const vetCustomers = response.data.data.filter(
           (booking) =>
             booking.veterinarian_id === accountId &&
-            booking.status === "test_requested"
+            (booking.status === "test_requested" ||
+              booking.status === "checked_in_after_test")
         );
 
         setCustomerList(vetCustomers);
@@ -102,7 +103,9 @@ const WaitingResult = () => {
                   >
                     {item.status === "test_requested"
                       ? "Chờ xét nghiệm"
-                      : "Chưa checkin"}
+                      : item.status === "checked_in_after_test"
+                      ? "Có kết quả"
+                      : ""}
                   </p>
                 </td>
                 <td>

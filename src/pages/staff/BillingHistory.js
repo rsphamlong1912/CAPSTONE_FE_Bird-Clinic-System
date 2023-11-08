@@ -212,7 +212,7 @@ const BillingHistory = () => {
                 <td>{item.total_price}</td>
                 <td>
                   <strong>
-                    {item.payment_method === "cast"
+                    {item.payment_method === "cash"
                       ? "Tiền mặt"
                       : "Chuyển khoản"}
                   </strong>

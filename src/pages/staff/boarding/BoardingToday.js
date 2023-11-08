@@ -1,10 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import styles from "./BoardingToday.module.scss";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../../services/axios";
+import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 
 const BoardingToday = () => {
+  const [customerList, setCustomerList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const handleChangeStatusBooking = async (item) => {
+    try {
+      const response = await api.put(`/booking/${item.booking_id}`, {
+        status: "on_going",
+      });
+      console.log("response doi status ne", response.data);
+      navigate(`/boarding/${item.booking_id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("/booking");
+        console.log("api ne:", response.data.data);
+
+        const accountId = localStorage.getItem("account_id");
+        const vetCustomers = response.data.data.filter(
+          (booking) =>
+            booking.veterinarian_id === accountId &&
+            booking.status === "checked_in"
+        );
+
+        setCustomerList(vetCustomers);
+        console.log("Updated customerList:", vetCustomers);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 850);
+    fetchData();
+  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
@@ -34,71 +76,107 @@ const BoardingToday = () => {
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
             <th> Trạng thái</th>
+            <th> Hành động</th>
           </tr>
         </thead>
         <tbody>
-          <tr onClick={() => navigate("/boarding/1")}>
-            <td> 1 </td>
-            <td>Nguyễn Trí Công</td>
-            <td>Sáo nâu</td>
-            <td>Khám tổng quát</td>
-            <td>09:30</td>
-            <td>09:36</td>
-            <td>
-              <strong>Phạm Ngọc Long</strong>
-            </td>
-            <td>
-              <p className="status being">Đang khám</p>
-            </td>
-          </tr>
-          <tr onClick={() => navigate("/boarding/1")}>
-            <td> 2 </td>
-            <td>Lê Hũu</td>
-            <td>Vẹt xanh</td>
-            <td>Lưu trú</td>
-            <td>10:30</td>
-            <td>10:42</td>
-            <td>
-              <strong>Hải Nam</strong>
-            </td>
-            <td>
-              <p className="status checkin">Đã checkin</p>
-            </td>
-          </tr>
-          <tr onClick={() => navigate("/boarding/1")}>
-            <td> 3 </td>
-            <td>Nobi Nobita</td>
-            <td>Chích choè</td>
-            <td>Khám tổng quát</td>
-            <td>10:45</td>
-            <td>10:45</td>
-            <td>
-              <strong>Hải Nam</strong>
-            </td>
-            <td>
-              <p className="status pending">Chờ kết quả</p>
-            </td>
-          </tr>
-          <tr onClick={() => navigate("/boarding/1")}>
-            <td> 4 </td>
-            <td>Sakura Chan</td>
-            <td>Vành khuyên</td>
-            <td>Khám tổng quát</td>
-            <td>11:30</td>
-            <td>11:38</td>
-            <td>
-              <strong>Phạm Ngọc Long</strong>
-            </td>
-            <td>
-              <p className="status has-result">Đã có kết quả</p>
-            </td>
-          </tr>
+          {loading && (
+            <>
+              <Loading></Loading>
+              <Loading></Loading>
+              <Loading></Loading>
+              <Loading></Loading>
+              <Loading></Loading>
+              <Loading></Loading>
+              <Loading></Loading>
+            </>
+          )}
+
+          {!loading &&
+            customerList.map((item, index) => (
+              <tr key={index}>
+                <td> {index + 1} </td>
+                <td>{item.customer_name}</td>
+                <td>Sáo nâu</td>
+                <td>Nội trú</td>
+                <td>{item.estimate_time}</td>
+                <td></td>
+                <td>
+                  <strong>Phạm Ngọc Long</strong>
+                </td>
+                <td>
+                  <p
+                    className={`${styles.status} ${
+                      item.status === "checked_in"
+                        ? styles.checkin
+                        : item.status === "on_going" ||
+                          item.status === "test_requested"
+                        ? styles.being
+                        : styles.booked
+                    } `}
+                  >
+                    {item.status === "checked_in"
+                      ? "Đã checkin"
+                      : item.status === "on_going"
+                      ? "Đang khám"
+                      : item.status === "test_requested"
+                      ? "Chờ xét nghiệm"
+                      : "Chưa checkin"}
+                  </p>
+                </td>
+                <td>
+                  <div
+                    className={styles.btnExam}
+                    onClick={() => handleChangeStatusBooking(item)}
+                  >
+                    Khám
+                  </div>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
-      <div className={styles.footerContent}>
-        <div className={styles.numberResult}>4 kết quả</div>
+      <div className={styles.numResult}>
+        <div className="number-result">
+          {!loading && customerList.length} kết quả
+        </div>
       </div>
     </div>
+  );
+};
+
+const Loading = () => {
+  return (
+    <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <strong>
+          <LoadingSkeleton></LoadingSkeleton>
+        </strong>
+      </td>
+      <td>
+        <div className="status being">
+          <LoadingSkeleton></LoadingSkeleton>
+        </div>
+      </td>
+    </tr>
   );
 };
 

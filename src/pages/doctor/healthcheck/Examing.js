@@ -18,8 +18,8 @@ import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal"
 
 import { message } from "antd";
 
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 const Examing = () => {
   const { bookingId } = useParams();
@@ -40,7 +40,7 @@ const Examing = () => {
 
   //cong
   const [date, setDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState('');
+  const [formattedDate, setFormattedDate] = useState("");
   const onChange = (newDate) => {
     setDate(newDate);
 
@@ -469,7 +469,7 @@ const Examing = () => {
         booking_id: bookingInfo.booking_id,
         reason_referral: "any",
         status: "pending",
-        date: "2023-02-10",
+        date: bookingInfo.arrival_date,
         veterinarian_referral: "any",
         total_price: totalPrice,
         qr_code: "any",
@@ -611,11 +611,17 @@ const Examing = () => {
                                   onClick={() => removeForm(index)}
                                 />
 
-                                <div className={styles.numberMedicine}>{index + 1}. {form.selectedMedicine}</div>
-                                <RiDeleteBinLine className={styles.deleteMedicine} onClick={() => removeForm(index)} />
-
+                                <div className={styles.numberMedicine}>
+                                  {index + 1}. {form.selectedMedicine}
+                                </div>
+                                <RiDeleteBinLine
+                                  className={styles.deleteMedicine}
+                                  onClick={() => removeForm(index)}
+                                />
                               </div>
-                              <div className={styles.hsdMedicine}>HDSD: {form.note}</div>
+                              <div className={styles.hsdMedicine}>
+                                HDSD: {form.note}
+                              </div>
                               <div className={styles.createFirst}>
                                 <div className={styles.First}>
                                   <p>Tên thuốc *</p>
@@ -651,11 +657,7 @@ const Examing = () => {
                                           form.selectedMedicine
                                       )
                                       .map((filteredSlot, index) => (
-                                        <p
-                                          key={index}
-                                        >
-                                          {filteredSlot.unit}
-                                        </p>
+                                        <p key={index}>{filteredSlot.unit}</p>
                                       ))}
                                   </p>
                                 </div>
@@ -716,7 +718,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  { }
+                                  {}
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -791,10 +793,15 @@ const Examing = () => {
                   )} */}
 
                   <div>
-                    <div className={styles.expectedDate}>Ngày dự kiến: {formattedDate}</div>
-                    <Calendar className={styles.calendar} onChange={onChange} value={date} />
+                    <div className={styles.expectedDate}>
+                      Ngày dự kiến: {formattedDate}
+                    </div>
+                    <Calendar
+                      className={styles.calendar}
+                      onChange={onChange}
+                      value={date}
+                    />
                   </div>
-
                 </div>
                 <div>
                   <div className={styles.txtNote}>Ghi chú thêm:</div>

@@ -32,7 +32,8 @@ const ExamingToday = () => {
         const vetCustomers = response.data.data.filter(
           (booking) =>
             booking.veterinarian_id === accountId &&
-            booking.status === "checked_in"
+            booking.status === "checked_in" &&
+            booking.service_type_id === "ST001"
         );
 
         setCustomerList(vetCustomers);

@@ -8,6 +8,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { api } from "../../services/axios";
 import { useReactToPrint } from "react-to-print";
 import { HoaDon } from "../../components/pdfData/HoaDon";
+import { toast } from "react-toastify";
 
 const Billing = () => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const Billing = () => {
       setLoading(false);
     }, 850);
     fetchData();
-  }, []);
+  });
 
   //GET DỊCH VỤ TỪ API
   useEffect(() => {
@@ -117,6 +118,17 @@ const Billing = () => {
                 status: "1",
               });
 
+              toast.success("Dịch vụ đã được thanh toán!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+
               //CHANGE STATUS SERVICE FORM
               try {
                 const response = await api.put(
@@ -170,6 +182,17 @@ const Billing = () => {
                 payment_method: "banking",
                 paypal_transaction_id: "any",
                 status: "1",
+              });
+
+              toast.success("Dịch vụ đã được thanh toán!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
               });
 
               //CHANGE STATUS SERVICE FORM
@@ -230,15 +253,12 @@ const Billing = () => {
             <th> Khách hàng</th>
             <th> Số lượng dịch vụ</th>
             <th> Tổng tiền</th>
-            <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
         </thead>
         <tbody>
           {loading && (
             <>
-              <Loading></Loading>
-              <Loading></Loading>
               <Loading></Loading>
               <Loading></Loading>
               <Loading></Loading>
@@ -254,15 +274,6 @@ const Billing = () => {
                 <td>{item.customer_name}</td>
                 <td>{item.num_ser_must_do}</td>
                 <td>{item.total_price}</td>
-                <td>
-                  <p
-                    className={`${styles.status} ${
-                      item.status === "1" ? styles.being : styles.checkin
-                    } `}
-                  >
-                    {item.status === "1" ? "Chưa thanh toán" : "Đã thanh toán"}
-                  </p>
-                </td>
 
                 <td className={styles.grAction}>
                   <div

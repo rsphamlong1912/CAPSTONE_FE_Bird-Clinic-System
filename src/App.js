@@ -99,7 +99,7 @@ const listTabsGrooming = [
   {
     id: 1,
     name: "Khám hôm nay",
-    to: "/grooming-today",
+    to: "/grooming",
   },
   {
     id: 2,
@@ -251,7 +251,7 @@ function App() {
           }
         ></Route>
         <Route
-          path="/grooming/:id"
+          path="/grooming/:bookingId"
           element={
             <MainLayout listTabs={listTabsGrooming}>
               <Grooming></Grooming>

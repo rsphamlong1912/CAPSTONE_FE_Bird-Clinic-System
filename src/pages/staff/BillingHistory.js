@@ -8,9 +8,8 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { api } from "../../services/axios";
 import { useReactToPrint } from "react-to-print";
 import { HoaDon } from "../../components/pdfData/HoaDon";
-import { toast } from "react-toastify";
 
-const Billing = () => {
+const BillingHistory = () => {
   const navigate = useNavigate();
   const [billList, setBillList] = useState([]);
   const [serviceFormDetailList, setServiceFormDetailList] = useState([]);
@@ -43,11 +42,13 @@ const Billing = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/service_Form");
-        const filterBill = response.data.data.filter(
-          (item) => item.status === "pending"
-        );
-        setBillList(filterBill);
+        const response = await api.get("/bill");
+
+        const allBill = response.data.data;
+        // const checkedInBookings = allBookings.filter(
+        //   (booking) => booking.status === "checked_in"
+        // );
+        setBillList(allBill);
       } catch (error) {
         console.log(error);
       }
@@ -57,7 +58,7 @@ const Billing = () => {
       setLoading(false);
     }, 850);
     fetchData();
-  });
+  }, []);
 
   //GET DỊCH VỤ TỪ API
   useEffect(() => {
@@ -80,13 +81,13 @@ const Billing = () => {
 
   const options = {
     title: "Xác nhận thanh toán",
-    message: "Chọn phương thức đã thanh toán:",
+    message: "Xác nhận khách hàng đã thanh toán?",
     buttons: [
       {
-        label: "Tiền mặt",
+        label: "Xác nhận",
       },
       {
-        label: "Chuyển khoản",
+        label: "Huỷ",
       },
     ],
     closeOnEscape: true,
@@ -105,29 +106,16 @@ const Billing = () => {
       ...options,
       buttons: [
         {
-          label: "Tiền mặt",
+          label: "Xác nhận",
           onClick: async () => {
             try {
-              const createdBill = await api.post(`/bill/`, {
-                title: "Thanh toán lần 1",
-                total_price: item.total_price,
-                service_form_id: item.service_form_id,
-                booking_id: item.booking_id,
-                payment_method: "cash",
-                paypal_transaction_id: "any",
-                status: "1",
+              const response = await api.put(`/bill/${item.bill_id}`, {
+                status: "2",
               });
-
-              toast.success("Dịch vụ đã được thanh toán!", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
+              // Cập nhật trạng thái trong danh sách billList
+              const updatedBillList = billList.map((bill) =>
+                bill.bill_id === item.bill_id ? { ...bill, status: "2" } : bill
+              );
 
               //CHANGE STATUS SERVICE FORM
               try {
@@ -165,75 +153,17 @@ const Billing = () => {
               } catch (error) {
                 console.log(error);
               }
+
+              setBillList(updatedBillList);
             } catch (error) {
               console.log(error);
             }
           },
         },
         {
-          label: "Chuyển khoản",
-          onClick: async () => {
-            try {
-              const createdBill = await api.post(`/bill/`, {
-                title: "Thanh toán lần 1",
-                total_price: item.total_price,
-                service_form_id: item.service_form_id,
-                booking_id: item.booking_id,
-                payment_method: "banking",
-                paypal_transaction_id: "any",
-                status: "1",
-              });
-
-              toast.success("Dịch vụ đã được thanh toán!", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-
-              //CHANGE STATUS SERVICE FORM
-              try {
-                const response = await api.put(
-                  `/service_Form/${item.service_form_id}`,
-                  {
-                    status: "paid",
-                  }
-                );
-              } catch (error) {
-                console.log(error);
-              }
-
-              //CHANGE STATUS SERVICE FORM DETAIL
-              try {
-                const response = await api.get(
-                  `/service_Form/${item.service_form_id}`
-                );
-
-                setServiceFormDetailList(
-                  response.data.data[0].service_form_details
-                );
-                for (const item of response.data.data[0].service_form_details) {
-                  const detailResponse = await api.put(
-                    `/service_Form_detail/${item.service_form_detail_id}`,
-                    {
-                      status: "checked_in",
-                      veterinarian_id: item.veterinarian_id,
-                      process_at: item.process_at,
-                    }
-                  );
-
-                  console.log(" doi ròi", detailResponse);
-                }
-              } catch (error) {
-                console.log(error);
-              }
-            } catch (error) {
-              console.log(error);
-            }
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
           },
         },
       ],
@@ -251,14 +181,19 @@ const Billing = () => {
           <tr>
             <th> STT</th>
             <th> Khách hàng</th>
-            <th> Số lượng dịch vụ</th>
-            <th> Tổng tiền</th>
+            <th> Tiêu đề</th>
+            <th> Dịch vụ</th>
+            <th>Tổng tiền</th>
+            <th>Phương thức</th>
+            <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
         </thead>
         <tbody>
           {loading && (
             <>
+              <Loading></Loading>
+              <Loading></Loading>
               <Loading></Loading>
               <Loading></Loading>
               <Loading></Loading>
@@ -272,16 +207,27 @@ const Billing = () => {
               <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
-                <td>{item.num_ser_must_do}</td>
+                <td>{item.title}</td>
+                <td>Khám tổng quát</td>
                 <td>{item.total_price}</td>
+                <td>
+                  <strong>
+                    {item.payment_method === "cash"
+                      ? "Tiền mặt"
+                      : "Chuyển khoản"}
+                  </strong>
+                </td>
+                <td>
+                  <p
+                    className={`${styles.status} ${
+                      item.status === "1" ? styles.checkin : ""
+                    } `}
+                  >
+                    Đã thanh toán
+                  </p>
+                </td>
 
                 <td className={styles.grAction}>
-                  <div
-                    className={styles.btnCheckin}
-                    onClick={() => handleConfirmAlert(item)}
-                  >
-                    Xác nhận
-                  </div>
                   <div
                     className={`${styles.btnCheckin} ${styles.viewDetail} `}
                     onClick={() => handlePrint(item)}
@@ -340,4 +286,4 @@ const Loading = () => {
   );
 };
 
-export default Billing;
+export default BillingHistory;

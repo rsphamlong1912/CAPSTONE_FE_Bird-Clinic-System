@@ -23,18 +23,6 @@ const ReTesting = () => {
     recommendations: "",
   });
 
-  // const notify = () =>
-  //   toast.error("🦄 Wow so easy!", {
-  //     position: "top-right",
-  //     autoClose: 5000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "light",
-  //   });
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setTestingData({
@@ -94,6 +82,19 @@ const ReTesting = () => {
 
       const isDone =
         serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
+
+      if (isDone) {
+        try {
+          const updateBookingResponse = await api.put(
+            `/booking/${serviceFormDetailInfo.booking_id}`,
+            {
+              status: "checked_in_after_test",
+            }
+          );
+        } catch (error) {
+          console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
+        }
+      }
 
       // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
       const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
@@ -179,6 +180,47 @@ const ReTesting = () => {
       console.error("Error:", error);
       // Đảm bảo quay lại giá trị trước đó nếu có lỗi xảy ra
       setTab((tab) => tab - 1);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Lấy file đã chọn
+    const fileInput = document.getElementById("file");
+    const file = fileInput.files[0];
+
+    // Tạo formData chứa dữ liệu cần gửi
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("type", serviceFormDetailInfo.note);
+    formData.append("type_id", serviceFormDetailInfo.service_package_id);
+    formData.append("type_service", serviceFormDetailInfo.service_package_id);
+
+    // const requestData = {
+    //   type: serviceFormDetailInfo.note,
+    //   type_id: serviceFormDetailInfo.service_package_id,
+    //   is_before: "any",
+    //   is_after: "any",
+    //   type_service: "ST001",
+    //   image: file,
+    // };
+
+    console.log("file ne: ", file);
+
+    // Thực hiện gọi API sử dụng axios
+    try {
+      const response = await api.post("/media", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Xử lý response nếu cần
+      console.log("Response:", response.data);
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Error:", error);
     }
   };
 
@@ -272,7 +314,7 @@ const ReTesting = () => {
             {tab == 3 && (
               <div className={styles.retesting}>
                 <h2 className={styles.title}>Trả kết quả xét nghiệm</h2>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className={styles.fileInput}>
                     <label htmlFor="file">Tải lên file xét nghiệm</label>
                     <input type="file" name="file" id="file" />

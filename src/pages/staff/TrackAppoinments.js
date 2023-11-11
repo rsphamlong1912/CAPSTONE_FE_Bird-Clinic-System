@@ -89,7 +89,7 @@ const TrackAppoinments = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "check_in"
+                      item.status === "checked_in"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
@@ -97,7 +97,7 @@ const TrackAppoinments = () => {
                         : ""
                     } `}
                   >
-                    {item.status === "check_in"
+                    {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "test_requested"
                       ? "Chờ xét nghiệm"

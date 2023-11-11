@@ -85,10 +85,6 @@ const Grooming = () => {
   const { getRootProps: getRootProps4, getInputProps: getInputProps4 } = useDropzone({ onDrop: onDrop4 });
 
   const [packageInfo, setPackageInfo] = useState([]);
-  const [packageOne, setPackageOne] = useState([]);
-  const [packageTwo, setPackageTwo] = useState([]);
-  const [packageThree, setPackageThree] = useState([]);
-  const [packageFour, setPackageFour] = useState([]);
 
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
@@ -105,6 +101,8 @@ const Grooming = () => {
     });
   };
 
+  const [birdSizeId, setBirdSizeId] = useState(null);
+
   //LẤY THÔNG TIN BOOKING
   useEffect(() => {
     const getBooking = async () => {
@@ -113,9 +111,7 @@ const Grooming = () => {
           `/booking/${bookingId}`
         );
         setBookingInfo(response.data.data);
-        console.log("thong tin booking ne:", response.data.data);
 
-        // Only call getBirdProfile if bookingInfo is available
         if (response.data.data && response.data.data.bird_id) {
           getBirdProfile(response.data.data.bird_id);
         }
@@ -147,8 +143,13 @@ const Grooming = () => {
     const getBirdSize = async () => {
       try {
         const response = await api.get(`/bird_size/`);
-        setSizeInfo(response.data.data);
-        console.log("thong tin bird_size ne:", response.data.data);
+
+        const filteredSizeInfo = response.data.data.filter(item => item.bird_size_id !== 'SZ005');
+
+        setSizeInfo(filteredSizeInfo);
+
+        const firstBirdSize = filteredSizeInfo[0];
+        setBirdSizeId(firstBirdSize.bird_size_id);
       } catch (error) {
         console.log(error);
       }
@@ -156,34 +157,13 @@ const Grooming = () => {
 
     const getServicePackage = async () => {
       try {
-        const response = await api.get(`/servicePackage/`);
-        setPackageInfo(response.data.data)
-        console.log("thong tin package ne:", response.data.data);
-        //packageOne
-        const PackageOneList = response.data.data.filter(
-          (servicePackage) =>
-            ["SP11", "SP12", "SP13"].includes(servicePackage.service_package_id)
-        );
-        setPackageOne(PackageOneList);
-        //packageTwo
-        const PackageTwoList = response.data.data.filter(
-          (servicePackage) =>
-            ["SP16", "SP17", "SP18"].includes(servicePackage.service_package_id)
-        );
-        setPackageTwo(PackageTwoList);
-        //packageThree
-        const PackageThreeList = response.data.data.filter(
-          (servicePackage) =>
-            ["SP21", "SP22", "SP23"].includes(servicePackage.service_package_id)
-        );
-        setPackageThree(PackageThreeList);
-        //packageThree
-        const PackageThreeFour = response.data.data.filter(
-          (servicePackage) =>
-            ["SP26", "SP27", "SP28"].includes(servicePackage.service_package_id)
-        );
-        setPackageFour(PackageThreeFour);
-
+        const response = await api.get(`/servicePackage/`, {
+          params: {
+            bird_size_id: birdSizeId,
+            service_type_id: 'ST002',
+          },
+        });
+        setPackageInfo(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -191,12 +171,25 @@ const Grooming = () => {
     getBirdSize();
     getBooking();
     getServicePackage();
-  }, [bookingId]); // Assuming bookingId is a dependency needed to fetch data
+  }, [bookingId]);
 
   const [selectedServices, setSelectedServices] = useState([]);
 
-  // Hàm để thêm hoặc loại bỏ service_package_id vào/from selectedServices
   const toggleService = (serviceId) => {
+    const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
+    const selectedBirdSizeId = selectedService?.bird_size_id;
+
+    if (
+      selectedBirdSizeId &&
+      selectedServices.some((id) => {
+        const service = packageInfo.find((s) => s.service_package_id === id);
+        return service?.bird_size_id !== selectedBirdSizeId;
+      })
+    ) {
+      message.error("Bạn đã chọn dịch vụ của size chim khác");
+      return;
+    }
+
     if (selectedServices.includes(serviceId)) {
       setSelectedServices(selectedServices.filter((id) => id !== serviceId));
     } else {
@@ -204,13 +197,11 @@ const Grooming = () => {
     }
   };
 
-  // Lưu selectedServices vào localStorage khi có thay đổi
   useEffect(() => {
     localStorage.setItem('selectedServices', JSON.stringify(selectedServices));
   }, [selectedServices]);
 
   useEffect(() => {
-    // Lấy selectedServices từ localStorage (nếu có) khi component được tải
     const savedSelectedServices = JSON.parse(localStorage.getItem('selectedServices'));
     if (savedSelectedServices) {
       setSelectedServices(savedSelectedServices);
@@ -219,12 +210,15 @@ const Grooming = () => {
 
   const createNewServiceForm = async () => {
     try {
-      // Get all service_package_id values from selectedServices
       const arrServicePack = selectedServices.map((serviceId) => ({
         service_package_id: serviceId,
       }));
 
-      // Tạo service_Form
+      const totalPrice = selectedServices.reduce((total, serviceId) => {
+        const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
+        return total + (selectedService ? parseFloat(selectedService.price) : 0);
+      }, 0);
+
       const createdResponse = await api.post(`/service_Form/`, {
         bird_id: bookingInfo.bird_id,
         booking_id: bookingInfo.booking_id,
@@ -232,11 +226,11 @@ const Grooming = () => {
         status: "pending",
         date: bookingInfo.arrival_date,
         veterinarian_referral: bookingInfo.veterinarian_id,
-        total_price: 50000,
+        total_price: totalPrice,
         qr_code: "any",
-        num_ser_must_do: 1,
+        num_ser_must_do: selectedServices.length,
         num_ser_has_done: 0,
-        arr_service_pack: arrServicePack, // Use the arrServicePack here
+        arr_service_pack: arrServicePack,
       });
       success();
     } catch (err) {
@@ -244,7 +238,20 @@ const Grooming = () => {
       showError();
     }
   };
-  console.log('selectedServices', selectedServices)
+
+  const [availableServices, setAvailableServices] = useState([]);
+  const onSizeBirdSelect = (sizeBirdId) => {
+    const servicesForSelectedSize = packageInfo.filter(
+      (service) => service.bird_size_id === sizeBirdId
+    );
+
+    setAvailableServices(servicesForSelectedSize);
+    setSizeBird((prevSizeBird) => {
+      return prevSizeBird === sizeBirdId ? prevSizeBird : sizeBirdId;
+    });
+  }
+
+  
 
   return (
     <div className={styles.wrapper}>
@@ -337,13 +344,11 @@ const Grooming = () => {
                   <h4 className={styles.title}>Chọn size chim: </h4>
                   <div className={styles.displaysizeBird}>
                     {sizeInfo.map((item, index) => (
-                      <div
-                        className={styles.sizeBirdWrapper}
-                        key={index}
-                      >
+                      <div className={styles.sizeBirdWrapper} key={index}>
                         <div
-                          className={`${sizeBird === index + 1 ? styles.sizeBirdItemActive : styles.sizeBirdItem}`}
-                          onClick={() => setSizeBird(index + 1)}
+                          className={`${styles.sizeBirdItem} ${sizeBird === item.bird_size_id ? styles.sizeBirdItemActive : ""
+                            }`}
+                          onClick={() => onSizeBirdSelect(item.bird_size_id)}
                         >
                           <p>{item.size}</p>
                           <span>{item.breeds}</span>
@@ -355,26 +360,25 @@ const Grooming = () => {
                 <div className={styles.serviceChosen}>
                   <h4 className={styles.title}>Chọn dịch vụ: </h4>
                   <div className={styles.serviceWrapper}>
-                    {sizeBird > 0 && sizeBird <= 4 && (
-                      [packageOne, packageTwo, packageThree, packageFour][sizeBird - 1].map((service) => (
-                        <div
-                          className={`${styles.serviceItem
-                            } ${selectedServices.includes(service.service_package_id) ? styles.active : ''}`}
-                          key={service.service_package_id}
-                        >
-                          <h5>{service.package_name}</h5>
-                          <div className={styles.serviceDesc}>{service.service_description}</div>
-                          <span className={styles.price}>
-                            {service.price}<sup className={styles.unitPrice}>vnđ</sup>
-                          </span>
-                          <br />
-                          <button onClick={() => toggleService(service.service_package_id)}>Thêm</button>
-                        </div>
-                      ))
-                    )}
+                    {availableServices.map((service) => (
+                      <div
+                        className={`${styles.serviceItem} ${selectedServices.includes(service.service_package_id) ? styles.active : ""
+                          }`}
+                        key={service.service_package_id}
+                      >
+                        <h5>{service.package_name}</h5>
+                        <div className={styles.serviceDesc}>{service.service_description}</div>
+                        <span className={styles.price}>
+                          {service.price}
+                          <sup className={styles.unitPrice}>vnđ</sup>
+                        </span>
+                        <br />
+                        <button onClick={() => toggleService(service.service_package_id)}>Thêm</button>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <button className={styles.printService} onClick={createNewServiceForm} >Xac nhan</button>
+                <button className={styles.printService} onClick={createNewServiceForm} >Xác nhận</button>
                 {contextHolder}
               </div>
             )}

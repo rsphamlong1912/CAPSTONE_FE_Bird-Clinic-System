@@ -31,7 +31,6 @@ const GroomingToday = () => {
             booking.service_type_id == "ST002"
         );
         setCustomerList(filterBookings);
-        console.log('filterBookings', filterBookings)
       } catch (error) {
         console.log(error);
       }
@@ -119,7 +118,7 @@ const GroomingToday = () => {
                   </p>
                 </td>
                 <td>
-                  <div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Spa</div>
+                  <div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Tiếp nhận</div>
                 </td>
               </tr>
             ))}

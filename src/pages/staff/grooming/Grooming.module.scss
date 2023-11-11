@@ -42,7 +42,7 @@
   width: 68%;
   background-color: #fff;
   padding: 20px;
-  height: 650px;
+  height: auto;
   border-radius: 5px;
   margin-left: 3.5rem;
 }
@@ -164,7 +164,7 @@ span.active {
 
 .sizeBirdItem {
   text-align: center;
-  width: 260px;
+  width: 205px;
   height: auto;
   padding: 12px;
   border-radius: 5px;
@@ -173,10 +173,11 @@ span.active {
   margin: 0 5px;
   cursor: pointer;
   p {
-    display: inline-block;
+    display: inline-block;;
     text-align: center;
     font-weight: 500;
     font-size: 18px;
+    width: 180px;
   }
 }
 
@@ -184,7 +185,7 @@ span.active {
   background-color: #32b768;
   color: #fff;
   text-align: center;
-  width: 260px;
+  width: 205px;
   height: auto;
   padding: 12px;
   border-radius: 5px;
@@ -198,6 +199,7 @@ span.active {
     text-align: center;
     font-size: 18px;
     color: #fff;
+    width: 180px;
   }
 }
 
@@ -206,7 +208,7 @@ span.active {
 }
 .serviceItem {
   text-align: center;
-  width: 260px;
+  width: 300px;
   height: auto;
   padding: 16px;
   border-radius: 5px;
@@ -244,6 +246,29 @@ span.active {
     border: 1px solid #32b768;
     cursor: pointer;
     margin: 8px 0;
+  }
+}
+
+.serviceItem.active {
+  background-color: #32b768; /* Màu nền khi được chọn */
+  color: #fff; /* Màu văn bản khi được chọn */
+  border-color: #32b768; /* Màu viền khi được chọn */
+
+  .price {
+    font-size: 34px;
+    margin: 8px 0;
+    font-weight: 700;
+    line-height: 57px;
+    letter-spacing: 0.20000000298023224px;
+    text-align: left;
+    color: #fff;
+    .unitPrice {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 32px;
+      letter-spacing: 0.10000000149011612px;
+      text-align: left;
+    }
   }
 }
 
@@ -485,4 +510,23 @@ ion-icon {
   font-size: 15px;
   margin-left: 290px;
   margin-top: 30px;
+}
+
+.displaysizeBird {
+  display: flex;
+  max-width: 870px;
+  flex-wrap: wrap;
+}
+
+.printService {
+  background-color: #32b768;
+  padding: 10px 15px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  margin-left: 380px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-size: 18px;
 }

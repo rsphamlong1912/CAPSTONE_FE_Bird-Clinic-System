@@ -117,7 +117,7 @@ const listTabsBoarding = [
   {
     id: 1,
     name: "Khám hôm nay",
-    to: "/boarding-today",
+    to: "/boarding",
   },
   {
     id: 2,
@@ -251,7 +251,7 @@ function App() {
           }
         ></Route>
         <Route
-          path="/grooming/:id"
+          path="/grooming/:bookingId"
           element={
             <MainLayout listTabs={listTabsGrooming}>
               <Grooming></Grooming>
@@ -268,14 +268,13 @@ function App() {
           }
         ></Route>
         <Route
-          path="/boarding/:id"
+          path="/boarding/:bookingId"
           element={
             <MainLayout listTabs={listTabsBoarding}>
               <Boarding></Boarding>
             </MainLayout>
           }
         ></Route>
-        {/*ManageAndReport*/}
         <Route
           path="/manage-report"
           element={

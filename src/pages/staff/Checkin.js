@@ -19,7 +19,7 @@ const Checkin = () => {
         const response = await api.get("/booking");
         const filterBookings = response.data.data.filter(
           (booking) =>
-            booking.status === "booked" || booking.status === "checked_in"
+            booking.status !== "pending" && booking.status !== "booked"
         );
         setCustomerList(filterBookings);
       } catch (error) {
@@ -32,93 +32,6 @@ const Checkin = () => {
     fetchData();
   });
 
-  const options = {
-    title: "Xác nhận check-in",
-    message: "Tiến hành checkin cuộc hẹn này?",
-    buttons: [
-      {
-        label: "Xác nhận",
-      },
-      {
-        label: "Huỷ",
-      },
-    ],
-    closeOnEscape: true,
-    closeOnClickOutside: true,
-    keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
-    overlayClassName: "overlay-custom-class-name",
-  };
-
-  const handleConfirmAlert = (item) => {
-    const updatedOptions = {
-      ...options,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
-            try {
-              const response = await api.put(`/booking/${item.booking_id}`, {
-                status: "checked_in",
-              });
-              toast.success("Check-in thành công!", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-              console.log("response doi status ne", response.data);
-              // setCustomerList(response.data.data);
-              createNewServiceForm(item);
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
-  };
-
-  const createNewServiceForm = async (item) => {
-    try {
-      // Tạo service_Form
-      const createdResponse = await api.post(`/service_Form/`, {
-        bird_id: item.bird_id,
-        booking_id: item.booking_id,
-        reason_referral: "any",
-        status: "pending",
-        date: item.arrival_date,
-        veterinarian_referral: item.veterinarian_id,
-        total_price: 50000,
-        qr_code: "any",
-        num_ser_must_do: 1,
-        num_ser_has_done: 0,
-        arr_service_pack: [
-          {
-            service_package_id: "SP1",
-            note: "Khám tổng quát",
-          },
-        ],
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
@@ -178,16 +91,7 @@ const Checkin = () => {
                 </td>
 
                 <td>
-                  {item.status === "booked" ? (
-                    <div
-                      className={styles.btnCheckin}
-                      onClick={() => handleConfirmAlert(item)}
-                    >
-                      Check in
-                    </div>
-                  ) : (
-                    <div className={styles.btnCheckin}>Xem</div>
-                  )}
+                  <div className={styles.btnCheckin}>Xem</div>
                 </td>
               </tr>
             ))}

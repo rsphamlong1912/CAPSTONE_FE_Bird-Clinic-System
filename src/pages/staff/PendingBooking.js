@@ -140,7 +140,7 @@ const PendingBooking = () => {
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>Sáo nâu</td>
-                <td>Khám tổng quát</td>
+                <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
                 <td>
                   <strong>Phạm Ngọc Long</strong>

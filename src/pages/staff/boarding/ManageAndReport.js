@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ManageAndReport.module.scss";
 import { SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import { message } from "antd";
-
 const ManageAndReport = () => {
     const cageApi = Array(20).fill(null);
     const [totalCages, setTotalCages] = useState(cageApi);

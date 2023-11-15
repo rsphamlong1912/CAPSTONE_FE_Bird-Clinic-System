@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import styles from "./TrackAppoinments.module.scss";
+import styles from "./PendingBooking.module.scss";
 import { api } from "../../services/axios";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { useNavigate } from "react-router-dom";

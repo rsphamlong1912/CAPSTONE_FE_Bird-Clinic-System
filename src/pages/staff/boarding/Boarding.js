@@ -53,6 +53,8 @@ const Boarding = () => {
   };
 
   useEffect(() => {
+    let mang1 = [];
+    let mang2 = [];
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
@@ -66,12 +68,41 @@ const Boarding = () => {
       setDateRange(range);
 
       api
-        .get(`/cage/schedule_cage?start_date=${startDate}&end_date=${endDate}`)
+        .get(`/cage/?size=${birdSizeSelected}`)
         .then((response) => {
           // Handle the API response data
-          setCageList(
-            response.data.data.filter((item) => item.size === birdSizeSelected)
-          );
+          // console.log("response cvage moi", response.data.data);
+          // setCageList(response.data.data);
+          mang1 = response.data.data;
+          api
+            .get(
+              `/cage/schedule_cage?start_date=${startDate}&end_date=${endDate}`
+            )
+            .then((response) => {
+              // Handle the API response data
+              // setCageList(
+              //   response.data.data.filter((item) => item.size === birdSizeSelected)
+              // );
+              mang2 = response.data.data.filter(
+                (item) => item.size === birdSizeSelected
+              );
+              console.log("m1:", mang1);
+              console.log("m2", mang2);
+              const filteredMang1 = mang1.filter(
+                (item1) =>
+                  !mang2.some(
+                    (item2) => item1.boarding_id === item2.boarding_id
+                  )
+              );
+              const unionArray = [...mang2, ...filteredMang1];
+              console.log("union", unionArray);
+
+              setCageList(unionArray);
+            })
+            .catch((error) => {
+              // Handle errors
+              console.error("API Error:", error);
+            });
         })
         .catch((error) => {
           // Handle errors

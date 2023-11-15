@@ -28,6 +28,20 @@ const ManageAndReport = () => {
             message.error("Lồng trống");
         }
     };
+    sendApiforData();
+  }, []);
+
+  const filledCageList = [
+    ...cageList,
+    ...Array(20 - cageList.length).fill({ id: null, name: "Default Cage" }),
+  ];
+  const handleCageClick = (cage) => {
+    if (cage.bird_id) {
+      navigate(`/manage-report/${cage.id || "default"}`);
+    } else {
+      message.error("Lồng trống");
+    }
+  };
 
     const [selectedSize, setSelectedSize] = useState('');
     const filteredCageList = cageList.filter((cage) => {
@@ -75,8 +89,8 @@ const ManageAndReport = () => {
                 ))}
             </div>
             <div className={styles.footerContent}>{`${activeCagesCount}/${cagesCount} sức chứa`}</div>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default ManageAndReport;

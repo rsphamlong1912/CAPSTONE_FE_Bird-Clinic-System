@@ -21,6 +21,7 @@ import ReTesting from "./pages/doctor/healthcheck/ReTesting";
 import PendingBooking from "./pages/staff/PendingBooking";
 import Billing from "./pages/staff/Billing";
 import BillingHistory from "./pages/staff/BillingHistory";
+import { io } from "socket.io-client";
 
 const listTabsStaff = [
   {
@@ -117,7 +118,7 @@ const listTabsBoarding = [
   {
     id: 1,
     name: "Khám hôm nay",
-    to: "/boarding-today",
+    to: "/boarding",
   },
   {
     id: 2,
@@ -135,6 +136,8 @@ const listTabsBoarding = [
     to: "/history-boarding",
   },
 ];
+
+export const socket = io("https://clinicsystem.io.vn/");
 
 function App() {
   return (
@@ -268,14 +271,13 @@ function App() {
           }
         ></Route>
         <Route
-          path="/boarding/:id"
+          path="/boarding/:bookingId"
           element={
             <MainLayout listTabs={listTabsBoarding}>
               <Boarding></Boarding>
             </MainLayout>
           }
         ></Route>
-        {/*ManageAndReport*/}
         <Route
           path="/manage-report"
           element={

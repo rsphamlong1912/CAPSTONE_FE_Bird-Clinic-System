@@ -214,7 +214,7 @@ const Examing = () => {
     };
 
     getBooking();
-  }, [bookingId]); // Assuming bookingId is a dependency needed to fetch data
+  }, [bookingId]);
 
   const toggleInfo = () => {
     setShowInfo(!showInfo);
@@ -273,16 +273,16 @@ const Examing = () => {
     return unit * day;
   };
 
-  useEffect(() => {
-    // Tính toán giá trị amount cho tất cả các form
-    const updatedForms = forms.map((form) => {
-      return {
-        ...form,
-        amount: calculateAmount(form.unit, form.day),
-      };
-    });
-    setForms(updatedForms);
-  }, [forms]);
+  // useEffect(() => {
+  //   // Tính toán giá trị amount cho tất cả các form
+  //   const updatedForms = forms.map((form) => {
+  //     return {
+  //       ...form,
+  //       amount: calculateAmount(form.unit, form.day),
+  //     };
+  //   });
+  //   setForms(updatedForms);
+  // }, [forms]);
 
   const handleMedicineSelect = (index, selectedMedicine) => {
     const updatedForms = [...forms];

@@ -40,6 +40,7 @@ const Billing = () => {
     }
   };
 
+  //GET DỮ LIỆU BILL
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,7 +64,7 @@ const Billing = () => {
   useEffect(() => {
     const fetchServiceList = async () => {
       try {
-        const response = await api.get(`/servicePackage/?size_id=SZ005`);
+        const response = await api.get(`/servicePackage/`);
 
         // const filteredServiceList = response.data.data.filter(
         //   (servicePackage) =>
@@ -332,9 +333,9 @@ const Loading = () => {
         </strong>
       </td>
       <td>
-        <div className="status being">
+        <p className="status being">
           <LoadingSkeleton></LoadingSkeleton>
-        </div>
+        </p>
       </td>
     </tr>
   );

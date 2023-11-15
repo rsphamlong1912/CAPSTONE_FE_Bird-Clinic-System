@@ -9,6 +9,43 @@ const BoardingToday = () => {
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [dates, setDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+
+  useEffect(() => {
+    const today = new Date();
+    const nextFourDays = [];
+
+    for (let i = 0; i < 5; i++) {
+      const nextDay = new Date();
+      nextDay.setDate(today.getDate() + i);
+      const year = nextDay.getFullYear();
+      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
+      const day = String(nextDay.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      nextFourDays.push(formattedDate);
+    }
+    // Set selectedDate to the first date in the array when component mounts
+    if (nextFourDays.length > 0) {
+      setSelectedDate(nextFourDays[0]);
+    }
+    setDates(nextFourDays);
+  }, []);
+
+  const handleDateClick = (date) => {
+    const clickedDate = new Date(date);
+    const year = clickedDate.getFullYear();
+    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(clickedDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    setSelectedDate(formattedDate);
+    console.log("se,", selectedDate);
+  };
+
+  const formatDateForDisplay = (date) => {
+    const [yyyy, mm, dd] = date.split("-");
+    return `${dd}/${mm}`;
+  };
 
   const handleChangeStatusBooking = async (item) => {
     try {
@@ -25,14 +62,15 @@ const BoardingToday = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/booking");
+        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
         console.log("api ne:", response.data.data);
 
         const accountId = localStorage.getItem("account_id");
         const vetCustomers = response.data.data.filter(
           (booking) =>
             booking.veterinarian_id === accountId &&
-            booking.status === "checked_in"
+            booking.status === "checked_in" &&
+            booking.service_type_id === "ST003"
         );
 
         setCustomerList(vetCustomers);
@@ -46,17 +84,21 @@ const BoardingToday = () => {
       setLoading(false);
     }, 850);
     fetchData();
-  }, []);
+  }, [selectedDate]);
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
         <div className={styles.left}></div>
         <div className={styles.middle}>
-          <span className={styles.active}>06/10</span>
-          <span>07/10</span>
-          <span>08/10</span>
-          <span>09/10</span>
-          <span>10/10</span>
+          {dates.map((item, index) => (
+            <span
+              key={index}
+              className={item === selectedDate ? styles.active : ""}
+              onClick={() => handleDateClick(item)}
+            >
+              {formatDateForDisplay(item)}
+            </span>
+          ))}
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>

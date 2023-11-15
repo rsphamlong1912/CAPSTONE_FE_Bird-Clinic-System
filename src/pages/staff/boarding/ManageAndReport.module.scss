@@ -1,47 +1,47 @@
 .container {
-    margin: 70px;
-    background-color: #fff;
-    height: 700px;
+  margin: 30px;
+  background-color: #fff;
+  height: 700px;
 }
 
 .headerContent {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 30px;
-    padding-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px;
+  padding-top: 30px;
 }
 
 .left {
-    font-size: 25px;
-    font-weight: 600;
-    margin-left: 30px;
+  font-size: 25px;
+  font-weight: 600;
+  margin-left: 30px;
 }
 
 .right {
-    display: flex;
+  display: flex;
 }
 
 .btnSearch {
-    background-color: #fff;
-    font-size: 20px;
-    align-self: center;
-    border: 1px gray solid;
-    padding: 10px;
-    border-radius: 5px;
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+  background-color: #fff;
+  font-size: 20px;
+  align-self: center;
+  border: 1px gray solid;
+  padding: 10px;
+  border-radius: 5px;
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .right input {
-    width: 200px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px gray solid;
-    border-left: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+  width: 200px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px gray solid;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .cageChosen {

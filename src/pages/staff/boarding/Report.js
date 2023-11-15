@@ -6,8 +6,13 @@ import { MdOutlineDone } from "react-icons/md";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 import { AiOutlinePrinter } from "react-icons/ai";
 import { api } from "../../../services/axios";
-import { socket } from "../../../App";
+import { useParams } from "react-router-dom";
+import io from "socket.io-client";
+const socket = io("https://clinicsystem.io.vn/");
+
 const Report = () => {
+  const { boarding_id } = useParams();
+  const [boardingInfo, setBoardingInfo] = useState();
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [tables, setTables] = useState([]);
   const [selectedType, setSelectedType] = useState("");
@@ -55,52 +60,120 @@ const Report = () => {
       console.log(error);
     }
   };
+  const getBoardingInfo = async () => {
+    try {
+      const responseBoarding = await api.get(`/boarding/${boarding_id}`);
+      setBoardingInfo(responseBoarding.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getChatContent();
+    getBoardingInfo();
   }, []);
 
   const sendMessage = async () => {
-    const responsePost = await api.post(`content_chat/`, {
-      user1: "clinic",
-      user2: "customer1",
-      message: message,
-      type: "sent",
-      chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
-    });
-
-    const responsePost2 = await api.post(`content_chat/`, {
-      user1: "customer1",
-      user2: "clinic",
-      message: message,
-      type: "receive",
-      chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
-    });
-
-    if (responsePost && responsePost2) {
-      socket.emit("client-sent-message", {
+    if (message !== "") {
+      const responsePost = await api.post(`content_chat/`, {
         user1: "clinic",
         user2: "customer1",
-        msg: message,
+        message: message,
+        type: "sent",
+        chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
       });
-      console.log("chay roif ne");
-      setMessage("");
+
+      const responsePost2 = await api.post(`content_chat/`, {
+        user1: "customer1",
+        user2: "clinic",
+        message: message,
+        type: "receive",
+        chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+      });
+
+      if (responsePost && responsePost2) {
+        socket.emit("client-sent-message", {
+          user1: "clinic",
+          user2: "customer1",
+          message: message,
+          type: "sent",
+          chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+        });
+        console.log("chay roif ne");
+        setMessage("");
+      }
+    } else {
+      // Lấy file đã chọn
+      const fileInput = document.getElementById("file");
+      const file = fileInput.files[0];
+      console.log("file", file);
+
+      // Tạo formData chứa dữ liệu cần gửi
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("user1", "clinic");
+      formData.append("user2", "customer1");
+      formData.append("type", "sent");
+      formData.append("chat_id", "75e72f990d5b6fe886b2d0430c1f7a");
+
+      const formData2 = new FormData();
+      formData2.append("image", file);
+      formData2.append("user1", "customer1");
+      formData2.append("user2", "clinic");
+      formData2.append("type", "receive");
+      formData2.append("chat_id", "75e72f990d5b6fe886b2d0430c1f7a");
+
+      // Thực hiện gọi API sử dụng axios
+      try {
+        const response1 = await api.post("/content_chat/img", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const response2 = await api.post("/content_chat/img", formData2, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (response1 && response2) {
+          socket.emit("client-sent-message", {
+            user1: "clinic",
+            user2: "customer1",
+            message: file,
+            type: "sent",
+            chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+          });
+          console.log("chay roif ne");
+          setMessage("");
+        }
+        // getChatContent();
+      } catch (error) {
+        // Xử lý lỗi nếu có
+        console.error("Error:", error);
+      }
     }
   };
-
   useEffect(() => {
+    let data = {};
+    data.account_id = "clinic";
+    socket.emit("login", data);
     socket.on("server-send-data_seft", (message) => {
-      // setMessages((prevMessages) => [...prevMessages, message]);
+      // setContentChat((prevMessages) => [...prevMessages, message]);
       // console.log("Chạy vào đây rồi ♥")
       console.log("send data seft ♥: ", message);
       getChatContent();
     });
     socket.on("server-send-data", (message) => {
-      // setMessages((prevMessages) => [...prevMessages, message]);
+      console.log("message", message);
+      message.type = "receive";
+      // setContentChat((prevMessages) => [...prevMessages, message]);
       // console.log("Chạy vào đây rồi ♥")
       console.log("send data♥: ", message);
       getChatContent();
     });
   }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
@@ -123,18 +196,33 @@ const Report = () => {
               <div className={styles.headerReports}>Nội dung báo cáo</div>
               <div className={styles.chatContainer}>
                 <div className={styles.chatMessages}>
-                  {chatContent.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`${styles.message} ${
-                        message.type === "sent"
-                          ? styles.clinic
-                          : styles.customer
-                      }`}
-                    >
-                      {message.message}
-                    </div>
-                  ))}
+                  {chatContent.map((message, index) => {
+                    if (message.img_link) {
+                      return (
+                        <img
+                          className={`${styles.message} ${styles.imgChat} ${
+                            message.type === "sent"
+                              ? styles.clinic
+                              : styles.customer
+                          }`}
+                          src={message.img_link}
+                          alt=""
+                        />
+                      );
+                    } else
+                      return (
+                        <div
+                          key={index}
+                          className={`${styles.message} ${
+                            message.type === "sent"
+                              ? styles.clinic
+                              : styles.customer
+                          }`}
+                        >
+                          {message.message}
+                        </div>
+                      );
+                  })}
                 </div>
               </div>
             </div>
@@ -198,6 +286,7 @@ const Report = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
+            <input type="file" name="file" id="file" />
             <button onClick={sendMessage}>Gửi</button>
           </div>
         </div>

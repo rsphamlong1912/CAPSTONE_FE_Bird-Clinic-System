@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styles from "./Signin.module.scss";
 import { api } from "../services/axios";
 import { toast } from "react-toastify";
-import { socket } from "../App";
 
 const Signin = () => {
   const [phone, setPhone] = useState("");
@@ -21,10 +20,6 @@ const Signin = () => {
     api
       .post(`/login/?phone=${phone}&password=${password}`)
       .then((response) => {
-        const data = {};
-        data.account_id = "clinic";
-        socket.emit("login", data);
-
         // Xử lý phản hồi từ API khi đăng nhập thành công
         console.log("Đăng nhập thành công:", response.data.data.data);
         const { account_id, name, service_id } = response.data.data.data;
@@ -37,6 +32,8 @@ const Signin = () => {
             window.location.href = "/examing";
           } else if (service_id === "S013") {
             window.location.href = "/boarding";
+          } else if (service_id === "S009") {
+            window.location.href = "/grooming";
           } else {
             window.location.href = "/retesting";
           }

@@ -5,26 +5,22 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import { message } from "antd";
 const ManageAndReport = () => {
-    const cageApi = Array(20).fill(null);
-    const [totalCages, setTotalCages] = useState(cageApi);
+    const [cageList, setCageList] = useState([]);
     const navigate = useNavigate();
 
-    const [cageList, setCageList] = useState([]);
     useEffect(() => {
-        const sendApiforData = async () => {
+        const sendApiForData = async () => {
             try {
                 const response = await api.get(`/cage/`);
                 console.log("response:", response);
-
                 setCageList(response.data.data);
             } catch (error) {
                 console.log(error);
             }
         };
-        sendApiforData();
+        sendApiForData();
     }, []);
 
-    const filledCageList = [...cageList, ...Array(20 - cageList.length).fill({ id: null, name: "Default Cage" })];
     const handleCageClick = (cage) => {
         if (cage.bird_id) {
             navigate(`/manage-report/${cage.id || 'default'}`);
@@ -34,14 +30,17 @@ const ManageAndReport = () => {
     };
 
     const [selectedSize, setSelectedSize] = useState('');
-    const filteredCageList = filledCageList.filter((cage) => {
+    const filteredCageList = cageList.filter((cage) => {
         if (selectedSize === '') {
             return true;
         } else {
-            // Thay thế điều kiện dưới đây bằng điều kiện phù hợp với dữ liệu của bạn
+            // Adjust this condition based on your data structure
             return cage.size === selectedSize;
         }
     });
+
+    const activeCagesCount = filteredCageList.filter((cage) => cage.status === 'not_empty').length;
+    const cagesCount = filteredCageList.filter((cage) => cage.cage_id).length;
 
     return (
         <div className={styles.container}>
@@ -67,15 +66,15 @@ const ManageAndReport = () => {
                 {filteredCageList.map((cage, index) => (
                     <div
                         key={cage.id || index}
-                        className={`${styles.cageItem} ${cage.bird_id ? styles.active : styles.inactive}`}
+                        className={`${styles.cageItem} ${cage.status === 'not_empty' ? styles.active : styles.inactive}`}
                         onClick={() => handleCageClick(cage)}
                     >
-                        <p>{`L.${cage.id || index + 1}`}</p>
-                        <span>{`${cage.bird_id ? cage.bird_id.slice(0, 6) + '...' : ''}`}</span>
+                        <p>{`L.${cage.cage_id}`}</p>
+                        <span>{`${cage.bird_id ? cage.bird_id.slice(0, 6) + '...' : 'Empty Slot'}`}</span>
                     </div>
                 ))}
             </div>
-            <div className={styles.footerContent}>{`${cageList.length}/20 sức chứa`}</div>
+            <div className={styles.footerContent}>{`${activeCagesCount}/${cagesCount} sức chứa`}</div>
         </div>
     );
 };

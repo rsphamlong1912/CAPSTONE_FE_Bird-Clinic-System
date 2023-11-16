@@ -21,6 +21,7 @@ import ReTesting from "./pages/doctor/healthcheck/ReTesting";
 import PendingBooking from "./pages/staff/PendingBooking";
 import Billing from "./pages/staff/Billing";
 import BillingHistory from "./pages/staff/BillingHistory";
+import TrackDetail from "./pages/staff/TrackDetail";
 
 const listTabsStaff = [
   {
@@ -147,6 +148,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsStaff}>
               <TrackAppoinments></TrackAppoinments>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/track/:bookingId"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <TrackDetail></TrackDetail>
             </MainLayout>
           }
         ></Route>

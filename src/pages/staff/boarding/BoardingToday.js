@@ -4,6 +4,8 @@ import styles from "./BoardingToday.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import io from "socket.io-client";
+const socket = io("https://clinicsystem.io.vn");
 
 const BoardingToday = () => {
   const [customerList, setCustomerList] = useState([]);
@@ -11,6 +13,17 @@ const BoardingToday = () => {
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
+
+  useEffect(() => {
+    console.log("socket id khi mới vào bên booking: ", socket.id);
+    socket.emit("login", { account_id: localStorage.getItem("account_id") });
+    console.log("Login sucess");
+
+    socket.on("server-confirm-check-in", (data) => {
+      console.log("Data trả về: ", data);
+      fetchData();
+    });
+  }, []);
 
   useEffect(() => {
     const today = new Date();
@@ -58,28 +71,26 @@ const BoardingToday = () => {
       console.log(error);
     }
   };
+  const fetchData = async () => {
+    try {
+      const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+      console.log("api ne:", response.data.data);
 
+      const accountId = localStorage.getItem("account_id");
+      const vetCustomers = response.data.data.filter(
+        (booking) =>
+          booking.veterinarian_id === accountId &&
+          booking.status === "checked_in" &&
+          booking.service_type_id === "ST003"
+      );
+
+      setCustomerList(vetCustomers);
+      console.log("Updated customerList:", vetCustomers);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
-        console.log("api ne:", response.data.data);
-
-        const accountId = localStorage.getItem("account_id");
-        const vetCustomers = response.data.data.filter(
-          (booking) =>
-            booking.veterinarian_id === accountId &&
-            booking.status === "checked_in" &&
-            booking.service_type_id === "ST003"
-        );
-
-        setCustomerList(vetCustomers);
-        console.log("Updated customerList:", vetCustomers);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     setTimeout(() => {
       setLoading(false);
     }, 850);

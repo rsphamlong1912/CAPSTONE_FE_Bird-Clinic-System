@@ -1,12 +1,12 @@
 import React from "react";
 
-const LoadingSkeleton = () => {
+const LoadingSkeleton = ({ height = 15 }) => {
   return (
     <div
       className="skeleton"
       style={{
         width: "100%",
-        height: 15,
+        height: height,
       }}
     ></div>
   );

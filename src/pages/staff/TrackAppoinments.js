@@ -8,6 +8,9 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import DetailBookingModal from "../../components/modals/DetailBookingModal";
 
+import io from "socket.io-client";
+const socket = io("https://clinicsystem.io.vn");
+
 const TrackAppoinments = () => {
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
@@ -18,6 +21,21 @@ const TrackAppoinments = () => {
   const [dates, setDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
   const [bookingSelectedInfo, setBookingSelectedInfo] = useState();
+
+  //SOCKET CHECKIN
+  useEffect(() => {
+    setTimeout(() => {
+      console.log("socket id khi mới vào: ", socket.id);
+      socket.emit("login", { account_id: "staff" });
+      console.log("Login sucess");
+      socket.on("server-scan-check-in", (data) => {
+        console.log("data", data.booking_id);
+        if (data.booking_id) {
+          navigate(`/track/${data.booking_id}`);
+        }
+      });
+    }, 500);
+  }, []);
 
   useEffect(() => {
     const today = new Date();
@@ -275,10 +293,16 @@ const TrackAppoinments = () => {
                 <td className={styles.flexBtn}>
                   <div
                     className={styles.btnCheckin}
-                    onClick={() => handleModal(item)}
+                    onClick={() => navigate(`/track/${item.booking_id}`)}
                   >
                     Xem
                   </div>
+                  {/* <div
+                    className={styles.btnCheckin}
+                    onClick={() => handleModal(item)}
+                  >
+                    Xem
+                  </div> */}
                   {item.status === "booked" ? (
                     <div
                       className={styles.btnCheckin}

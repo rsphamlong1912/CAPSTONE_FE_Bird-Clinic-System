@@ -1,0 +1,177 @@
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.headerContent {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 25px 0;
+  .left {
+    transform: translateX(-200px);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    ion-icon {
+      color: black;
+    }
+  }
+  .right {
+    transform: translateX(176px);
+  }
+}
+.nameCustomer {
+  width: 280px;
+  text-align: center;
+  background-color: #32b768;
+  color: white;
+  padding: 10px 30px;
+  border-radius: 5px;
+  margin-left: 15%;
+  font-weight: 600;
+}
+
+.mainContent {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mainContent .content {
+  width: 68%;
+  background-color: #fff;
+  padding: 20px;
+  height: 540px;
+  border-radius: 5px;
+  margin-left: 3.5rem;
+}
+
+.mainContent .metaContent {
+  width: 25%;
+  margin: 0 auto;
+  .boxData {
+    width: 80%;
+    margin-left: 2.5rem;
+    display: inline-block;
+    padding: 15px 45px;
+    background-color: #32b768;
+    text-align: center;
+    border-radius: 5px;
+    .boxDataItem {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      padding-left: 25px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    ion-icon {
+      color: white;
+    }
+  }
+  button {
+    display: block;
+    width: 80%;
+    height: auto;
+    padding: 15px 45px;
+    margin: 15px 0;
+    margin-left: 2.5rem;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+  button.btnComplete {
+    background-color: white;
+    color: #32b768;
+    border: 1px solid #32b768;
+  }
+}
+
+.element {
+  width: 60%;
+  padding: 5px;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+  margin-left: 50px;
+  margin-top: 30px;
+  float: left;
+}
+
+.customerInfo {
+  margin-bottom: 40px;
+}
+.lineItem {
+  margin: 10px 0;
+  font-weight: 500;
+  .label {
+    display: inline-block;
+    min-width: 185px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    color: rgba(108, 108, 108, 1);
+    margin-right: 5px;
+  }
+}
+
+ion-icon {
+  color: #32b768;
+}
+
+.footerContent {
+  background-color: #d9d9d9;
+  display: flex;
+  justify-content: end;
+  padding: 20px;
+}
+
+.footerContent button {
+  padding: 15px 30px;
+  margin: 0 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btnBack {
+  background-color: rgba(108, 108, 108, 0.5);
+}
+
+.btnCont {
+  background-color: rgba(50, 183, 104, 0.5);
+}
+
+// =====================
+
+.InfText {
+  padding-top: 30px;
+  text-align: center;
+  font-size: 28px;
+}
+.image {
+  width: 150px;
+  height: 150px;
+  margin-left: 100px;
+  margin-top: 30px;
+  border-radius: 13px;
+  box-shadow: 5px 5px 5px #aaa;
+}
+
+.selectVet {
+  margin-top: 2%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.history {
+  float: left;
+}

@@ -22,8 +22,8 @@ const ManageAndReport = () => {
   }, []);
 
   const handleCageClick = (cage) => {
-    if (cage.bird_id) {
-      navigate(`/manage-report/${cage.id || "default"}`);
+    if (cage.boarding_id) {
+      navigate(`/manage-report/${cage.boarding_id || "default"}`);
     } else {
       message.error("Lồng trống");
     }

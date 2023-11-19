@@ -4,6 +4,8 @@ import styles from "./styles/ExamingToday.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import io from "socket.io-client";
+const socket = io("https://clinicsystem.io.vn");
 
 const ExamingToday = () => {
   const [customerList, setCustomerList] = useState([]);
@@ -11,6 +13,17 @@ const ExamingToday = () => {
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
+
+  useEffect(() => {
+    console.log("socket id khi mới vào bên booking: ", socket.id);
+    socket.emit("login", { account_id: localStorage.getItem("account_id") });
+    console.log("Login sucess");
+
+    socket.on("server-confirm-check-in", (data) => {
+      console.log("Data trả về: ", data);
+      fetchData();
+    });
+  }, []);
 
   useEffect(() => {
     const today = new Date();
@@ -51,6 +64,11 @@ const ExamingToday = () => {
       const response = await api.put(`/booking/${item.booking_id}`, {
         status: "on_going",
       });
+      if (response) {
+        socket.emit("start-exam", {
+          customer_id: item.account_id,
+        });
+      }
       console.log("response doi status ne", response.data);
       navigate(`/examing/${item.booking_id}`);
     } catch (error) {
@@ -58,26 +76,26 @@ const ExamingToday = () => {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+      console.log("api ne:", response.data.data);
+
+      const accountId = localStorage.getItem("account_id");
+      const vetCustomers = response.data.data.filter(
+        (booking) =>
+          booking.veterinarian_id === accountId &&
+          booking.status !== "pending" &&
+          booking.status !== "booked" &&
+          booking.service_type_id === "ST001"
+      );
+
+      setCustomerList(vetCustomers);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
-        console.log("api ne:", response.data.data);
-
-        const accountId = localStorage.getItem("account_id");
-        const vetCustomers = response.data.data.filter(
-          (booking) =>
-            booking.veterinarian_id === accountId &&
-            booking.status === "checked_in" &&
-            booking.service_type_id === "ST001"
-        );
-
-        setCustomerList(vetCustomers);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     setTimeout(() => {
       setLoading(false);
     }, 850);

@@ -221,7 +221,6 @@ const Examing = () => {
     setShowButton(false); // Ẩn nút sau khi nhấp vào
   };
 
-  //tab 3 get api
   const [medicineNames, setMedicineNames] = useState([]);
 
   useEffect(() => {
@@ -229,7 +228,6 @@ const Examing = () => {
       try {
         const response = await api.get(`/medicine/`);
         const medicineData = response.data.data;
-        // const names = medicineData.map((medicine) => medicine.name);
         setMedicineNames(medicineData);
         console.log("adata:", medicineData);
       } catch (error) {
@@ -255,9 +253,6 @@ const Examing = () => {
     sendApiforData();
   }, [tab]);
 
-  const [selectedMedicineId, setSelectedMedicineId] = useState("");
-
-  //tab 3
   const [forms, setForms] = useState([
     {
       selectedMedicine: "",
@@ -268,46 +263,23 @@ const Examing = () => {
       note: "",
     },
   ]);
-  // const medicineNames = [/* Your array of medicine names */];
-  const calculateAmount = (unit, day) => {
-    return unit * day;
-  };
-
-  // useEffect(() => {
-  //   // Tính toán giá trị amount cho tất cả các form
-  //   const updatedForms = forms.map((form) => {
-  //     return {
-  //       ...form,
-  //       amount: calculateAmount(form.unit, form.day),
-  //     };
-  //   });
-  //   setForms(updatedForms);
-  // }, [forms]);
 
   const handleMedicineSelect = (index, selectedMedicine) => {
     const updatedForms = [...forms];
     updatedForms[index].selectedMedicine = selectedMedicine;
-    // Tìm loại (type) dựa trên selectedMedicine và cập nhật giá trị cho type
     const selectedType = medicineNames.find(
       (medicine) => medicine.name === selectedMedicine
     )?.unit;
     updatedForms[index].type = selectedType || "";
 
     setForms(updatedForms);
-
-    // Find the selected medicine and get its medicine_id
-    const searchMedicine = medicineNames.find(
-      (medicine) => medicine.name === selectedMedicine
-    );
-
-    if (searchMedicine) {
-      setSelectedMedicineId(searchMedicine.medicine_id);
-      console.log("hahaha", searchMedicine.medicine_id);
-    } else {
-      setSelectedMedicineId(""); // Reset to empty if no medicine is selected
-    }
   };
 
+  const findMedicineIdByName = (medicineName) => {
+    const foundMedicine = medicineNames.find((medicine) => medicine.name === medicineName);
+    return foundMedicine ? foundMedicine.medicine_id : null;
+  };
+  
   const handleInputMedicineFirst = (index, e) => {
     const { name, value } = e.target;
     const updatedForms = [...forms];
@@ -346,8 +318,8 @@ const Examing = () => {
         // note: prescriptionData.note,
         // usage: "",
         arr_medicine: forms.map((medicineData) => ({
-          medicine_id: selectedMedicineId,
-          total_dose: medicineData.amount,
+          medicine_id: findMedicineIdByName(medicineData.selectedMedicine),
+          total_dose: medicineData.unit * medicineData.day,
           dose: medicineData.unit,
           day: medicineData.day,
           note: medicineData.note,
@@ -605,12 +577,6 @@ const Examing = () => {
                           {forms.map((form, index) => (
                             <div key={index} className={styles.contentAll}>
                               <div className={styles.headerDelete}>
-                                <h1>{index + 1}. Tên thuốc</h1>
-                                <RiDeleteBinLine
-                                  className={styles.deleteMedicine}
-                                  onClick={() => removeForm(index)}
-                                />
-
                                 <div className={styles.numberMedicine}>
                                   {index + 1}. {form.selectedMedicine}
                                 </div>
@@ -718,7 +684,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  {}
+                                  { }
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -772,26 +738,6 @@ const Examing = () => {
             {tab == 4 && (
               <div className={styles.create}>
                 <div className={styles.SelectDate}>
-                  <input
-                    className={styles.ChooseDay}
-                    name="arrival_date"
-                    value={bookingData.arrival_date}
-                    onChange={handleInputSave}
-                    placeholder="yyyy-mm-dd"
-                  />
-
-                  {/* {selectedDate && (
-                    <div className={styles.SetTime}>
-                      {timeSlotDate
-                        .filter((timeSlot) => timeSlot.date === selectedDate)
-                        .map((filteredSlot, index) => (
-                          <p className={styles.SetTimeSon} key={index}>
-                            {filteredSlot.slot_clinic.time}
-                          </p>
-                        ))}
-                    </div>
-                  )} */}
-
                   <div>
                     <div className={styles.expectedDate}>
                       Ngày dự kiến: {formattedDate}

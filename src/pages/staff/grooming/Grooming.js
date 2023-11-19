@@ -19,70 +19,74 @@ const Grooming = () => {
   const [tab, setTab] = useState(1);
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [sizeBird, setSizeBird] = useState(1);
-  const [showInfo1, setShowInfo1] = useState(false);
-  const [showInfo2, setShowInfo2] = useState(false);
-  const toggleInfo1 = () => {
-    setShowInfo1(!showInfo1);
+  const [showInfo, setShowInfo] = useState([]);
+
+  // Hàm toggleInfo1 nhận một tham số là serviceIndex để xác định dịch vụ nào đang được thao tác
+  const toggleInfo1 = (serviceIndex) => {
+    // Tạo một mảng mới từ mảng cũ để tránh thay đổi trực tiếp trạng thái
+    const newShowInfo = [...showInfo];
+    newShowInfo[serviceIndex] = !newShowInfo[serviceIndex];
+    setShowInfo(newShowInfo);
   };
-  const toggleInfo2 = () => {
-    setShowInfo2(!showInfo2);
-  };
-  const [image1, setImage1] = useState(null);
-  const [image2, setImage2] = useState(null);
-  const [image3, setImage3] = useState(null);
-  const [image4, setImage4] = useState(null);
-  const onDrop1 = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
+  // const toggleInfo2 = () => {
+  //   setShowInfo2(!showInfo2);
+  // };
+  // const [image1, setImage1] = useState(null);
+  // const [image2, setImage2] = useState(null);
+  // const [image3, setImage3] = useState(null);
+  // const [image4, setImage4] = useState(null);
+  // const onDrop1 = (acceptedFiles) => {
+  //   const file = acceptedFiles[0];
+  //   const reader = new FileReader();
 
-    reader.onload = () => {
-      setImage1(reader.result);
-    };
+  //   reader.onload = () => {
+  //     setImage1(reader.result);
+  //   };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
-  const onDrop2 = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+  // const onDrop2 = (acceptedFiles) => {
+  //   const file = acceptedFiles[0];
+  //   const reader = new FileReader();
 
-    reader.onload = () => {
-      setImage2(reader.result);
-    };
+  //   reader.onload = () => {
+  //     setImage2(reader.result);
+  //   };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
-  const onDrop3 = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+  // const onDrop3 = (acceptedFiles) => {
+  //   const file = acceptedFiles[0];
+  //   const reader = new FileReader();
 
-    reader.onload = () => {
-      setImage3(reader.result);
-    };
+  //   reader.onload = () => {
+  //     setImage3(reader.result);
+  //   };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
-  const onDrop4 = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+  // const onDrop4 = (acceptedFiles) => {
+  //   const file = acceptedFiles[0];
+  //   const reader = new FileReader();
 
-    reader.onload = () => {
-      setImage4(reader.result);
-    };
+  //   reader.onload = () => {
+  //     setImage4(reader.result);
+  //   };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
-  const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({ onDrop: onDrop1 });
-  const { getRootProps: getRootProps2, getInputProps: getInputProps2 } = useDropzone({ onDrop: onDrop2 });
-  const { getRootProps: getRootProps3, getInputProps: getInputProps3 } = useDropzone({ onDrop: onDrop3 });
-  const { getRootProps: getRootProps4, getInputProps: getInputProps4 } = useDropzone({ onDrop: onDrop4 });
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+  // const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({ onDrop: onDrop1 });
+  // const { getRootProps: getRootProps2, getInputProps: getInputProps2 } = useDropzone({ onDrop: onDrop2 });
+  // const { getRootProps: getRootProps3, getInputProps: getInputProps3 } = useDropzone({ onDrop: onDrop3 });
+  // const { getRootProps: getRootProps4, getInputProps: getInputProps4 } = useDropzone({ onDrop: onDrop4 });
 
   const [packageInfo, setPackageInfo] = useState([]);
 
@@ -251,7 +255,62 @@ const Grooming = () => {
     });
   }
 
-  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Assuming you have file input elements with the ids "file1" and "file2"
+    const fileInput1 = document.getElementById("file1");
+    const fileInput2 = document.getElementById("file2");
+
+    // Get the selected files
+    const file1 = fileInput1.files[0];
+    const file2 = fileInput2.files[0];
+
+    // Iterate over each selected service and upload images
+    for (const serviceId of selectedServices) {
+      // Get the selected service details
+      const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
+
+      // Create FormData for the first image
+      const formData1 = new FormData();
+      formData1.append("image", file1);
+      formData1.append("type", selectedService.package_name); // Use the service name as type
+      formData1.append("type_id", serviceId); // Use serviceId as type_id
+      formData1.append("type_service", serviceId); // Replace with the actual type_service
+      formData1.append("is_before", true);
+
+      // Create FormData for the second image
+      const formData2 = new FormData();
+      formData2.append("image", file2);
+      formData2.append("type", selectedService.package_name); // Use the service name as type
+      formData2.append("type_id", serviceId); // Use serviceId as type_id
+      formData2.append("type_service", serviceId); // Replace with the actual type_service
+      formData2.append("is_after", true);
+
+      try {
+        // Use axios to post the first image
+        const response1 = await api.post("/media", formData1, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        // Use axios to post the second image
+        const response2 = await api.post("/media", formData2, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        // Additional logic or state updates can be added here
+        message.success("Tải ảnh thành công");
+      } catch (error) {
+        // Handle errors if any
+        message.error("Tải ảnh thất bại");
+        console.error("Error:", error);
+      }
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -385,98 +444,76 @@ const Grooming = () => {
             {tab == 3 && (
               <div className={styles.perform}>
                 <div className={styles.services}>
-                  <span className={styles.txtService}>1.Dịch vụ cắt tỉa cánh</span>
-                  <span className={styles.boxService}>
-                    <input type="checkbox" name="temperature" />
-                    <label for="temperature">Hoàn thành</label>
-                  </span>
-                  <span className={styles.dropService}>
-                    <AiOutlineDown onClick={toggleInfo1} />
-                    {showInfo1 && (
-                      <div className={styles.DropAndDrag}>
-                        <div>
-                          <div {...getRootProps1()} className={styles.dropzone}>
-                            <input {...getInputProps1()} />
-                            {image1 ? (
-                              <img src={image1} alt="Dropped Image" className={styles.showimage} />
-                            ) : (
-                              <p>Kéo và thả tệp hình ảnh vào đây hoặc nhấn để chọn tệp</p>
-                            )}
-                          </div>
-                          <div className={styles.BAGrooming}>Trước grooming</div>
-                        </div>
-                        <div>
-                          <div {...getRootProps2()} className={styles.dropzone}>
-                            <input {...getInputProps2()} />
-                            {image2 ? (
-                              <img src={image2} alt="Dropped Image" className={styles.showimage} />
-                            ) : (
-                              <p>Kéo và thả tệp hình ảnh vào đây hoặc nhấn để chọn tệp</p>
-                            )}
-                          </div>
-                          <div className={styles.BAGrooming}>Sau grooming</div>
-                        </div>
+                  {selectedServices.map((serviceId, index) => {
+                    const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
+
+                    return (
+                      <div key={index} className={styles.mainServiceImg}>
+                        <span className={styles.txtService}>{index + 1}.{selectedService.package_name}</span>
+                        <span className={styles.boxService}>
+                          <input type="checkbox" name={`service_${index}`} />
+                          <label htmlFor={`service_${index}`}>Hoàn thành</label>
+                        </span>
+                        <span className={styles.dropService}>
+                          <AiOutlineDown onClick={() => toggleInfo1(index)} />
+                          {showInfo[index] && (
+                            <div className={styles.DropAndDrag}>
+                              <div className={styles.FILEContent}>
+                                <input type="file" name="file1" id="file1" className={styles.FILEGrooming} />
+                                <div className={styles.BAGrooming}>Trước grooming</div>
+                              </div>
+                              <div className={styles.FILEContent}>
+                                <input type="file" name="file2" id="file2" className={styles.FILEGrooming} />
+                                <div className={styles.BAGrooming}>Sau grooming</div>
+                              </div>
+                            </div>
+                          )}
+                        </span>
                       </div>
-                    )}
-                  </span>
+                    );
+                  })}
                 </div>
-                <div className={styles.services}>
-                  <span className={styles.txtService}>2.Dịch vụ cắt tỉa Lông</span>
-                  <span className={styles.boxService}>
-                    <input type="checkbox" name="temperature" />
-                    <label for="temperature">Hoàn thành</label>
-                  </span>
-                  <span className={styles.dropService}>
-                    <AiOutlineDown onClick={toggleInfo2} />
-                    {showInfo2 && (
-                      <div className={styles.DropAndDrag}>
-                        <div>
-                          <div {...getRootProps3()} className={styles.dropzone}>
-                            <input {...getInputProps3()} />
-                            {image3 ? (
-                              <img src={image3} alt="Dropped Image" className={styles.showimage} />
-                            ) : (
-                              <p>Kéo và thả tệp hình ảnh vào đây hoặc nhấn để chọn tệp</p>
-                            )}
-                          </div>
-                          <div className={styles.BAGrooming}>Trước grooming</div>
-                        </div>
-                        <div>
-                          <div {...getRootProps4()} className={styles.dropzone}>
-                            <input {...getInputProps4()} />
-                            {image4 ? (
-                              <img src={image4} alt="Dropped Image" className={styles.showimage} />
-                            ) : (
-                              <p>Kéo và thả tệp hình ảnh vào đây hoặc nhấn để chọn tệp</p>
-                            )}
-                          </div>
-                          <div className={styles.BAGrooming}>Sau grooming</div>
-                        </div>
-                      </div>
-                    )}
-                  </span>
-                </div>
+                <button onClick={handleSubmit} className={styles.btnSubmit}>
+                  Gửi
+                </button>
               </div>
             )}
             {tab == 4 && (
               <div className={styles.completed}>
-                <div className={styles.completedinf}>
-                  <div className={styles.txtCompleted}>Khách hàng:</div>
-                  <div className={styles.txtInf}>{customerProfile.name}</div>
-
-                  <div className={styles.txtCompleted}>Tên chim:</div>
-                  <div className={styles.txtInf}>{birdProfile.name}</div>
+                <div className={styles.completedFirst}>
+                  <div className={styles.completedLeft}>
+                    <h1>Thông tin</h1>
+                    <h4>Khách hàng và chim</h4>
+                  </div>
+                  <div className={styles.completedRight}>
+                    <div className={styles.completedRightOne}>
+                      <div className={styles.completedinf}>
+                        <div className={styles.txtCompleted}>KHÁCH HÀNG</div>
+                        <div className={styles.txtInf}>{customerProfile.name}</div>
+                      </div>
+                      <div className={styles.completedinf}>
+                        <div className={styles.txtCompleted}>TÊN CHIM</div>
+                        <div className={styles.txtInf}>{birdProfile.name}</div>
+                      </div>
+                    </div>
+                    <div className={styles.completedRightTwo}>
+                      <div className={styles.completedinf}>
+                        <div className={styles.txtCompleted}>SĐT</div>
+                        <div className={styles.txtInf}>{customerProfile.phone}</div>
+                      </div>
+                      <div className={styles.completedinf}>
+                        <div className={styles.txtCompleted}>LOẠI</div>
+                        <div className={styles.txtInf}>{birdProfile.breed}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.completedinf}>
-                  <div className={styles.txtCompleted}>Số điện thoại:</div>
-                  <div className={styles.txtInf}>{customerProfile.phone}</div>
-
-                  <div className={styles.txtCompleted}>Loài:</div>
-                  <div className={styles.txtInf}>{birdProfile.breed}</div>
-                </div>
-                <div className={styles.completedinf}>
-                  <div className={styles.txtCompleted}>Dịch vụ:</div>
-                  <div>
+                <div className={styles.completedSecond}>
+                  <div className={styles.completedLeft}>
+                    <h1>Dịch vụ</h1>
+                    <h4>Các dịch vụ đã chọn</h4>
+                  </div>
+                  <div className={styles.completedSecondService}>
                     {selectedServices.map((serviceId) => {
                       const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
 
@@ -486,16 +523,6 @@ const Grooming = () => {
                         </div>
                       );
                     })}
-                  </div>
-                </div>
-                <div className={styles.imageCompleted}>
-                  <div className={styles.Completedimage}>
-                    <img src="https://vcdn-vnexpress.vnecdn.net/2023/03/22/chim-toucan-9479-1679447208.jpg" alt="Trước grooming" />
-                    <div className={styles.txtCompletedimage}>Trước grooming</div>
-                  </div>
-                  <div className={styles.Completedimage}>
-                    <img src="https://vcdn-vnexpress.vnecdn.net/2023/03/22/chim-toucan-9479-1679447208.jpg" alt="Sau grooming" />
-                    <div className={styles.txtCompletedimage}>Sau grooming</div>
                   </div>
                 </div>
                 <button

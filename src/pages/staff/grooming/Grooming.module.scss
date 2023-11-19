@@ -130,16 +130,18 @@ span.active {
 }
 .title {
   font-size: 22px;
-  font-weight: 700;
   line-height: 27px;
   letter-spacing: 0.01em;
   text-align: left;
   color: black;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .customerInfo {
-  margin-bottom: 40px;
+  padding: 20px;
+  border: 2px solid rgb(232, 232, 232);
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 .lineItem {
   margin: 10px 0;
@@ -323,18 +325,22 @@ ion-icon {
 }
 
 .perform {
-  margin-left: 200px;
+  margin-left: 180px;
 }
 
 .txtService {
   font-size: 30px;
   color: #6B7280;
+  width: 500px; /* Adjust the value as needed */
+  /* Add any other styles you want */
+  /* For example, you can use display: inline-block to allow setting a width */
+  display: inline-block;
 }
 
 .boxService {
   font-size: 25px;
   color: #737373;
-  margin-left: 150px;
+  margin-right: 10px;
 }
 
 .boxService > input {
@@ -344,7 +350,7 @@ ion-icon {
 }
 
 .dropService {
-  padding-left: 50px;
+  padding-left: 20px;
 }
 
 .DropAndDrag {
@@ -387,7 +393,7 @@ ion-icon {
 }
 
 .BAGrooming {
-  margin-left: 130px;
+  margin-left: 100px;
   margin-top: 20px;
 
   font-family: 'Montserrat';
@@ -407,30 +413,35 @@ ion-icon {
 }
 
 .completedinf {
-  display: flex;
+  // display: flex;
+  width: 200px;
+  border: 2px solid rgb(232, 232, 232);
+  margin: 20px;
+  border-radius: 8px;
 }
 
 .txtCompleted {
-  font-size: 20px;
+  font-size: 12px;
+  font-weight: 800;
   line-height: 24px;
   /* identical to box height, or 171% */
   letter-spacing: 0.2px;
 
-  color: #000000;
-  width: 200px;
-  padding-left: 50px;
-  padding-bottom: 30px;
+  color: #6C6C6C;
+  padding-top: 10px;
+  margin-left: 10px;
 }
 
 .txtInf {
   font-weight: 600;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 24px;
   /* identical to box height, or 171% */
   letter-spacing: 0.2px;
 
   color: #000000;
-  width: 200px;
+  padding-bottom: 15px;
+  margin-left: 10px;
 }
 
 .txtInfSV {
@@ -441,7 +452,8 @@ ion-icon {
   letter-spacing: 0.2px;
 
   color: #000000;
-  width: 600px;
+  padding-left: 10px;
+  margin: 10px;
 }
 
 .imageCompleted {
@@ -481,7 +493,7 @@ ion-icon {
   font-size: 15px;
   border: 1px solid #32B768;
 
-  margin-top: 100px;
+  margin-top: 60px;
   margin-left: 350px;
 }
 
@@ -529,4 +541,88 @@ ion-icon {
   margin-top: 15px;
   cursor: pointer;
   font-size: 18px;
+}
+
+.FILEContent {
+  margin-bottom: 10px;
+  margin-right: 30px;
+  margin-left: 30px;
+  margin-top: 8px;
+  border: 1px solid #cccccc;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.FILEGrooming {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.btnSubmit {
+  background-color: #32b768;
+  padding: 10px 15px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  margin-left: 330px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.completedFirst {
+  display: flex;
+}
+
+.completedSecond {
+  margin-top: 15px;
+  display: flex;
+}
+
+.completedLeft {
+  width: 300px;
+  border: 2px solid rgb(232, 232, 232);
+  border-radius: 15px 0 0 15px;
+
+  h1{
+    color: #000000;
+    margin-top: 40px;
+    margin-left: 40px;
+    margin-bottom: 10px;
+  }
+
+  h4 {
+    color: #6C6C6C;
+    margin-left: 40px;
+  }
+}
+
+.completedRight {
+  width: auto;
+  border: 2px solid rgb(232, 232, 232);
+  display: flex;
+  border-radius: 0 15px 15px 0;
+}
+
+.completedSecondService {
+  width: 480px;
+  height: 150px;
+  border: 2px solid rgb(232, 232, 232);
+  border-radius: 0 15px 15px 0;
+}
+
+.birdInfo {
+  padding: 20px;
+  border: 2px solid rgb(232, 232, 232);
+  border-radius: 10px;
+}
+
+.mainServiceImg {
+  width: 750px;
+}
+
+.services  {
+  height: 450px;
 }

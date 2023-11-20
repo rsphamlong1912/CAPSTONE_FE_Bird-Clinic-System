@@ -18,6 +18,7 @@ const Report = () => {
   const [selectedType, setSelectedType] = useState("");
   const [tab, setTab] = useState(1);
   const [chatId, setChatId] = useState();
+  const [customerId, setCustomerId] = useState();
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
   const navigate = useNavigate();
@@ -52,10 +53,10 @@ const Report = () => {
     // Cập nhật danh sách bảng bằng cách thêm bảng mới vào mảng hiện tại
     setTables([...tables, newTable]);
   };
-  const getChatContent = async (chatId) => {
+  const getChatContent = async (chatId, customerId) => {
     try {
       const responseChatContent = await api.get(
-        `content_chat/?chat_id=${chatId}&user1=clinic&user2=customer1`
+        `content_chat/?chat_id=${chatId}&user1=clinic&user2=${customerId}`
       );
       setContentChat(responseChatContent.data.data);
     } catch (error) {
@@ -68,7 +69,11 @@ const Report = () => {
       if (responseBoarding) {
         setBoardingInfo(responseBoarding.data.data);
         setChatId(responseBoarding.data.data.chats.chat_id);
-        getChatContent(responseBoarding.data.data.chats.chat_id);
+        setCustomerId(responseBoarding.data.data.chats.customer_id);
+        getChatContent(
+          responseBoarding.data.data.chats.chat_id,
+          responseBoarding.data.data.chats.customer_id
+        );
       }
     } catch (error) {
       console.log(error);
@@ -82,14 +87,14 @@ const Report = () => {
     if (message !== "") {
       const responsePost = await api.post(`content_chat/`, {
         user1: "clinic",
-        user2: "customer1",
+        user2: customerId,
         message: message,
         type: "sent",
         chat_id: chatId,
       });
 
       const responsePost2 = await api.post(`content_chat/`, {
-        user1: "customer1",
+        user1: customerId,
         user2: "clinic",
         message: message,
         type: "receive",
@@ -99,7 +104,7 @@ const Report = () => {
       if (responsePost && responsePost2) {
         socket.emit("client-sent-message", {
           user1: "clinic",
-          user2: "customer1",
+          user2: customerId,
           message: message,
           type: "sent",
           chat_id: chatId,
@@ -117,13 +122,13 @@ const Report = () => {
       const formData = new FormData();
       formData.append("image", file);
       formData.append("user1", "clinic");
-      formData.append("user2", "customer1");
+      formData.append("user2", customerId);
       formData.append("type", "sent");
       formData.append("chat_id", chatId);
 
       const formData2 = new FormData();
       formData2.append("image", file);
-      formData2.append("user1", "customer1");
+      formData2.append("user1", customerId);
       formData2.append("user2", "clinic");
       formData2.append("type", "receive");
       formData2.append("chat_id", chatId);
@@ -144,7 +149,7 @@ const Report = () => {
         if (response1 && response2) {
           socket.emit("client-sent-message", {
             user1: "clinic",
-            user2: "customer1",
+            user2: customerId,
             message: file,
             type: "sent",
             chat_id: chatId,

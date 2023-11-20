@@ -25,6 +25,7 @@ const Signin = () => {
         const { account_id, name, service_id } = response.data.data.data;
         localStorage.setItem("account_id", account_id);
         localStorage.setItem("name", name);
+        localStorage.setItem("role", response.data.data.role);
         const role = response.data.data.role;
         console.log(role);
         if (role === "vet") {

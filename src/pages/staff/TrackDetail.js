@@ -131,6 +131,7 @@ const TrackDetail = () => {
               const response = await api.put(`/booking/${item.booking_id}`, {
                 status: "checked_in",
                 checkin_time: currentTime,
+                veterinarian_id: selectedVet,
               });
               if (response) {
                 console.log("do response r ne");
@@ -224,7 +225,7 @@ const TrackDetail = () => {
                             return (
                               <option
                                 key={vet.veterinarian_id}
-                                value={vet.name}
+                                value={vet.veterinarian_id}
                                 selected={true}
                               >
                                 {vet.name}
@@ -234,7 +235,7 @@ const TrackDetail = () => {
                             return (
                               <option
                                 key={vet.veterinarian_id}
-                                value={vet.name}
+                                value={vet.veterinarian_id}
                               >
                                 {vet.name}
                               </option>

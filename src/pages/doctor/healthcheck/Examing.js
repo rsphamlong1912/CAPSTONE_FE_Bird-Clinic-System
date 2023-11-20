@@ -2,11 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./styles/Examing.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
-import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { RiDeleteBinLine } from "react-icons/ri";
 import "flatpickr/dist/flatpickr.css";
-import Flatpickr from "react-flatpickr";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 
 import { useReactToPrint } from "react-to-print";
@@ -20,6 +18,8 @@ import { message } from "antd";
 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import io from "socket.io-client";
+const socket = io("https://clinicsystem.io.vn/");
 
 const Examing = () => {
   const { bookingId } = useParams();
@@ -53,6 +53,14 @@ const Examing = () => {
     setFormattedDate(formatted);
     console.log(`Selected Date: ${formatted}`);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log("socket id detail: ", socket.id);
+      socket.emit("login", { account_id: localStorage.getItem("account_id") });
+      console.log("Login sucess");
+    }, 500);
+  }, []);
 
   //GET DỊCH VỤ TỪ API
   useEffect(() => {
@@ -429,6 +437,7 @@ const Examing = () => {
       const response = await api.put(`/booking/${bookingInfo.booking_id}`, {
         status: "test_requested",
       });
+
       console.log("response doi status neeee", response.data);
     } catch (error) {
       console.log(error);
@@ -449,7 +458,13 @@ const Examing = () => {
         num_ser_has_done: "0",
         arr_service_pack: newArray,
       });
-      console.log("created response", createdResponse.data.data);
+      if (createdResponse) {
+        console.log("do response r ne", createdResponse);
+        socket.emit("create-service-form", {
+          customer_id: bookingInfo.account_id,
+          service_form_id: createdResponse.data.data.service_form_id,
+        });
+      }
 
       // const createdBill = await api.post(`/bill/`, {
       //   title: "Thanh toán",

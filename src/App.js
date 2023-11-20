@@ -22,6 +22,7 @@ import PendingBooking from "./pages/staff/PendingBooking";
 import Billing from "./pages/staff/Billing";
 import BillingHistory from "./pages/staff/BillingHistory";
 import TrackDetail from "./pages/staff/TrackDetail";
+import BillingDetail from "./pages/staff/BillingDetail";
 
 const listTabsStaff = [
   {
@@ -41,14 +42,14 @@ const listTabsStaff = [
   },
   {
     id: 4,
-    name: "Cần thanh toán",
+    name: "Thanh toán",
     to: "/billing",
   },
-  {
-    id: 5,
-    name: "Đã thanh toán",
-    to: "/billing-history",
-  },
+  // {
+  //   id: 5,
+  //   name: "Đã thanh toán",
+  //   to: "/billing-history",
+  // },
 ];
 const listTabsHealthCheck = [
   {
@@ -180,6 +181,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsStaff}>
               <Billing></Billing>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/billing/:id"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <BillingDetail></BillingDetail>
             </MainLayout>
           }
         ></Route>

@@ -208,12 +208,12 @@ tbody tr.hide td img {
 }
 
 .status.pending {
-  color: rgba(249, 150, 31, 1);
+  color: red;
   background-color: #fff;
-  border: 1px solid rgba(249, 150, 31, 1);
+  border: 1px solid red;
 }
 
-.status.checkin {
+.status.paid {
   color: rgba(0, 178, 255, 1);
   background-color: #fff;
   border: 1px solid rgba(0, 178, 255, 1);

@@ -73,7 +73,7 @@ const Checkin = () => {
               >
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
-                <td>Sáo nâu</td>
+                <td>{item.bird.name}</td>
                 <td>Khám tổng quát</td>
                 <td>{item.estimate_time}</td>
                 <td></td>
@@ -83,10 +83,25 @@ const Checkin = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "booked" ? styles.pending : styles.checkin
+                      item.status === "checked_in"
+                        ? styles.checkin
+                        : item.status === "on_going" ||
+                          item.status === "test_requested"
+                        ? styles.being
+                        : item.status === "booked"
+                        ? styles.booked
+                        : ""
                     } `}
                   >
-                    {item.status === "booked" ? "Chưa checkin" : "Đã checkin"}
+                    {item.status === "checked_in"
+                      ? "Đã checkin"
+                      : item.status === "test_requested"
+                      ? "Chờ xét nghiệm"
+                      : item.status === "on_going"
+                      ? "Đang khám"
+                      : item.status === "booked"
+                      ? "Chưa checkin"
+                      : ""}
                   </p>
                 </td>
 

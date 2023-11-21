@@ -23,6 +23,8 @@ import Billing from "./pages/staff/Billing";
 import BillingHistory from "./pages/staff/BillingHistory";
 import TrackDetail from "./pages/staff/TrackDetail";
 import BillingDetail from "./pages/staff/BillingDetail";
+import ResultToday from "./pages/doctor/healthcheck/ResultToday";
+import Result from "./pages/doctor/healthcheck/Result";
 
 const listTabsStaff = [
   {
@@ -82,8 +84,8 @@ const listTabsReTesting = [
   },
   {
     id: 2,
-    name: "Chờ kết quả",
-    to: "/wait-result",
+    name: "Trả kết quả",
+    to: "/result",
   },
   {
     id: 3,
@@ -256,6 +258,22 @@ function App() {
           element={
             <MainLayout listTabs={listTabsReTesting}>
               <ReTesting></ReTesting>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/result/"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <ResultToday></ResultToday>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/result/:serviceFormDetailId"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <Result></Result>
             </MainLayout>
           }
         ></Route>

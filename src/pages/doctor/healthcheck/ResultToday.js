@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Checkin.module.scss";
-import useCurrentDate from "../../hooks/useCurrentDate";
-import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
+import styles from "./ResultToday.module.scss";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../services/axios";
-import { confirmAlert } from "react-confirm-alert";
-import { toast } from "react-toastify";
+import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import useCurrentDate from "../../../hooks/useCurrentDate";
+import { api } from "../../../services/axios";
 
-const Checkin = () => {
+const ResultToday = () => {
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentDate } = useCurrentDate();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/booking");
-        const filterBookings = response.data.data.filter(
-          (booking) =>
-            booking.status !== "pending" && booking.status !== "booked"
+        const response = await api.get(
+          `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
+            "account_id"
+          )}&service_type_id=ST001`
         );
-        setCustomerList(filterBookings);
+
+        const allRequested = response.data.data;
+        const filterList = allRequested.filter(
+          (item) => item.status === "wait_result"
+        );
+        setCustomerList(filterList);
       } catch (error) {
         console.log(error);
       }
     };
+
     setTimeout(() => {
       setLoading(false);
     }, 850);
     fetchData();
-  });
+  }, []);
 
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>DANH SÁCH CHECKIN HÔM NAY</div>
+        <div className={styles.left}>DANH SÁCH TRẢ KẾT QUẢ XÉT NGHIỆM</div>
         <div className={styles.right}>{currentDate}</div>
       </div>
       <table>
         <thead>
           <tr>
             <th> STT</th>
-            <th> Khách hàng</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
-            <th> Giờ đặt</th>
-            <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
             <th> Trạng thái</th>
             <th> Hành động</th>
@@ -67,46 +67,40 @@ const Checkin = () => {
 
           {!loading &&
             customerList.map((item, index) => (
-              <tr
-                key={index}
-                // onClick={() => navigate(`/examing/${item.booking_id}`)}
-              >
+              <tr key={index}>
                 <td> {index + 1} </td>
-                <td>{item.customer_name}</td>
-                <td>{item.bird.name}</td>
-                <td>Khám tổng quát</td>
-                <td>{item.estimate_time}</td>
-                <td></td>
+                <td>Sáo nâu</td>
+                <td>{item.note}</td>
                 <td>
-                  <strong>{item.veterinarian.name}</strong>
+                  <strong>Phạm Ngọc Long</strong>
                 </td>
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "checked_in"
-                        ? styles.checkin
-                        : item.status === "on_going" ||
-                          item.status === "test_requested"
+                      item.status === "pending"
+                        ? styles.pending
+                        : item.status === "on_going"
                         ? styles.being
-                        : item.status === "booked"
-                        ? styles.booked
-                        : ""
+                        : styles.hasResult
                     } `}
                   >
-                    {item.status === "checked_in"
-                      ? "Đã checkin"
-                      : item.status === "test_requested"
-                      ? "Chờ xét nghiệm"
+                    {item.status === "checked_in" || item.status === "pending"
+                      ? "Chưa xét nghiệm"
                       : item.status === "on_going"
-                      ? "Đang khám"
-                      : item.status === "booked"
-                      ? "Chưa checkin"
-                      : ""}
+                      ? "Đang xét nghiệm"
+                      : "Đã xét nghiệm"}
                   </p>
                 </td>
 
                 <td>
-                  <div className={styles.btnCheckin}>Xem</div>
+                  <div
+                    className={styles.btnTesting}
+                    onClick={() =>
+                      navigate(`/result/${item.service_form_detail_id}`)
+                    }
+                  >
+                    Tiến hành
+                  </div>
                 </td>
               </tr>
             ))}
@@ -156,4 +150,4 @@ const Loading = () => {
   );
 };
 
-export default Checkin;
+export default ResultToday;

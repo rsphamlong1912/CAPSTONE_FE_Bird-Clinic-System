@@ -36,6 +36,7 @@ const TrackDetail = () => {
     try {
       const responseBooking = await api.get(`/booking/${bookingId}`);
       setBookingInfo(responseBooking.data.data);
+      setSelectedVet(responseBooking.data.data.veterinarian_id);
     } catch (error) {
       console.log(error);
     }
@@ -127,8 +128,10 @@ const TrackDetail = () => {
         {
           label: "Xác nhận",
           onClick: async () => {
+            console.log("selected vet", selectedVet);
             try {
               const response = await api.put(`/booking/${item.booking_id}`, {
+                veterinarian_id: selectedVet,
                 status: "checked_in",
                 checkin_time: currentTime,
               });
@@ -224,7 +227,7 @@ const TrackDetail = () => {
                             return (
                               <option
                                 key={vet.veterinarian_id}
-                                value={vet.name}
+                                value={vet.veterinarian_id}
                                 selected={true}
                               >
                                 {vet.name}
@@ -234,7 +237,7 @@ const TrackDetail = () => {
                             return (
                               <option
                                 key={vet.veterinarian_id}
-                                value={vet.name}
+                                value={vet.veterinarian_id}
                               >
                                 {vet.name}
                               </option>

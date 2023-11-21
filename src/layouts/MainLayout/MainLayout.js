@@ -17,7 +17,11 @@ const MainLayout = (props) => {
         <div className={styles.datetime}>{currentDate}</div>
         <div className={styles.user}>
           <div>
-            <span>Bác sĩ {localStorage.getItem("name")}</span>
+            <span>
+              {localStorage.getItem("role") === "vet"
+                ? `Bác sĩ ${localStorage.getItem("name")}`
+                : "Nhân viên phòng khám"}
+            </span>
             <br />
             <span className={styles.descUser}>Dịch vụ khám tổng quát</span>
           </div>

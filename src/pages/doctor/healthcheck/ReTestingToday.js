@@ -20,10 +20,10 @@ const ReTestingToday = () => {
         );
 
         const allRequested = response.data.data;
-        // const checkedInBookings = allBookings.filter(
-        //   (booking) => booking.status === "checked_in"
-        // );
-        setCustomerList(allRequested);
+        const filterList = allRequested.filter(
+          (item) => item.status !== "wait_result" && item.status !== "done"
+        );
+        setCustomerList(filterList);
       } catch (error) {
         console.log(error);
       }

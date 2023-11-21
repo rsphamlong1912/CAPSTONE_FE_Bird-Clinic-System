@@ -6,7 +6,7 @@ import { MdOutlineDone } from "react-icons/md";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 import { AiOutlinePrinter } from "react-icons/ai";
 import { api } from "../../../services/axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn/");
 
@@ -17,8 +17,11 @@ const Report = () => {
   const [tables, setTables] = useState([]);
   const [selectedType, setSelectedType] = useState("");
   const [tab, setTab] = useState(1);
+  const [chatId, setChatId] = useState();
+  const [customerId, setCustomerId] = useState();
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
+  const navigate = useNavigate();
 
   // Hàm này được sử dụng để thêm một bảng mới vào danh sách
   const createTable = () => {
@@ -50,10 +53,10 @@ const Report = () => {
     // Cập nhật danh sách bảng bằng cách thêm bảng mới vào mảng hiện tại
     setTables([...tables, newTable]);
   };
-  const getChatContent = async () => {
+  const getChatContent = async (chatId, customerId) => {
     try {
       const responseChatContent = await api.get(
-        `content_chat/?chat_id=75e72f990d5b6fe886b2d0430c1f7a&user1=clinic&user2=customer1`
+        `content_chat/?chat_id=${chatId}&user1=clinic&user2=${customerId}`
       );
       setContentChat(responseChatContent.data.data);
     } catch (error) {
@@ -63,13 +66,20 @@ const Report = () => {
   const getBoardingInfo = async () => {
     try {
       const responseBoarding = await api.get(`/boarding/${boarding_id}`);
-      setBoardingInfo(responseBoarding.data.data);
+      if (responseBoarding) {
+        setBoardingInfo(responseBoarding.data.data);
+        setChatId(responseBoarding.data.data.chats.chat_id);
+        setCustomerId(responseBoarding.data.data.chats.customer_id);
+        getChatContent(
+          responseBoarding.data.data.chats.chat_id,
+          responseBoarding.data.data.chats.customer_id
+        );
+      }
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    getChatContent();
     getBoardingInfo();
   }, []);
 
@@ -77,27 +87,27 @@ const Report = () => {
     if (message !== "") {
       const responsePost = await api.post(`content_chat/`, {
         user1: "clinic",
-        user2: "customer1",
+        user2: customerId,
         message: message,
         type: "sent",
-        chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+        chat_id: chatId,
       });
 
       const responsePost2 = await api.post(`content_chat/`, {
-        user1: "customer1",
+        user1: customerId,
         user2: "clinic",
         message: message,
         type: "receive",
-        chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+        chat_id: chatId,
       });
 
       if (responsePost && responsePost2) {
         socket.emit("client-sent-message", {
           user1: "clinic",
-          user2: "customer1",
+          user2: customerId,
           message: message,
           type: "sent",
-          chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+          chat_id: chatId,
         });
         console.log("chay roif ne");
         setMessage("");
@@ -112,16 +122,16 @@ const Report = () => {
       const formData = new FormData();
       formData.append("image", file);
       formData.append("user1", "clinic");
-      formData.append("user2", "customer1");
+      formData.append("user2", customerId);
       formData.append("type", "sent");
-      formData.append("chat_id", "75e72f990d5b6fe886b2d0430c1f7a");
+      formData.append("chat_id", chatId);
 
       const formData2 = new FormData();
       formData2.append("image", file);
-      formData2.append("user1", "customer1");
+      formData2.append("user1", customerId);
       formData2.append("user2", "clinic");
       formData2.append("type", "receive");
-      formData2.append("chat_id", "75e72f990d5b6fe886b2d0430c1f7a");
+      formData2.append("chat_id", chatId);
 
       // Thực hiện gọi API sử dụng axios
       try {
@@ -139,10 +149,10 @@ const Report = () => {
         if (response1 && response2) {
           socket.emit("client-sent-message", {
             user1: "clinic",
-            user2: "customer1",
+            user2: customerId,
             message: file,
             type: "sent",
-            chat_id: "75e72f990d5b6fe886b2d0430c1f7a",
+            chat_id: chatId,
           });
           console.log("chay roif ne");
           setMessage("");
@@ -162,7 +172,7 @@ const Report = () => {
       // setContentChat((prevMessages) => [...prevMessages, message]);
       // console.log("Chạy vào đây rồi ♥")
       console.log("send data seft ♥: ", message);
-      getChatContent();
+      setContentChat((chatContent) => [...chatContent, message]);
     });
     socket.on("server-send-data", (message) => {
       console.log("message", message);
@@ -170,16 +180,16 @@ const Report = () => {
       // setContentChat((prevMessages) => [...prevMessages, message]);
       // console.log("Chạy vào đây rồi ♥")
       console.log("send data♥: ", message);
-      getChatContent();
+      setContentChat((chatContent) => [...chatContent, message]);
     });
   }, []);
 
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
-        <div className={styles.left}>
+        <div className={styles.left} onClick={() => navigate("/manage-report")}>
           <ion-icon name="chevron-back-outline"></ion-icon>
-          <span>Thoát</span>
+          <span>Trở về</span>
         </div>
         <div className={styles.right}>
           <div className={styles.nameCustomer}>KH: Nguyễn Trí Công</div>

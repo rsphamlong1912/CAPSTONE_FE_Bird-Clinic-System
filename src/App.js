@@ -22,6 +22,9 @@ import PendingBooking from "./pages/staff/PendingBooking";
 import Billing from "./pages/staff/Billing";
 import BillingHistory from "./pages/staff/BillingHistory";
 import TrackDetail from "./pages/staff/TrackDetail";
+import BillingDetail from "./pages/staff/BillingDetail";
+import ResultToday from "./pages/doctor/healthcheck/ResultToday";
+import Result from "./pages/doctor/healthcheck/Result";
 
 const listTabsStaff = [
   {
@@ -41,14 +44,14 @@ const listTabsStaff = [
   },
   {
     id: 4,
-    name: "Cần thanh toán",
+    name: "Thanh toán",
     to: "/billing",
   },
-  {
-    id: 5,
-    name: "Đã thanh toán",
-    to: "/billing-history",
-  },
+  // {
+  //   id: 5,
+  //   name: "Đã thanh toán",
+  //   to: "/billing-history",
+  // },
 ];
 const listTabsHealthCheck = [
   {
@@ -81,8 +84,8 @@ const listTabsReTesting = [
   },
   {
     id: 2,
-    name: "Chờ kết quả",
-    to: "/wait-result",
+    name: "Trả kết quả",
+    to: "/result",
   },
   {
     id: 3,
@@ -184,6 +187,14 @@ function App() {
           }
         ></Route>
         <Route
+          path="/billing/:id"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <BillingDetail></BillingDetail>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
           path="/billing-history"
           element={
             <MainLayout listTabs={listTabsStaff}>
@@ -247,6 +258,22 @@ function App() {
           element={
             <MainLayout listTabs={listTabsReTesting}>
               <ReTesting></ReTesting>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/result/"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <ResultToday></ResultToday>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/result/:serviceFormDetailId"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <Result></Result>
             </MainLayout>
           }
         ></Route>

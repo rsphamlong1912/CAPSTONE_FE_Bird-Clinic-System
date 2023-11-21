@@ -45,10 +45,10 @@ const Billing = () => {
     const fetchData = async () => {
       try {
         const response = await api.get("/service_Form");
-        const filterBill = response.data.data.filter(
-          (item) => item.status === "pending"
-        );
-        setBillList(filterBill);
+        // const filterBill = response.data.data.filter(
+        //   (item) => item.status === "pending"
+        // );
+        setBillList(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -254,6 +254,7 @@ const Billing = () => {
             <th> Khách hàng</th>
             <th> Số lượng dịch vụ</th>
             <th> Tổng tiền</th>
+            <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
         </thead>
@@ -275,20 +276,39 @@ const Billing = () => {
                 <td>{item.customer_name}</td>
                 <td>{item.num_ser_must_do}</td>
                 <td>{item.total_price}</td>
+                <td>
+                  <p
+                    className={`${styles.status} ${
+                      item.status === "paid" ? styles.paid : styles.pending
+                    } `}
+                  >
+                    {item.status === "paid"
+                      ? "Đã thanh toán"
+                      : "Chưa thanh toán"}
+                  </p>
+                </td>
 
                 <td className={styles.grAction}>
                   <div
                     className={styles.btnCheckin}
+                    onClick={() => navigate(`/billing/${item.service_form_id}`)}
+                  >
+                    Xem
+                  </div>
+                  {/* <div
+                    className={styles.btnCheckin}
                     onClick={() => handleConfirmAlert(item)}
                   >
                     Xác nhận
-                  </div>
-                  <div
-                    className={`${styles.btnCheckin} ${styles.viewDetail} `}
-                    onClick={() => handlePrint(item)}
-                  >
-                    Xem hoá đơn
-                  </div>
+                  </div> */}
+                  {item.status === "paid" && (
+                    <div
+                      className={`${styles.btnCheckin} ${styles.viewDetail} `}
+                      onClick={() => handlePrint(item)}
+                    >
+                      In hoá đơn
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
@@ -309,12 +329,6 @@ const Billing = () => {
 const Loading = () => {
   return (
     <tr>
-      <td>
-        <LoadingSkeleton></LoadingSkeleton>
-      </td>
-      <td>
-        <LoadingSkeleton></LoadingSkeleton>
-      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

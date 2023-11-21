@@ -4,6 +4,7 @@ import styles from "./GroomingToday.module.scss";
 import { useNavigate } from "react-router-dom";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 import { api } from "../../../services/axios";
+import { ImFilesEmpty } from "react-icons/im";
 
 const GroomingToday = () => {
   const [customerList, setCustomerList] = useState([]);
@@ -127,6 +128,15 @@ const GroomingToday = () => {
             </>
           )}
 
+          {!loading && customerList.length === 0 && (
+            <tr className={styles.NoGroomingDetial}>
+              <td colSpan="9">
+                <ImFilesEmpty className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>No grooming appointments for the selected date.</h3>
+              </td>
+            </tr>
+          )}
+
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
@@ -141,22 +151,21 @@ const GroomingToday = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "check_in"
-                        ? styles.checkin
-                        : item.status === "on_going" ||
-                          item.status === "test_requested"
+                    className={`${styles.status} ${item.status === "check_in"
+                      ? styles.checkin
+                      : item.status === "on_going" ||
+                        item.status === "test_requested"
                         ? styles.being
                         : ""
-                    } `}
+                      } `}
                   >
                     {item.status === "check_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
-                      ? "Đang chăm sóc"
-                      : item.status === "test_requested"
-                      ? "Chờ kết quả"
-                      : "Chưa checkin"}
+                        ? "Đang chăm sóc"
+                        : item.status === "test_requested"
+                          ? "Chờ kết quả"
+                          : "Chưa checkin"}
                   </p>
                 </td>
                 <td>

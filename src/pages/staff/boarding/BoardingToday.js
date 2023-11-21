@@ -12,7 +12,13 @@ const BoardingToday = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
 
   useEffect(() => {
     console.log("socket id khi mới vào bên booking: ", socket.id);
@@ -79,10 +85,23 @@ const BoardingToday = () => {
       const accountId = localStorage.getItem("account_id");
       const vetCustomers = response.data.data.filter(
         (booking) =>
-          booking.veterinarian_id === accountId &&
-          booking.status === "checked_in" &&
-          booking.service_type_id === "ST003"
+          (booking.veterinarian_id === accountId &&
+            booking.status === "checked_in") ||
+          (booking.status === "on_going" && booking.service_type_id === "ST003")
       );
+
+      vetCustomers.sort((a, b) => {
+        const timeA = a.checkin_time.split(":").map(Number);
+        const timeB = b.checkin_time.split(":").map(Number);
+
+        // Compare hours
+        if (timeA[0] !== timeB[0]) {
+          return timeA[0] - timeB[0];
+        }
+
+        // If hours are the same, compare minutes
+        return timeA[1] - timeB[1];
+      });
 
       setCustomerList(vetCustomers);
       console.log("Updated customerList:", vetCustomers);

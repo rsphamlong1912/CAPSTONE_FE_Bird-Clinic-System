@@ -90,11 +90,25 @@ const ExamingToday = () => {
           booking.service_type_id === "ST001"
       );
 
+      vetCustomers.sort((a, b) => {
+        const timeA = a.checkin_time.split(":").map(Number);
+        const timeB = b.checkin_time.split(":").map(Number);
+
+        // Compare hours
+        if (timeA[0] !== timeB[0]) {
+          return timeA[0] - timeB[0];
+        }
+
+        // If hours are the same, compare minutes
+        return timeA[1] - timeB[1];
+      });
+
       setCustomerList(vetCustomers);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
@@ -167,7 +181,8 @@ const ExamingToday = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "checked_in"
+                      item.status === "checked_in" ||
+                      item.status === "checked_in_after_test"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
@@ -181,6 +196,8 @@ const ExamingToday = () => {
                       ? "Đang khám"
                       : item.status === "test_requested"
                       ? "Chờ xét nghiệm"
+                      : item.status === "checked_in_after_test"
+                      ? "Có kết quả"
                       : "Chưa checkin"}
                   </p>
                 </td>

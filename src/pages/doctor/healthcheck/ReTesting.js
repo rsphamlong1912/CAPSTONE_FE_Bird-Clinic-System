@@ -290,7 +290,7 @@ const ReTesting = () => {
               </div>
             </div>
             <button className={styles.btnComplete} onClick={handleConfirmAlert}>
-              Hoàn thành xét nghiệm
+              Xác nhận xét nghiệm
             </button>
             <button className={styles.btnHospitalize}>Nhập viện</button>
           </div>

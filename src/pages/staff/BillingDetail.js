@@ -179,6 +179,7 @@ const BillingDetail = () => {
                     customer_id: customerId,
                     vet: vetDetailArr,
                   });
+                  navigate("/billing");
                 } catch (error) {
                   console.log(error);
                 }
@@ -252,6 +253,7 @@ const BillingDetail = () => {
                     customer_id: customerId,
                     vet: vetDetailArr,
                   });
+                  navigate("/billing");
                 } catch (error) {
                   console.log(error);
                 }
@@ -328,10 +330,12 @@ const BillingDetail = () => {
                     ))}
                 </tbody>
               </table>
-              <div className={styles.totalPrice}>
-                <span className={styles.totalLabel}>Tổng cộng:</span>
-                <span>{totalPrice && formattedPrice(totalPrice)}</span>
-              </div>
+              {!loading && (
+                <div className={styles.totalPrice}>
+                  <span className={styles.totalLabel}>Tổng cộng:</span>
+                  <span>{totalPrice && formattedPrice(totalPrice)}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.metaContent}>

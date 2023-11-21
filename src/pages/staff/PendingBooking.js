@@ -11,6 +11,42 @@ const PendingBooking = () => {
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dates, setDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+
+  useEffect(() => {
+    const today = new Date();
+    const nextFourDays = [];
+
+    for (let i = 0; i < 5; i++) {
+      const nextDay = new Date();
+      nextDay.setDate(today.getDate() + i);
+      const year = nextDay.getFullYear();
+      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
+      const day = String(nextDay.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      nextFourDays.push(formattedDate);
+    }
+    // Set selectedDate to the first date in the array when component mounts
+    if (nextFourDays.length > 0) {
+      setSelectedDate(nextFourDays[0]);
+    }
+    setDates(nextFourDays);
+  }, []);
+
+  const handleDateClick = (date) => {
+    const clickedDate = new Date(date);
+    const year = clickedDate.getFullYear();
+    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(clickedDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    setSelectedDate(formattedDate);
+  };
+
+  const formatDateForDisplay = (date) => {
+    const [yyyy, mm, dd] = date.split("-");
+    return `${dd}/${mm}`;
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -95,11 +131,15 @@ const PendingBooking = () => {
       <div className={styles.headerContent}>
         <div className={styles.left}></div>
         <div className={styles.middle}>
-          <span className={styles.active}>06/10</span>
-          <span>07/10</span>
-          <span>08/10</span>
-          <span>09/10</span>
-          <span>10/10</span>
+          {dates.map((item, index) => (
+            <span
+              key={index}
+              className={item === selectedDate ? styles.active : ""}
+              onClick={() => handleDateClick(item)}
+            >
+              {formatDateForDisplay(item)}
+            </span>
+          ))}
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>

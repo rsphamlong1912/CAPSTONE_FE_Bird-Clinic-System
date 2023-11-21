@@ -22,9 +22,11 @@ const TrackDetail = () => {
   const [selectedVet, setSelectedVet] = useState("");
   const [bookingInfo, setBookingInfo] = useState();
 
-  const fetchVeterinarians = async () => {
+  const fetchVeterinarians = async (vet) => {
     try {
-      const responseVeterinarians = await api.get(`/vet`);
+      const responseVeterinarians = await api.get(
+        `/vet/?service_id=${vet.service_id}&service_type_id=${vet.service_type_id}`
+      );
       setVeterinarians(responseVeterinarians.data.data);
       console.log("fetch", responseVeterinarians.data.data);
     } catch (error) {
@@ -37,13 +39,13 @@ const TrackDetail = () => {
       const responseBooking = await api.get(`/booking/${bookingId}`);
       setBookingInfo(responseBooking.data.data);
       setSelectedVet(responseBooking.data.data.veterinarian_id);
+      fetchVeterinarians(responseBooking.data.data.veterinarian);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchVeterinarians();
     fetchBookingInfo();
     setTimeout(() => {
       setLoading(false);
@@ -136,26 +138,25 @@ const TrackDetail = () => {
                 checkin_time: currentTime,
               });
               if (response) {
-                console.log("do response r ne");
                 socket.emit("confirm-check-in", {
                   customer_id: item.account_id,
                   veterinarian_id: item.veterinarian_id,
                 });
-              }
-              toast.success("Check-in thành công!", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-              });
-              console.log("response doi status ne", response.data);
-              //CHECK SERVICE TYPE
-              if (item.service_type_id === "ST001") {
-                createNewServiceForm(item);
+                toast.success("Check-in thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                console.log("response doi status ne", response.data);
+                if (item.service_type_id === "ST001") {
+                  createNewServiceForm(item);
+                }
+                navigate("/track");
               }
             } catch (error) {
               console.log(error);

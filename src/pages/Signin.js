@@ -21,7 +21,9 @@ const Signin = () => {
       .post(`/login/?phone=${phone}&password=${password}`)
       .then((response) => {
         // Xử lý phản hồi từ API khi đăng nhập thành công
-        console.log("Đăng nhập thành công:", response.data.data.data);
+        console.log("Đăng nhập thành công:", response.data.data);
+        const { accessToken } = response.data.data;
+        localStorage.setItem("accessToken", accessToken);
         const { account_id, name, service_id } = response.data.data.data;
         localStorage.setItem("account_id", account_id);
         localStorage.setItem("name", name);

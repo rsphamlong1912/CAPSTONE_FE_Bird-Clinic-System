@@ -70,6 +70,7 @@ const TrackAppoinments = () => {
     const [yyyy, mm, dd] = date.split("-");
     return `${dd}/${mm}`;
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -77,6 +78,19 @@ const TrackAppoinments = () => {
         const filterBookings = response.data.data.filter(
           (booking) => booking.status !== "pending"
         );
+        // Sort bookings by checkin_time in ascending order
+        // filterBookings.sort((a, b) => {
+        //   const timeA = a.checkin_time.split(":").map(Number);
+        //   const timeB = b.checkin_time.split(":").map(Number);
+
+        //   // Compare hours
+        //   if (timeA[0] !== timeB[0]) {
+        //     return timeA[0] - timeB[0];
+        //   }
+
+        //   // If hours are the same, compare minutes
+        //   return timeA[1] - timeB[1];
+        // });
         setCustomerList(filterBookings);
       } catch (error) {
         console.log(error);
@@ -87,7 +101,7 @@ const TrackAppoinments = () => {
       setLoading(false);
     }, 850);
     fetchData();
-  });
+  }, []);
 
   const options = {
     title: "Xác nhận check-in",
@@ -269,7 +283,8 @@ const TrackAppoinments = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "checked_in"
+                      item.status === "checked_in" ||
+                      item.status === "checked_in_after_test"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
@@ -287,23 +302,28 @@ const TrackAppoinments = () => {
                       ? "Đang khám"
                       : item.status === "booked"
                       ? "Chưa checkin"
+                      : item.status === "checked_in_after_test"
+                      ? "Có kết quả"
                       : ""}
                   </p>
                 </td>
                 <td className={styles.flexBtn}>
-                  <div
-                    className={styles.btnCheckin}
-                    onClick={() => navigate(`/track/${item.booking_id}`)}
-                  >
-                    Xem
-                  </div>
+                  {item.status === "booked" && (
+                    <div
+                      className={styles.btnCheckin}
+                      onClick={() => navigate(`/track/${item.booking_id}`)}
+                    >
+                      Xem
+                    </div>
+                  )}
+
                   {/* <div
                     className={styles.btnCheckin}
                     onClick={() => handleModal(item)}
                   >
                     Xem
                   </div> */}
-                  {item.status === "booked" ? (
+                  {/* {item.status === "booked" ? (
                     <div
                       className={styles.btnCheckin}
                       onClick={() => handleConfirmAlert(item)}
@@ -312,7 +332,7 @@ const TrackAppoinments = () => {
                     </div>
                   ) : (
                     <div></div>
-                  )}
+                  )} */}
                 </td>
               </tr>
             ))}

@@ -106,18 +106,18 @@ const Result = () => {
       const isDone =
         serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
 
-      if (isDone) {
-        try {
-          const updateBookingResponse = await api.put(
-            `/booking/${serviceFormDetailInfo.booking_id}`,
-            {
-              status: "checked_in_after_test",
-            }
-          );
-        } catch (error) {
-          console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
-        }
-      }
+      //   if (isDone) {
+      //     try {
+      //       const updateBookingResponse = await api.put(
+      //         `/booking/${serviceFormDetailInfo.booking_id}`,
+      //         {
+      //           status: "checked_in_after_test",
+      //         }
+      //       );
+      //     } catch (error) {
+      //       console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
+      //     }
+      //   }
 
       // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
       const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
@@ -139,7 +139,7 @@ const Result = () => {
         theme: "light",
       });
 
-      setTimeout(navigate(`/retesting/`), 500);
+      navigate(`/retesting`);
       // Additional handling if required
     } catch (error) {
       console.error("Error submitting data:", error);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./ReTesting.module.scss";
+import styles from "./Result.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
 import "reactjs-popup/dist/index.css";
 import "flatpickr/dist/flatpickr.css";
@@ -9,7 +9,7 @@ import { api } from "../../../services/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 
-const ReTesting = () => {
+const Result = () => {
   const { serviceFormDetailId } = useParams();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -33,7 +33,30 @@ const ReTesting = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    const fileInput = document.getElementById("file");
+    const file = fileInput.files[0];
+    if (file) {
+      // Tạo formData chứa dữ liệu cần gửi
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("type", serviceFormDetailInfo.note);
+      formData.append("type_id", serviceFormDetailInfo.service_package_id);
+      formData.append("type_service", serviceFormDetailInfo.service_package_id);
 
+      console.log("file ne: ", file);
+
+      // Thực hiện gọi API sử dụng axios
+      try {
+        const response = await api.post("/media", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("Response:", response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
     try {
       const response = await api.post(`/medicalRecord/`, {
         ...testingData,
@@ -58,71 +81,71 @@ const ReTesting = () => {
     }
   };
 
-  // const handleDoneServiceFormDetail = async () => {
-  //   try {
-  //     const doneResponse = await api.put(
-  //       `/service_Form_detail/${serviceFormDetailId}`,
-  //       {
-  //         status: "done",
-  //         veterinarian_id: localStorage.getItem("account_id"),
-  //         process_at: 0,
-  //       }
-  //     );
+  const handleDoneServiceFormDetail = async () => {
+    try {
+      const doneResponse = await api.put(
+        `/service_Form_detail/${serviceFormDetailId}`,
+        {
+          status: "done",
+          veterinarian_id: localStorage.getItem("account_id"),
+          process_at: 0,
+        }
+      );
 
-  //     //TĂNG SERVICE HAS DONE LÊN 1
-  //     const serviceFormId = serviceFormDetailInfo.service_form_id;
-  //     // Lấy thông tin hiện tại của service form
-  //     const serviceFormResult = await api.get(`/service_Form/${serviceFormId}`);
-  //     // Lấy giá trị hiện tại của num_ser_has_done từ response
+      //TĂNG SERVICE HAS DONE LÊN 1
+      const serviceFormId = serviceFormDetailInfo.service_form_id;
+      // Lấy thông tin hiện tại của service form
+      const serviceFormResult = await api.get(`/service_Form/${serviceFormId}`);
+      // Lấy giá trị hiện tại của num_ser_has_done từ response
 
-  //     const currentNumSerHasDone =
-  //       serviceFormResult.data.data[0].num_ser_has_done;
-  //     // Tăng giá trị lên 1
-  //     const updatedNumSerHasDone = currentNumSerHasDone + 1;
+      const currentNumSerHasDone =
+        serviceFormResult.data.data[0].num_ser_has_done;
+      // Tăng giá trị lên 1
+      const updatedNumSerHasDone = currentNumSerHasDone + 1;
 
-  //     const isDone =
-  //       serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
+      const isDone =
+        serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
 
-  //     if (isDone) {
-  //       try {
-  //         const updateBookingResponse = await api.put(
-  //           `/booking/${serviceFormDetailInfo.booking_id}`,
-  //           {
-  //             status: "checked_in_after_test",
-  //           }
-  //         );
-  //       } catch (error) {
-  //         console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
-  //       }
-  //     }
+      if (isDone) {
+        try {
+          const updateBookingResponse = await api.put(
+            `/booking/${serviceFormDetailInfo.booking_id}`,
+            {
+              status: "checked_in_after_test",
+            }
+          );
+        } catch (error) {
+          console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
+        }
+      }
 
-  //     // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
-  //     const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
-  //       num_ser_has_done: updatedNumSerHasDone,
-  //       status: isDone ? "done" : "paid",
-  //     });
+      // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
+      const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
+        num_ser_has_done: updatedNumSerHasDone,
+        status: isDone ? "done" : "paid",
+      });
 
-  //     console.log("increaseRes", increaseResponse.data);
+      console.log("increaseRes", increaseResponse.data);
 
-  //     //TOAST THÔNG BÁO
-  //     toast.success("Hoàn thành khám thành công!", {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //     });
+      //TOAST THÔNG BÁO
+      toast.success("Hoàn thành khám thành công!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
 
-  //     setTimeout(navigate(`/retesting/`), 500);
-  //     // Additional handling if required
-  //   } catch (error) {
-  //     console.error("Error submitting data:", error);
-  //     // Error handling, if needed
-  //   }
-  // };
+      setTimeout(navigate(`/retesting/`), 500);
+      // Additional handling if required
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      // Error handling, if needed
+    }
+  };
 
   const options = {
     title: "Xác nhận",
@@ -199,54 +222,13 @@ const ReTesting = () => {
     getServiceFormDetail();
   }, [serviceFormDetailId]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    // Lấy file đã chọn
-    const fileInput = document.getElementById("file");
-    const file = fileInput.files[0];
-
-    // Tạo formData chứa dữ liệu cần gửi
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("type", serviceFormDetailInfo.note);
-    formData.append("type_id", serviceFormDetailInfo.service_package_id);
-    formData.append("type_service", serviceFormDetailInfo.service_package_id);
-
-    // const requestData = {
-    //   type: serviceFormDetailInfo.note,
-    //   type_id: serviceFormDetailInfo.service_package_id,
-    //   is_before: "any",
-    //   is_after: "any",
-    //   type_service: "ST001",
-    //   image: file,
-    // };
-
-    console.log("file ne: ", file);
-
-    // Thực hiện gọi API sử dụng axios
-    try {
-      const response = await api.post("/media", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      // Xử lý response nếu cần
-      console.log("Response:", response.data);
-    } catch (error) {
-      // Xử lý lỗi nếu có
-      console.error("Error:", error);
-    }
-  };
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
-          <div className={styles.left} onClick={() => navigate("/retesting")}>
+          <div className={styles.left} onClick={() => navigate("/result")}>
             <ion-icon name="chevron-back-outline"></ion-icon>
-            <span>Thoát</span>
+            <span>Trở về</span>
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>KH: Nguyễn Trí Công</div>
@@ -255,21 +237,48 @@ const ReTesting = () => {
         <div className={styles.mainContent}>
           <div className={styles.content}>
             <div className={styles.retesting}>
-              <h2 className={styles.title}>
-                Xét nghiệm {serviceFormDetailInfo?.note}
-              </h2>
-              <div className={styles.lineItem}>
-                <span className={styles.label}>Mã số:</span>
-                <span>HCO012J6</span>
+              <h2 className={styles.title}>Trả kết quả xét nghiệm</h2>
+              <div className={styles.fileInput}>
+                <label htmlFor="symptom">Triệu chứng</label>
+                <input
+                  type="text"
+                  name="symptom"
+                  id="symptom"
+                  onChange={handleInputChange}
+                />
               </div>
-              <div className={styles.lineItem}>
-                <span className={styles.label}>Tên khách hàng:</span>
-                <span>Nguyễn Trí Công</span>
+              <div className={styles.fileInput}>
+                <label htmlFor="diagnose">Chẩn đoán</label>
+                <input
+                  type="text"
+                  name="diagnose"
+                  id="diagnose"
+                  onChange={handleInputChange}
+                />
               </div>
-              <div className={styles.lineItem}>
-                <span className={styles.label}>Tên chim:</span>
-                <span>Vẹt xanh</span>
+              <div className={styles.fileInput}>
+                <label htmlFor="recommendations">Đề nghị</label>
+                <input
+                  type="text"
+                  name="recommendations"
+                  id="recommendations"
+                  onChange={handleInputChange}
+                />
               </div>
+              <div className={styles.fileInput}>
+                <label htmlFor="file">Tải lên file xét nghiệm</label>
+                <input type="file" name="file" id="file" />
+                <p className={styles.fileInfo}>
+                  *Dung lượng không vượt quá 5mb
+                </p>
+              </div>
+              <button
+                type="submit"
+                className={styles.btnSubmit}
+                onClick={handleFormSubmit}
+              >
+                Gửi
+              </button>
             </div>
           </div>
           <div className={styles.metaContent}>
@@ -289,10 +298,12 @@ const ReTesting = () => {
                 <span>Hồ sơ chim khám</span>
               </div>
             </div>
-            <button className={styles.btnComplete} onClick={handleConfirmAlert}>
-              Hoàn thành xét nghiệm
+            <button
+              className={styles.btnComplete}
+              onClick={handleDoneServiceFormDetail}
+            >
+              Hoàn thành
             </button>
-            <button className={styles.btnHospitalize}>Nhập viện</button>
           </div>
         </div>
       </div>
@@ -313,4 +324,4 @@ const ReTesting = () => {
   );
 };
 
-export default ReTesting;
+export default Result;

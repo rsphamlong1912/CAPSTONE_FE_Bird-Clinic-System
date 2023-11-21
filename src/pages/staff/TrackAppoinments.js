@@ -264,7 +264,7 @@ const TrackAppoinments = () => {
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
+                  <strong>{item.veterinarian.name}</strong>
                 </td>
                 <td>
                   <p

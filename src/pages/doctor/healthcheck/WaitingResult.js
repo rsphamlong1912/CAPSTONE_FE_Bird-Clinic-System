@@ -139,7 +139,7 @@ const WaitingResult = () => {
                     className={`${styles.status} ${
                       item.status === "test_requested"
                         ? styles.being
-                        : styles.booked
+                        : styles.checkin
                     } `}
                   >
                     {item.status === "test_requested"

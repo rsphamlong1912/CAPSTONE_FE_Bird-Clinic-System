@@ -21,8 +21,12 @@ const ReTestingToday = () => {
 
         const allRequested = response.data.data;
         const filterList = allRequested.filter(
-          (item) => item.status !== "wait_result" && item.status !== "done"
+          (item) =>
+            item.status === "checked_in" &&
+            item.status !== "wait_result" &&
+            item.status !== "done"
         );
+        console.log("fetch api", filterList);
         setCustomerList(filterList);
       } catch (error) {
         console.log(error);

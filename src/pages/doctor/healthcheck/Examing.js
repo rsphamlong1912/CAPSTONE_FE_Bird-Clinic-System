@@ -20,6 +20,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn/");
+import { IoCheckmarkDoneCircleSharp } from "react-icons/io5"
 
 const Examing = () => {
   const { bookingId } = useParams();
@@ -40,18 +41,29 @@ const Examing = () => {
 
   //cong
   const [date, setDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState("");
+  const [formattedDate, setFormattedDate] = useState();
+
+  const isPastDate = (checkDate) => {
+    const today = new Date();
+    return checkDate < today;
+  };
   const onChange = (newDate) => {
     setDate(newDate);
 
-    // Lấy năm, tháng và ngày từ đối tượng Date và in ra console
-    const year = newDate.getFullYear();
-    const month = newDate.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
-    const day = newDate.getDate();
-    // Tạo chuỗi định dạng
-    const formatted = `${year}-${month}-${day}`;
-    setFormattedDate(formatted);
-    console.log(`Selected Date: ${formatted}`);
+    if (!isPastDate(newDate)) {
+      // Lấy năm, tháng và ngày từ đối tượng Date và in ra console
+      const year = newDate.getFullYear();
+      const month = newDate.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+      const day = newDate.getDate();
+      // Tạo chuỗi định dạng
+      const formatted = `${year}-${month}-${day}`;
+      setFormattedDate(formatted);
+      console.log(`Selected Date: ${formatted}`);
+    }
+  };
+
+  const tileDisabled = ({ date }) => {
+    return isPastDate(date);
   };
 
   useEffect(() => {
@@ -265,9 +277,9 @@ const Examing = () => {
     {
       selectedMedicine: "",
       type: "",
-      unit: "",
-      day: "",
-      amount: 0,
+      unit: 1,
+      day: 1,
+      amount: "",
       note: "",
     },
   ]);
@@ -287,7 +299,7 @@ const Examing = () => {
     const foundMedicine = medicineNames.find((medicine) => medicine.name === medicineName);
     return foundMedicine ? foundMedicine.medicine_id : null;
   };
-  
+
   const handleInputMedicineFirst = (index, e) => {
     const { name, value } = e.target;
     const updatedForms = [...forms];
@@ -301,8 +313,8 @@ const Examing = () => {
       {
         selectedMedicine: "",
         type: "",
-        unit: "",
-        day: "",
+        unit: 1,
+        day: 1,
         amount: "",
         note: "",
       },
@@ -654,7 +666,7 @@ const Examing = () => {
                                       handleInputMedicineFirst(index, e)
                                     }
                                   >
-                                    <option value="">--</option>
+                                    {/* <option value="">--</option> */}
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -677,7 +689,7 @@ const Examing = () => {
                                       handleInputMedicineFirst(index, e)
                                     }
                                   >
-                                    <option value="">--</option>
+                                    {/* <option value="">--</option> */}
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -761,6 +773,7 @@ const Examing = () => {
                       className={styles.calendar}
                       onChange={onChange}
                       value={date}
+                      tileDisabled={tileDisabled}
                     />
                   </div>
                 </div>
@@ -780,6 +793,13 @@ const Examing = () => {
                   </button>
                   {contextHolder}
                 </div>
+              </div>
+            )}
+            {tab == 5 && (
+              <div className={styles.infConfirm}>
+                <IoCheckmarkDoneCircleSharp className={styles.iconConfirm} />
+                <div className={styles.txtConfirm}>Bạn đã hoàn thành tất cả các bước.</div>
+                <div className={styles.txtConfirmBack}>Bạn có thể quay lại để chỉnh sửa</div>
               </div>
             )}
           </div>
@@ -832,10 +852,11 @@ const Examing = () => {
             Quay lại
           </button>
         )}
-
-        <button className={styles.btnCont} onClick={handleNextTab}>
-          Tiếp tục
-        </button>
+        {tab !== 5 && (
+          <button className={styles.btnCont} onClick={handleNextTab}>
+            Tiếp tục
+          </button>
+        )}
       </div>
     </div>
   );

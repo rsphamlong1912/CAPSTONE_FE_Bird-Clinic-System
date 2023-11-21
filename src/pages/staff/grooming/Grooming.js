@@ -28,65 +28,6 @@ const Grooming = () => {
     newShowInfo[serviceIndex] = !newShowInfo[serviceIndex];
     setShowInfo(newShowInfo);
   };
-  // const toggleInfo2 = () => {
-  //   setShowInfo2(!showInfo2);
-  // };
-  // const [image1, setImage1] = useState(null);
-  // const [image2, setImage2] = useState(null);
-  // const [image3, setImage3] = useState(null);
-  // const [image4, setImage4] = useState(null);
-  // const onDrop1 = (acceptedFiles) => {
-  //   const file = acceptedFiles[0];
-  //   const reader = new FileReader();
-
-  //   reader.onload = () => {
-  //     setImage1(reader.result);
-  //   };
-
-  //   if (file) {
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-  // const onDrop2 = (acceptedFiles) => {
-  //   const file = acceptedFiles[0];
-  //   const reader = new FileReader();
-
-  //   reader.onload = () => {
-  //     setImage2(reader.result);
-  //   };
-
-  //   if (file) {
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-  // const onDrop3 = (acceptedFiles) => {
-  //   const file = acceptedFiles[0];
-  //   const reader = new FileReader();
-
-  //   reader.onload = () => {
-  //     setImage3(reader.result);
-  //   };
-
-  //   if (file) {
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-  // const onDrop4 = (acceptedFiles) => {
-  //   const file = acceptedFiles[0];
-  //   const reader = new FileReader();
-
-  //   reader.onload = () => {
-  //     setImage4(reader.result);
-  //   };
-
-  //   if (file) {
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-  // const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({ onDrop: onDrop1 });
-  // const { getRootProps: getRootProps2, getInputProps: getInputProps2 } = useDropzone({ onDrop: onDrop2 });
-  // const { getRootProps: getRootProps3, getInputProps: getInputProps3 } = useDropzone({ onDrop: onDrop3 });
-  // const { getRootProps: getRootProps4, getInputProps: getInputProps4 } = useDropzone({ onDrop: onDrop4 });
 
   const [packageInfo, setPackageInfo] = useState([]);
 
@@ -236,6 +177,7 @@ const Grooming = () => {
         num_ser_has_done: 0,
         arr_service_pack: arrServicePack,
       });
+      console.log('createdResponse', createdResponse);
       success();
     } catch (err) {
       console.log(err);
@@ -274,7 +216,7 @@ const Grooming = () => {
       // Create FormData for the first image
       const formData1 = new FormData();
       formData1.append("image", file1);
-      formData1.append("type", selectedService.package_name); // Use the service name as type
+      formData1.append("type", "service_form_details"); // Use the service name as type
       formData1.append("type_id", serviceId); // Use serviceId as type_id
       formData1.append("type_service", serviceId); // Replace with the actual type_service
       formData1.append("is_before", true);
@@ -282,7 +224,7 @@ const Grooming = () => {
       // Create FormData for the second image
       const formData2 = new FormData();
       formData2.append("image", file2);
-      formData2.append("type", selectedService.package_name); // Use the service name as type
+      formData2.append("type", "service_form_details"); // Use the service name as type
       formData2.append("type_id", serviceId); // Use serviceId as type_id
       formData2.append("type_service", serviceId); // Replace with the actual type_service
       formData2.append("is_after", true);
@@ -329,28 +271,24 @@ const Grooming = () => {
             <div className={styles.procedureTab}>
               <span
                 className={`${tab === 1 ? styles.active : ""}`}
-                onClick={() => setTab(1)}
               >
                 Thông tin
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
               <span
                 className={`${tab === 2 ? styles.active : ""}`}
-                onClick={() => setTab(2)}
               >
                 Chọn dịch vụ
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
               <span
                 className={`${tab === 3 ? styles.active : ""}`}
-                onClick={() => setTab(3)}
               >
                 Thực hiện
               </span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
               <span
                 className={`${tab === 4 ? styles.active : ""}`}
-                onClick={() => setTab(4)}
               >
                 Hoàn tất
               </span>
@@ -449,11 +387,7 @@ const Grooming = () => {
 
                     return (
                       <div key={index} className={styles.mainServiceImg}>
-                        <span className={styles.txtService}>{index + 1}.{selectedService.package_name}</span>
-                        <span className={styles.boxService}>
-                          <input type="checkbox" name={`service_${index}`} />
-                          <label htmlFor={`service_${index}`}>Hoàn thành</label>
-                        </span>
+                        <span className={styles.txtService}>{index + 1}. {selectedService.package_name}</span>
                         <span className={styles.dropService}>
                           <AiOutlineDown onClick={() => toggleInfo1(index)} />
                           {showInfo[index] && (
@@ -568,13 +502,14 @@ const Grooming = () => {
             Quay lại
           </button>
         )}
-
-        <button
-          className={styles.btnCont}
-          onClick={() => setTab((tab) => tab + 1)}
-        >
-          Tiếp tục
-        </button>
+        {tab !== 5 && (
+          <button
+            className={styles.btnCont}
+            onClick={() => setTab((tab) => tab + 1)}
+          >
+            Tiếp tục
+          </button>
+        )}
       </div>
     </div>
   );

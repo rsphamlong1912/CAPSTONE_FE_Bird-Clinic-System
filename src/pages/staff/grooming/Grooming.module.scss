@@ -112,7 +112,6 @@
   font-weight: bold;
   padding: 15px;
   border-radius: 50px;
-  cursor: pointer;
 }
 
 span.active {
@@ -329,24 +328,12 @@ ion-icon {
 }
 
 .txtService {
-  font-size: 30px;
+  font-size: 20px;
   color: #6B7280;
   width: 500px; /* Adjust the value as needed */
   /* Add any other styles you want */
   /* For example, you can use display: inline-block to allow setting a width */
   display: inline-block;
-}
-
-.boxService {
-  font-size: 25px;
-  color: #737373;
-  margin-right: 10px;
-}
-
-.boxService > input {
-  width: 30px;
-  height: 30px;
-  margin-right: 12px;
 }
 
 .dropService {

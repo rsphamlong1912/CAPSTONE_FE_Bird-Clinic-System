@@ -1,16 +1,16 @@
-// * {
-//   margin: 0;
-//   padding: 0;
+* {
+  margin: 0;
+  padding: 0;
 
-//   box-sizing: border-box;
-//   font-family: sans-serif;
-// }
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
 
 .container {
   padding: 40px;
 }
 
-.headerContent {
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,8 +38,7 @@
   display: flex;
 }
 
-.btnSearch {
-  background-color: #fff;
+.btn-search {
   font-size: 20px;
   align-self: center;
   border: 1px gray solid;
@@ -51,7 +50,6 @@
 }
 
 .right input {
-  width: 200px;
   padding: 10px;
   border-radius: 5px;
   border: 1px gray solid;
@@ -145,7 +143,6 @@ main.table {
 
 table {
   width: 100%;
-  background-color: #fff;
 }
 
 td img {
@@ -174,14 +171,13 @@ thead th {
   text-transform: capitalize;
 }
 
-// tbody tr:nth-child(even) {
-//   background-color: #0000000b;
-// }
+tbody tr:nth-child(even) {
+  background-color: #0000000b;
+}
 
 tbody tr {
   --delay: 0.1s;
   transition: 0.5s ease-in-out var(--delay), background-color 0s;
-  background-color: #fff;
 }
 
 tbody tr.hide {
@@ -214,14 +210,13 @@ tbody tr.hide td img {
 
 .status {
   padding: 0.4rem 0;
-  border-radius: 20px;
+  border-radius: 2rem;
   text-align: center;
 }
 
-.status.being {
-  color: rgba(36, 219, 149, 1);
-  background-color: #fff;
-  border: 1px solid rgba(36, 219, 149, 1);
+.status.checkin {
+  background-color: #86e49d;
+  color: #006b21;
 }
 
 .status.cancelled {
@@ -230,27 +225,11 @@ tbody tr.hide td img {
 }
 
 .status.pending {
-  color: rgba(249, 150, 31, 1);
-  background-color: #fff;
-  border: 1px solid rgba(249, 150, 31, 1);
+  background-color: #ebc474;
 }
 
-.status.booked {
-  color: rgb(249, 31, 114);
-  background-color: #fff;
-  border: 1px solid rgb(249, 31, 114);
-}
-
-.status.checkin {
-  color: rgba(0, 178, 255, 1);
-  background-color: #fff;
-  border: 1px solid rgba(0, 178, 255, 1);
-}
-
-.status.has-result {
-  color: rgba(255, 59, 71, 1);
-  background-color: #fff;
-  border: 1px solid rgba(255, 59, 71, 1);
+.status.shipped {
+  background-color: #6fcaea;
 }
 
 @media (max-width: 1000px) {
@@ -295,33 +274,8 @@ tbody td.active {
   color: #6c00bd;
 }
 
-.footerContent {
+.footer-content {
   margin-top: 20px;
   font-weight: 600;
   font-size: 16px;
-}
-
-.btnCheckin {
-  text-align: center;
-  background-color: #32b768;
-  width: 100px;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.NoGroomingDetial {
-  height: 500px;
-
-  .iconEmpty {
-    width: auto;
-    height: 40px;
-    margin-left: 760px;
-    margin-bottom: 20px;
-  }
-
-  .txtNoGrooming {
-    text-align: center;
-  }
 }

@@ -39,8 +39,8 @@ const Result = () => {
       // Tạo formData chứa dữ liệu cần gửi
       const formData = new FormData();
       formData.append("image", file);
-      formData.append("type", serviceFormDetailInfo.note);
-      formData.append("type_id", serviceFormDetailInfo.service_package_id);
+      formData.append("type", "service_form_details");
+      formData.append("type_id", serviceFormDetailInfo.service_form_detail_id);
       formData.append("type_service", serviceFormDetailInfo.service_package_id);
 
       console.log("file ne: ", file);

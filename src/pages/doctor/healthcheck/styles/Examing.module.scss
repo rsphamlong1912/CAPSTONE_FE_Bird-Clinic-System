@@ -124,6 +124,13 @@ span.active {
   margin: 0 auto;
 }
 
+.examingService {
+  width: 75%;
+  margin: 0 auto;
+  height: 400px; /* Độ cao của khối */
+  overflow: auto; /* Tạo thanh cuộn khi nội dung tràn */
+}
+
 .serviceItem {
   display: flex;
   align-items: center;
@@ -147,12 +154,11 @@ span.active {
 .inputItem {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 
   label {
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px;
   }
 
   input {
@@ -160,7 +166,7 @@ span.active {
     display: block;
     border: 1px solid #dddddd;
     padding: 10px;
-    margin: 15px 0;
+    margin: 10px 0;
     border-radius: 5px;
 
     &:focus {
@@ -232,8 +238,13 @@ ion-icon {
 }
 
 .requireText {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
+  h3,
+  ion-icon {
+    color: #6c6c6c;
+  }
 }
 
 .printService {
@@ -271,11 +282,6 @@ ion-icon {
 h1 {
   color: #6c6c6c;
   font-size: 24px;
-}
-
-h3 {
-  color: #6c6c6c;
-  font-size: 20px;
 }
 
 p {
@@ -471,7 +477,7 @@ h2 {
   border-radius: 4px;
   color: white;
   font-size: 20px;
-  margin-top:8px;
+  margin-top: 8px;
   margin-left: 45px;
 }
 
@@ -513,7 +519,6 @@ h2 {
   border-radius: 3px;
 }
 
-
 .txtNote {
   margin-left: 45px;
 }
@@ -544,7 +549,7 @@ h2 {
 
 .calendar {
   width: 350px;
-  box-shadow: 1px 2px 3px 4px rgba(0, 0, 0, .1);
+  box-shadow: 1px 2px 3px 4px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   background-color: rgba(217, 217, 217, 0.4);
   margin-left: 170px;
@@ -562,7 +567,7 @@ h2 {
   height: 100px;
   margin-left: 350px;
   margin-top: 50px;
-  color: #32B768;
+  color: #32b768;
 }
 
 .txtConfirm {
@@ -575,4 +580,70 @@ h2 {
   font-size: 15px;
   margin-left: 290px;
   margin-top: 30px;
+}
+
+.resultDetail {
+  width: 100%;
+  padding: 10px 20px;
+  margin: 10px 0;
+  // background: hsl(188, 100%, 37%, 0.5);
+  border-radius: 6px;
+}
+
+.titleService {
+  border-bottom: 1px solid #737373;
+  padding-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  span {
+    font-size: 12px;
+    background-color: #32b768;
+    color: white;
+    cursor: pointer;
+  }
+}
+
+.lineItem {
+  margin: 10px 0;
+  font-weight: 500;
+  .label {
+    display: inline-block;
+    min-width: 185px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    color: rgba(108, 108, 108, 1);
+    margin-right: 5px;
+  }
+}
+
+.popup {
+  height: 500px;
+}
+
+.imgPopup {
+  width: 100%;
+  height: 450px;
+}
+
+.viewFile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  ion-icon {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    color: white;
+  }
+  transition: all 0.2s ease-in;
+}
+
+.inputLabelDesc {
+  font-size: 13px;
+  font-style: italic;
 }

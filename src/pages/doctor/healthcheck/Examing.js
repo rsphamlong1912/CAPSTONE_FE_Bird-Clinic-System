@@ -1,6 +1,7 @@
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io5"
 import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./styles/Examing.module.scss";
 import ExaminationModal from "../../../components/modals/ExaminationModal";
 import "reactjs-popup/dist/index.css";
@@ -20,20 +21,48 @@ import { message } from "antd";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import io from "socket.io-client";
+import Popup from "reactjs-popup";
+import { PhieuKetQua } from "../../../components/pdfData/PhieuKetQua";
 const socket = io("https://clinicsystem.io.vn/");
 
 const Examing = () => {
   const { bookingId } = useParams();
+  const navigate = useNavigate();
   const [tab, setTab] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [openModalProfile, setOpenModalProfile] = useState(false);
 
   const [bookingInfo, setBookingInfo] = useState();
   const [serviceFormDetail, setServiceFormDetail] = useState();
+  const [serviceFormDetailSideArr, setServiceFormDetailSideArr] = useState();
+  const [serviceFormDetailSideIdArr, setServiceFormDetailSideIdArr] =
+    useState();
+  const [medicalRecordData, setMedicalRecordData] = useState([]);
+  const [imgUrl, setImgUrl] = useState();
   const [birdProfile, setBirdProfile] = useState();
 
   const [openModalPrescription, setOpenModalPrescription] = useState(false);
   const [openModalConfirmService, setOpenModalConfirmService] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openPopup = async (id) => {
+    const responseImgUrl = await api.get(
+      `/media/?type=service_form_details&type_id=${id}`
+    );
+    if (responseImgUrl.data.data[0]?.link) {
+      setImgUrl(responseImgUrl.data.data[0]?.link);
+    } else {
+      setImgUrl(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Flag_of_None.svg/1024px-Flag_of_None.svg.png"
+      );
+    }
+    setIsOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsOpen(false);
+  };
+
   const [serviceList, setServiceList] = useState([]);
   //
   const [showInfo, setShowInfo] = useState(false);
@@ -203,6 +232,11 @@ const Examing = () => {
         setCustomerName(response.data.data[0].customer_name);
         setServiceType(response.data.data[0].service_type);
         setServiceTypeId(response.data.data[0].service_type_id);
+        setExamData({
+          symptoms: response.data.data[0].symptom,
+          diagnosis: response.data.data[0].diagnosis,
+          additionalNotes: response.data.data[0].recommendations,
+        });
 
         // Only call getBirdProfile if bookingInfo is available
         if (response.data.data[0] && response.data.data[0].bird_id) {
@@ -217,8 +251,45 @@ const Examing = () => {
         const responseServiceFormDetail = await api.get(
           `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
         );
+
         console.log("form detail ne", responseServiceFormDetail.data.data[0]);
         setServiceFormDetail(responseServiceFormDetail.data.data[0]);
+
+        //GET SERVICE FORM
+        const responseServiceForm = await api.get(
+          `/service_Form/?booking_id=${bookingId}`
+        );
+        console.log(
+          "service form status",
+          responseServiceForm.data.data.length
+        );
+        if (responseServiceForm.data.data.length > 0) {
+          setServiceFormDetailSideArr(
+            responseServiceForm.data.data[0].service_form_details
+          );
+          setServiceFormDetailSideIdArr(
+            responseServiceForm.data.data[0].service_form_details.map(
+              (item, index) => item.service_form_detail_id
+            )
+          );
+          try {
+            const responsesMedicalMedia = await Promise.all(
+              responseServiceForm.data.data[0].service_form_details
+                .map((item, index) => item.service_form_detail_id)
+                .map(async (item) => {
+                  const responseDetail = await api.get(
+                    `/medicalRecord/?service_form_detail_id=${item}`
+                  );
+                  return responseDetail.data.data[0];
+                })
+            );
+            // Thêm dữ liệu vào medicalRecordData
+            setMedicalRecordData(responsesMedicalMedia);
+            console.log("upda", responsesMedicalMedia);
+          } catch (error) {
+            console.error("Lỗi khi gọi API:", error);
+          }
+        }
       } catch (error) {
         console.log(error);
       }
@@ -296,7 +367,9 @@ const Examing = () => {
   };
 
   const findMedicineIdByName = (medicineName) => {
-    const foundMedicine = medicineNames.find((medicine) => medicine.name === medicineName);
+    const foundMedicine = medicineNames.find(
+      (medicine) => medicine.name === medicineName
+    );
     return foundMedicine ? foundMedicine.medicine_id : null;
   };
 
@@ -496,9 +569,9 @@ const Examing = () => {
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
-          <div className={styles.left}>
+          <div className={styles.left} onClick={() => navigate("/examing")}>
             <ion-icon name="chevron-back-outline"></ion-icon>
-            <span>Thoát</span>
+            <span>Trở về</span>
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>KH: {customerName}</div>
@@ -532,7 +605,11 @@ const Examing = () => {
                     name="symptoms"
                     value={examData.symptoms}
                     onChange={handleInputChange}
+                    disabled
                   />
+                  <span className={styles.inputLabelDesc}>
+                    *Các triệu chứng mà chim đang gặp phải
+                  </span>
                 </div>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Chẩn đoán</label>
@@ -542,6 +619,9 @@ const Examing = () => {
                     value={examData.diagnosis}
                     onChange={handleInputChange}
                   />
+                  <span className={styles.inputLabelDesc}>
+                    *Chẩn đoán của bác sĩ về tình trạng bệnh của chim
+                  </span>
                 </div>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Lời khuyên</label>
@@ -550,13 +630,82 @@ const Examing = () => {
                     value={examData.additionalNotes}
                     onChange={handleInputChange}
                   />
+                  <span className={styles.inputLabelDesc}>
+                    *Lời khuyên của bác sĩ cho chim bệnh
+                  </span>
                 </div>
               </div>
             )}
             {tab == 2 && (
-              <div className={styles.examing}>
+              <div className={styles.examingService}>
+                {serviceFormDetailSideArr?.length > 0 && (
+                  <div>
+                    <h3 className={styles.requireText}>
+                      <ion-icon name="documents-outline"></ion-icon>Kết quả xét
+                      nghiệm:
+                    </h3>
+                    {serviceFormDetailSideArr.map((item, index) => {
+                      const matchingMedicalRecord = medicalRecordData.find(
+                        (record) =>
+                          record.service_form_detail_id ===
+                          item.service_form_detail_id
+                      );
+                      console.log("record", matchingMedicalRecord);
+
+                      if (matchingMedicalRecord) {
+                        return (
+                          <div key={index} className={styles.resultDetail}>
+                            <div className={styles.titleService}>
+                              <h4>{item.note}</h4>
+                              <span
+                                onClick={() =>
+                                  openPopup(item.service_form_detail_id)
+                                }
+                                className={styles.viewFile}
+                              >
+                                <ion-icon name="document-outline"></ion-icon>Xem
+                                file
+                              </span>
+                              <Popup
+                                open={isOpen}
+                                closeOnDocumentClick
+                                onClose={closePopup}
+                              >
+                                <div className={styles.popup}>
+                                  <br></br>
+                                  <img
+                                    src={imgUrl}
+                                    alt=""
+                                    className={styles.imgPopup}
+                                  />
+                                </div>
+                              </Popup>
+                            </div>
+                            <div className={styles.lineItem}>
+                              <span className={styles.label}>Triệu chứng:</span>
+                              <span>{matchingMedicalRecord.symptom}</span>
+                            </div>
+                            <div className={styles.lineItem}>
+                              <span className={styles.label}>Chẩn đoán:</span>
+                              <span>{matchingMedicalRecord.diagnose}</span>
+                            </div>
+                            <div className={styles.lineItem}>
+                              <span className={styles.label}>Khuyến nghị:</span>
+                              <span>
+                                {matchingMedicalRecord.recommendations}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                )}
+
                 <h3 className={styles.requireText}>
-                  Yêu cầu các dịch vụ dưới đây (nếu có):
+                  <ion-icon name="alert-circle-outline"></ion-icon>Yêu cầu các
+                  dịch vụ dưới đây (nếu có):
                 </h3>
                 {serviceList.map((item, index) => (
                   <div className={styles.serviceItem} key={index}>
@@ -572,12 +721,13 @@ const Examing = () => {
                     <label htmlFor="temperature">{item.package_name}</label>
                   </div>
                 ))}
-                <div style={{ display: "none" }}>
+                {/* <div style={{ display: "none" }}>
                   <PhieuChiDinh
                     ref={printRef}
                     selectedServices={selectedServices}
                   ></PhieuChiDinh>
-                </div>
+                </div> */}
+
                 <button
                   className={styles.printService}
                   onClick={handleOpenConfirm}
@@ -711,7 +861,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  { }
+                                  {}
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -798,8 +948,12 @@ const Examing = () => {
             {tab == 5 && (
               <div className={styles.infConfirm}>
                 <IoCheckmarkDoneCircleSharp className={styles.iconConfirm} />
-                <div className={styles.txtConfirm}>Bạn đã hoàn thành tất cả các bước.</div>
-                <div className={styles.txtConfirmBack}>Bạn có thể quay lại để chỉnh sửa</div>
+                <div className={styles.txtConfirm}>
+                  Bạn đã hoàn thành tất cả các bước.
+                </div>
+                <div className={styles.txtConfirmBack}>
+                  Bạn có thể quay lại để chỉnh sửa
+                </div>
               </div>
             )}
           </div>
@@ -821,9 +975,20 @@ const Examing = () => {
               </div>
             </div>
             <button className={styles.btnComplete}>Hoàn thành khám</button>
-            <button className={styles.btnHospitalize}>Nhập viện</button>
+            <button className={styles.btnHospitalize} onClick={handlePrint}>
+              In phiếu kết quả
+            </button>
           </div>
         </div>
+      </div>
+      <div style={{ display: "none" }}>
+        <PhieuKetQua
+          ref={printRef}
+          bookingInfo={bookingInfo}
+          birdProfile={birdProfile}
+          examData={examData}
+          serviceFormDetailSideArr={serviceFormDetailSideArr}
+        ></PhieuKetQua>
       </div>
       <ExaminationModal
         open={openModal}

@@ -273,7 +273,7 @@ const Billing = () => {
             billList.map((item, index) => (
               <tr key={index}>
                 <td> {index + 1} </td>
-                <td>{item.customer_name}</td>
+                <td>{item.booking.customer_name}</td>
                 <td>{item.num_ser_must_do}</td>
                 <td>{item.total_price}</td>
                 <td>

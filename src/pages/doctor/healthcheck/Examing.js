@@ -21,6 +21,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import io from "socket.io-client";
 import Popup from "reactjs-popup";
+import { PhieuKetQua } from "../../../components/pdfData/PhieuKetQua";
 const socket = io("https://clinicsystem.io.vn/");
 
 const Examing = () => {
@@ -60,6 +61,7 @@ const Examing = () => {
   const closePopup = () => {
     setIsOpen(false);
   };
+
   const [serviceList, setServiceList] = useState([]);
   //
   const [showInfo, setShowInfo] = useState(false);
@@ -244,44 +246,6 @@ const Examing = () => {
           console.log("Set tab r nha", response.data.data[0].process_at);
         }
 
-        //GET SERVICE FORM
-        const responseServiceForm = await api.get(
-          `/service_Form/?booking_id=${bookingId}`
-        );
-        console.log(
-          "service form",
-          responseServiceForm.data.data[0].service_form_details
-        );
-        setServiceFormDetailSideArr(
-          responseServiceForm.data.data[0].service_form_details
-        );
-
-        setServiceFormDetailSideIdArr(
-          responseServiceForm.data.data[0].service_form_details.map(
-            (item, index) => item.service_form_detail_id
-          )
-        );
-
-        try {
-          const responsesMedicalMedia = await Promise.all(
-            responseServiceForm.data.data[0].service_form_details
-              .map((item, index) => item.service_form_detail_id)
-              .map(async (item) => {
-                const responseDetail = await api.get(
-                  `/medicalRecord/?service_form_detail_id=${item}`
-                );
-                return responseDetail.data.data[0];
-              })
-          );
-
-          // Thêm dữ liệu vào medicalRecordData
-          setMedicalRecordData(responsesMedicalMedia);
-
-          console.log("upda", responsesMedicalMedia);
-        } catch (error) {
-          console.error("Lỗi khi gọi API:", error);
-        }
-
         //GET SERVICE FORM DETAIL
         const responseServiceFormDetail = await api.get(
           `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
@@ -289,6 +253,42 @@ const Examing = () => {
 
         console.log("form detail ne", responseServiceFormDetail.data.data[0]);
         setServiceFormDetail(responseServiceFormDetail.data.data[0]);
+
+        //GET SERVICE FORM
+        const responseServiceForm = await api.get(
+          `/service_Form/?booking_id=${bookingId}`
+        );
+        console.log(
+          "service form status",
+          responseServiceForm.data.data.length
+        );
+        if (responseServiceForm.data.data.length > 0) {
+          setServiceFormDetailSideArr(
+            responseServiceForm.data.data[0].service_form_details
+          );
+          setServiceFormDetailSideIdArr(
+            responseServiceForm.data.data[0].service_form_details.map(
+              (item, index) => item.service_form_detail_id
+            )
+          );
+          try {
+            const responsesMedicalMedia = await Promise.all(
+              responseServiceForm.data.data[0].service_form_details
+                .map((item, index) => item.service_form_detail_id)
+                .map(async (item) => {
+                  const responseDetail = await api.get(
+                    `/medicalRecord/?service_form_detail_id=${item}`
+                  );
+                  return responseDetail.data.data[0];
+                })
+            );
+            // Thêm dữ liệu vào medicalRecordData
+            setMedicalRecordData(responsesMedicalMedia);
+            console.log("upda", responsesMedicalMedia);
+          } catch (error) {
+            console.error("Lỗi khi gọi API:", error);
+          }
+        }
       } catch (error) {
         console.log(error);
       }
@@ -637,7 +637,7 @@ const Examing = () => {
             )}
             {tab == 2 && (
               <div className={styles.examingService}>
-                {serviceFormDetailSideArr?.length > 1 && (
+                {serviceFormDetailSideArr?.length > 0 && (
                   <div>
                     <h3 className={styles.requireText}>
                       <ion-icon name="documents-outline"></ion-icon>Kết quả xét
@@ -720,12 +720,13 @@ const Examing = () => {
                     <label htmlFor="temperature">{item.package_name}</label>
                   </div>
                 ))}
-                <div style={{ display: "none" }}>
+                {/* <div style={{ display: "none" }}>
                   <PhieuChiDinh
                     ref={printRef}
                     selectedServices={selectedServices}
                   ></PhieuChiDinh>
-                </div>
+                </div> */}
+
                 <button
                   className={styles.printService}
                   onClick={handleOpenConfirm}
@@ -973,9 +974,20 @@ const Examing = () => {
               </div>
             </div>
             <button className={styles.btnComplete}>Hoàn thành khám</button>
-            <button className={styles.btnHospitalize}>Nhập viện</button>
+            <button className={styles.btnHospitalize} onClick={handlePrint}>
+              In phiếu kết quả
+            </button>
           </div>
         </div>
+      </div>
+      <div style={{ display: "none" }}>
+        <PhieuKetQua
+          ref={printRef}
+          bookingInfo={bookingInfo}
+          birdProfile={birdProfile}
+          examData={examData}
+          serviceFormDetailSideArr={serviceFormDetailSideArr}
+        ></PhieuKetQua>
       </div>
       <ExaminationModal
         open={openModal}

@@ -308,14 +308,12 @@ const TrackAppoinments = () => {
                   </p>
                 </td>
                 <td className={styles.flexBtn}>
-                  {item.status === "booked" && (
-                    <div
-                      className={styles.btnCheckin}
-                      onClick={() => navigate(`/track/${item.booking_id}`)}
-                    >
-                      Xem
-                    </div>
-                  )}
+                  <div
+                    className={styles.btnCheckin}
+                    onClick={() => navigate(`/track/${item.booking_id}`)}
+                  >
+                    Xem
+                  </div>
 
                   {/* <div
                     className={styles.btnCheckin}

@@ -175,6 +175,26 @@ const BillingDetail = () => {
 
                     console.log(" doi ròi", detailResponse);
                   }
+                  // const responseGetBooking = await api.get(
+                  //   `/booking/${item.booking_id}`
+                  // );
+                  // if (responseGetBooking) {
+                  //   console.log(
+                  //     "booking ne",
+                  //     responseGetBooking.data.data.money_has_paid
+                  //   );
+                  //   const newMoney =
+                  //     parseFloat(responseGetBooking.data.data.money_has_paid) +
+                  //     parseFloat(item.total_price);
+                  //   console.log("Tổng tiền mới:", newMoney);
+                  //   const responseUpdateBooking = await api.put(
+                  //     `/booking/${item.booking_id}`,
+                  //     {
+                  //       money_has_paid: newMoney,
+                  //     }
+                  //   );
+                  //   console.log("update money", responseUpdateBooking);
+                  // }
                   socket.emit("complete-payment", {
                     customer_id: customerId,
                     vet: vetDetailArr,

@@ -1,0 +1,73 @@
+.container {
+  width: 620px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title {
+  text-align: center;
+  color: black;
+  margin: 48px 0;
+}
+
+.left {
+  width: 75%;
+}
+.right {
+  width: 25%;
+  .qr {
+    margin-top: 20px;
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.lineItem {
+  margin: 10px 0;
+  font-weight: 500;
+  .label {
+    display: inline-block;
+    min-width: 135px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    text-align: left;
+    margin-right: 5px;
+  }
+  .label2 {
+    font-weight: 700;
+  }
+}
+
+.table {
+  th {
+    color: black;
+    font-weight: 300;
+  }
+  td {
+    font-weight: 500;
+    width: 100%;
+  }
+}
+
+.total {
+  margin-left: 50%;
+  margin-right: 20px;
+}
+
+.footer {
+  margin-top: 50px;
+  margin-left: 70%;
+  .sign {
+    margin-top: 60px;
+  }
+}
+
+.detailService {
+  margin-top: 10px;
+}

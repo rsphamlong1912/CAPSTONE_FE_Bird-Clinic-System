@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import io from "socket.io-client";
+import { useReactToPrint } from "react-to-print";
+import { HoaDon } from "../../components/pdfData/HoaDon";
 const socket = io("https://clinicsystem.io.vn");
 
 const TrackDetail = () => {
@@ -21,6 +23,13 @@ const TrackDetail = () => {
   const [veterinarians, setVeterinarians] = useState([]);
   const [selectedVet, setSelectedVet] = useState("");
   const [bookingInfo, setBookingInfo] = useState();
+  const [billDetailList, setBillDetailList] = useState();
+
+  //Print
+  const printRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+  });
 
   const fetchVeterinarians = async (vet) => {
     try {
@@ -44,9 +53,20 @@ const TrackDetail = () => {
       console.log(error);
     }
   };
+  const fetchBillDetail = async () => {
+    try {
+      const responseBill = await api.get(
+        `/billDetail/?booking_id=${bookingId}`
+      );
+      setBillDetailList(responseBill.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     fetchBookingInfo();
+    fetchBillDetail();
     setTimeout(() => {
       setLoading(false);
     }, 850);
@@ -285,6 +305,9 @@ const TrackDetail = () => {
               >
                 Check-in
               </button>
+              <button className={styles.btnComplete} onClick={handlePrint}>
+                In hoá đơn
+              </button>
             </div>
           </div>
         )}
@@ -293,6 +316,13 @@ const TrackDetail = () => {
         open={openModalProfile}
         onClose={() => setOpenModalProfile(false)}
       />
+      <div style={{ display: "none" }}>
+        <HoaDon
+          ref={printRef}
+          billDetailList={billDetailList}
+          bookingInfo={bookingInfo}
+        ></HoaDon>
+      </div>
       <div className={styles.footerContent}>
         <button className={styles.btnBack} onClick={() => navigate(`/track`)}>
           Quay lại

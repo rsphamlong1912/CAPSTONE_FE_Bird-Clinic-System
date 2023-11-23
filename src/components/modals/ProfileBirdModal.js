@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./ProfileBirdModal.module.scss";
 
-const ProfileBirdModal = ({ open, onClose, birdProfile }) => {
+const ProfileBirdModal = ({ open, onClose, birdProfile, birdProfileBreed }) => {
   if (!open) return null;
   return (
     <div onClick={onClose} className={styles.overlay}>
@@ -26,7 +26,7 @@ const ProfileBirdModal = ({ open, onClose, birdProfile }) => {
                 </tr>
                 <tr>
                   <th>Ngày nở</th>
-                  <td>21/03/2022</td>
+                  <td>{birdProfile?.hatching_date}</td>
                 </tr>
                 <tr>
                   <th>Giới tính</th>
@@ -46,7 +46,7 @@ const ProfileBirdModal = ({ open, onClose, birdProfile }) => {
                 </tr>
                 <tr>
                   <th>Giống</th>
-                  <td>Không</td>
+                  <td>{birdProfileBreed}</td>
                 </tr>
               </tbody>
             </table>

@@ -1,18 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "./Grooming.module.scss";
 import "reactjs-popup/dist/index.css";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 import { AiOutlineDown } from "react-icons/ai";
-import { useDropzone } from 'react-dropzone';
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io5"
 import { api } from "../../../services/axios";
 import { message } from "antd";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
+import io from "socket.io-client";
+const socket = io("https://clinicsystem.io.vn");
 
 const Grooming = () => {
   const { bookingId } = useParams();
   const [birdProfile, setBirdProfile] = useState([]);
   const [customerProfile, setCustomerProfile] = useState([]);
+  const [birdProfileSize, setBirdProfileSize] = useState([]);
+  const [birdProfileBreed, setBirdProfileBreed] = useState([]);
   const [bookingInfo, setBookingInfo] = useState();
   const [sizeInfo, setSizeInfo] = useState();
 
@@ -21,9 +26,7 @@ const Grooming = () => {
   const [sizeBird, setSizeBird] = useState(1);
   const [showInfo, setShowInfo] = useState([]);
 
-  // Hàm toggleInfo1 nhận một tham số là serviceIndex để xác định dịch vụ nào đang được thao tác
   const toggleInfo1 = (serviceIndex) => {
-    // Tạo một mảng mới từ mảng cũ để tránh thay đổi trực tiếp trạng thái
     const newShowInfo = [...showInfo];
     newShowInfo[serviceIndex] = !newShowInfo[serviceIndex];
     setShowInfo(newShowInfo);
@@ -56,21 +59,14 @@ const Grooming = () => {
           `/booking/${bookingId}`
         );
         setBookingInfo(response.data.data);
+        console.log("booking:", response.data.data)
 
-        if (response.data.data && response.data.data.bird_id) {
-          getBirdProfile(response.data.data.bird_id);
-        }
         if (response.data.data && response.data.data.account_id) {
           getCustomerProfile(response.data.data.account_id);
         }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    const getBirdProfile = async (birdId) => {
-      try {
-        const response = await api.get(`/bird/${birdId}`);
-        setBirdProfile(response.data.data);
+        if (response.data.data && response.data.data.bird_id) {
+          getBirdProfile(response.data.data.bird_id);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -80,6 +76,17 @@ const Grooming = () => {
       try {
         const response = await api.get(`/customer/${customerId}`);
         setCustomerProfile(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getBirdProfile = async (birdId) => {
+      try {
+        const response = await api.get(`/bird/${birdId}`);
+        setBirdProfile(response.data.data);
+        setBirdProfileSize(response.data.data.bird_breed.bird_size.size);
+        setBirdProfileBreed(response.data.data.bird_breed.breed)
       } catch (error) {
         console.log(error);
       }
@@ -177,11 +184,25 @@ const Grooming = () => {
         num_ser_has_done: 0,
         arr_service_pack: arrServicePack,
       });
-      console.log('createdResponse', createdResponse);
+      console.log('createdResponse', createdResponse.data);
+
+      if (createdResponse.data.data && createdResponse.data.data.service_form_id) {
+        getServiceFormDetails(createdResponse.data.data.service_form_id);
+      }
       success();
     } catch (err) {
       console.log(err);
       showError();
+    }
+  };
+
+  const [serviceFormDetails, setServiceFormDetails] = useState([]);
+  const getServiceFormDetails = async (service_form_id) => {
+    try {
+      const response = await api.get(`/service_Form/${service_form_id}`);
+      setServiceFormDetails(response.data.data[0].service_form_details);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -200,58 +221,132 @@ const Grooming = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Assuming you have file input elements with the ids "file1" and "file2"
     const fileInput1 = document.getElementById("file1");
     const fileInput2 = document.getElementById("file2");
 
-    // Get the selected files
-    const file1 = fileInput1.files[0];
-    const file2 = fileInput2.files[0];
+    const file1 = fileInput1.files;
+    const file2 = fileInput2.files;
 
-    // Iterate over each selected service and upload images
     for (const serviceId of selectedServices) {
-      // Get the selected service details
-      const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
+      const serviceFormDetailsForService = serviceFormDetails.filter(
+        (detail) => detail.service_package_id === serviceId
+      );
 
-      // Create FormData for the first image
-      const formData1 = new FormData();
-      formData1.append("image", file1);
-      formData1.append("type", "service_form_details"); // Use the service name as type
-      formData1.append("type_id", serviceId); // Use serviceId as type_id
-      formData1.append("type_service", serviceId); // Replace with the actual type_service
-      formData1.append("is_before", true);
+      if (serviceFormDetailsForService.length === 0) {
+        console.error(`Service form details not found for serviceId ${serviceId}`);
+        continue;
+      }
 
-      // Create FormData for the second image
-      const formData2 = new FormData();
-      formData2.append("image", file2);
-      formData2.append("type", "service_form_details"); // Use the service name as type
-      formData2.append("type_id", serviceId); // Use serviceId as type_id
-      formData2.append("type_service", serviceId); // Replace with the actual type_service
-      formData2.append("is_after", true);
+      for (const serviceFormDetail of serviceFormDetailsForService) {
 
-      try {
-        // Use axios to post the first image
-        const response1 = await api.post("/media", formData1, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const idDetail = serviceFormDetail.service_form_detail_id;
 
-        // Use axios to post the second image
-        const response2 = await api.post("/media", formData2, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const formData1 = new FormData();
+        for (let i = 0; i < file1.length; i++) {
+          formData1.append("image", file1[i]);
+        }
+        formData1.append("type", "service_form_details");
+        formData1.append("type_id", idDetail);
+        formData1.append("type_service", serviceId);
+        formData1.append("is_before", true);
 
-        // Additional logic or state updates can be added here
-        message.success("Tải ảnh thành công");
-      } catch (error) {
-        // Handle errors if any
-        message.error("Tải ảnh thất bại");
-        console.error("Error:", error);
+        const formData2 = new FormData();
+        for (let i = 0; i < file2.length; i++) {
+          formData2.append("image", file2[i]);
+        }
+        formData2.append("type", "service_form_details");
+        formData2.append("type_id", idDetail);
+        formData2.append("type_service", serviceId);
+        formData2.append("is_after", true);
+
+
+        try {
+          const response1 = await api.post("/media", formData1, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          const response2 = await api.post("/media", formData2, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          message.success("Tải ảnh thành công");
+        } catch (error) {
+          message.error("Tải ảnh thất bại");
+          console.error("Error:", error);
+        }
       }
     }
+  };
+
+  const options = {
+    title: "Xác nhận hoàn thành",
+    message: "Tiến hành hoàn tất dịch vụ?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const navigate = useNavigate();
+  const handleConfirmAlert = (item) => {
+    const updatedOptions = {
+      ...options,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const response = await api.put(`/booking/${item.booking_id}`, {
+                status: "finish",
+              });
+              if (response) {
+                socket.emit("confirm-check-in", {
+                  customer_id: item.account_id,
+                  veterinarian_id: item.veterinarian_id,
+                });
+                toast.success("Hoàn thành dịch vụ!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                console.log("response doi status ne", response.data);
+                navigate("/history-grooming");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
   };
 
   return (
@@ -322,15 +417,15 @@ const Grooming = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Size:</span>
-                    <span>Vừa</span>
+                    <span>{birdProfileSize}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Giống:</span>
-                    <span>{birdProfile.breed}</span>
+                    <span>{birdProfileBreed}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Microchip:</span>
-                    <span>Không</span>
+                    <span>{birdProfile.ISO_microchip}</span>
                   </div>
                 </div>
               </div>
@@ -356,23 +451,25 @@ const Grooming = () => {
                 </div>
                 <div className={styles.serviceChosen}>
                   <h4 className={styles.title}>Chọn dịch vụ: </h4>
-                  <div className={styles.serviceWrapper}>
-                    {availableServices.map((service) => (
-                      <div
-                        className={`${styles.serviceItem} ${selectedServices.includes(service.service_package_id) ? styles.active : ""
-                          }`}
-                        key={service.service_package_id}
-                      >
-                        <h5>{service.package_name}</h5>
-                        <div className={styles.serviceDesc}>{service.service_description}</div>
-                        <span className={styles.price}>
-                          {service.price}
-                          <sup className={styles.unitPrice}>vnđ</sup>
-                        </span>
-                        <br />
-                        <button onClick={() => toggleService(service.service_package_id)}>Thêm</button>
-                      </div>
-                    ))}
+                  <div className={styles.Wrappercontent}>
+                    <div className={styles.serviceWrapper}>
+                      {availableServices.map((service) => (
+                        <div
+                          className={`${styles.serviceItem} ${selectedServices.includes(service.service_package_id) ? styles.active : ""
+                            }`}
+                          key={service.service_package_id}
+                        >
+                          <h5>{service.package_name}</h5>
+                          <div className={styles.serviceDesc}>{service.service_description}</div>
+                          <span className={styles.price}>
+                            {service.price}
+                            <sup className={styles.unitPrice}>vnđ</sup>
+                          </span>
+                          <br />
+                          <button onClick={() => toggleService(service.service_package_id)}>Thêm</button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <button className={styles.printService} onClick={createNewServiceForm} >Xác nhận</button>
@@ -393,11 +490,25 @@ const Grooming = () => {
                           {showInfo[index] && (
                             <div className={styles.DropAndDrag}>
                               <div className={styles.FILEContent}>
-                                <input type="file" name="file1" id="file1" className={styles.FILEGrooming} />
+                                <input
+                                  type="file"
+                                  name="file1"
+                                  id="file1"
+                                  className={styles.FILEGrooming}
+                                  data-multiple-caption="{count} files selected"
+                                  multiple
+                                />
                                 <div className={styles.BAGrooming}>Trước grooming</div>
                               </div>
                               <div className={styles.FILEContent}>
-                                <input type="file" name="file2" id="file2" className={styles.FILEGrooming} />
+                                <input
+                                  type="file"
+                                  name="file2"
+                                  id="file2"
+                                  className={styles.FILEGrooming}
+                                  data-multiple-caption="{count} files selected"
+                                  multiple
+                                />
                                 <div className={styles.BAGrooming}>Sau grooming</div>
                               </div>
                             </div>
@@ -437,7 +548,7 @@ const Grooming = () => {
                       </div>
                       <div className={styles.completedinf}>
                         <div className={styles.txtCompleted}>LOẠI</div>
-                        <div className={styles.txtInf}>{birdProfile.breed}</div>
+                        <div className={styles.txtInf}>{birdProfile.bird_breed.breed}</div>
                       </div>
                     </div>
                   </div>
@@ -485,12 +596,20 @@ const Grooming = () => {
                 <span>Hồ sơ chim khám</span>
               </div>
             </div>
-            <button className={styles.btnComplete}>Hoàn thành</button>
+            {/* <button className={styles.btnComplete}>Hoàn thành</button> */}
+            <button
+              className={styles.btnComplete}
+              onClick={() => handleConfirmAlert(bookingInfo)}
+            >
+              Hoàn thành
+            </button>
           </div>
         </div>
       </div>
       <ProfileBirdModal
         open={openModalProfile}
+        birdProfile={birdProfile}
+        birdProfileBreed={birdProfileBreed}
         onClose={() => setOpenModalProfile(false)}
       />
       <div className={styles.footerContent}>

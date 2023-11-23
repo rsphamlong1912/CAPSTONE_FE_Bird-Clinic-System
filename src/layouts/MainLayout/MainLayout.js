@@ -23,7 +23,18 @@ const MainLayout = (props) => {
                 : "Nhân viên phòng khám"}
             </span>
             <br />
-            <span className={styles.descUser}>Dịch vụ khám tổng quát</span>
+            {/* <span className={styles.descUser}>Dịch vụ khám tổng quát</span> */}
+            <span className={styles.descUser}>
+              {localStorage.getItem("role") === "vet"
+                ? localStorage.getItem("service_id") === "S001"
+                  ? "Dịch vụ khám tổng quát"
+                  : localStorage.getItem("service_id") === "S013"
+                    ? "Dịch vụ nội trú"
+                    : localStorage.getItem("service_id") === "S009"
+                      ? "Dịch vụ chăm sóc, làm đẹp"
+                      : ""
+                : "Nhân viên phòng khám"}
+            </span>
           </div>
           <img
             src="https://kynguyenlamdep.com/wp-content/uploads/2022/06/avatar-cute-meo-con-than-chet-700x695.jpg"
@@ -38,9 +49,8 @@ const MainLayout = (props) => {
               <NavLink
                 key={index}
                 to={item.to}
-                className={`${styles.tabService} ${
-                  tab === item.id ? styles.active : ""
-                }`}
+                className={`${styles.tabService} ${tab === item.id ? styles.active : ""
+                  }`}
                 onClick={() => setTab(item.id)}
               >
                 {item.name}

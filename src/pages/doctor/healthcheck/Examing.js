@@ -1,3 +1,4 @@
+import { IoCheckmarkDoneCircleSharp } from "react-icons/io5"
 import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./styles/Examing.module.scss";
@@ -20,7 +21,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn/");
-import { IoCheckmarkDoneCircleSharp } from "react-icons/io5"
 
 const Examing = () => {
   const { bookingId } = useParams();

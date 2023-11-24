@@ -58,7 +58,11 @@ const TrackDetail = () => {
       const responseBill = await api.get(
         `/billDetail/?booking_id=${bookingId}`
       );
-      setBillDetailList(responseBill.data.data);
+      if (responseBill) {
+        setBillDetailList(responseBill.data.data);
+      } else {
+        setBillDetailList([]);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -116,6 +120,7 @@ const TrackDetail = () => {
           },
         ],
       });
+      console.log("create service form", createdResponse);
     } catch (err) {
       console.log(err);
     }

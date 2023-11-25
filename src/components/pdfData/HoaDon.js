@@ -7,10 +7,10 @@ export const HoaDon = React.forwardRef(
     const { currentDate } = useCurrentDate();
 
     // Tính tổng số tiền từ cột price
-    // const totalPrice = billDetailList.reduce((total, service) => {
-    //   const price = parseFloat(service.price);
-    //   return total + price;
-    // }, 0);
+    const totalPrice = billDetailList.reduce((total, service) => {
+      const price = parseFloat(service.price);
+      return total + price;
+    }, 0);
 
     // Định dạng tổng tiền theo tiền tệ Việt Nam
     const formattedPrice = (price) => {
@@ -82,7 +82,7 @@ export const HoaDon = React.forwardRef(
           </table>
           <div className={styles.lineItem}>
             <span className={styles.total}>Tổng cộng:</span>
-            {/* <span>{formattedPrice(totalPrice)}</span> */}
+            <span>{formattedPrice(totalPrice)}</span>
           </div>
         </div>
         <div className={styles.footer}>

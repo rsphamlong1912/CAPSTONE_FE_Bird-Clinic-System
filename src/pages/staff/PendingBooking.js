@@ -126,6 +126,72 @@ const PendingBooking = () => {
     confirmAlert(updatedOptions);
   };
 
+  const optionsCancel = {
+    title: "Xác nhận",
+    message: "Bạn có chắc huỷ cuộc hẹn?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const handleConfirmCancel = (item) => {
+    const updatedOptions = {
+      ...optionsCancel,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const responseCancel = await api.put(
+                `/booking/${item.booking_id}`,
+                {
+                  status: "cancel",
+                }
+              );
+              if (responseCancel) {
+                console.log("đã huỷ cuộc hẹn");
+                toast.success("Đã huỷ thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                navigate("/track");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
@@ -198,12 +264,18 @@ const PendingBooking = () => {
                     {item.status === "pending" ? "Chờ duyệt" : ""}
                   </p>
                 </td>
-                <td>
+                <td className={styles.flexAction}>
                   <div
                     className={styles.btnCheckin}
                     onClick={() => handleConfirmAlert(item)}
                   >
                     Duyệt
+                  </div>
+                  <div
+                    className={styles.btnCheckin}
+                    onClick={() => handleConfirmCancel(item)}
+                  >
+                    Huỷ
                   </div>
                 </td>
               </tr>

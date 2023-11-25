@@ -24,6 +24,7 @@ const TrackDetail = () => {
   const [selectedVet, setSelectedVet] = useState("");
   const [bookingInfo, setBookingInfo] = useState();
   const [billDetailList, setBillDetailList] = useState();
+  const [showPrintBill, setShowPrintBill] = useState(false);
 
   //Print
   const printRef = useRef();
@@ -54,11 +55,17 @@ const TrackDetail = () => {
     }
   };
   const fetchBillDetail = async () => {
+    console.log("booking id", bookingId);
     try {
       const responseBill = await api.get(
         `/billDetail/?booking_id=${bookingId}`
       );
-      setBillDetailList(responseBill.data.data);
+      console.log("fetch bill", responseBill.data.data.length);
+      if (responseBill.data.data.length !== 0) {
+        setBillDetailList(responseBill.data.data);
+        setShowPrintBill(true);
+      }
+      console.log("response bill", responseBill.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -96,6 +103,7 @@ const TrackDetail = () => {
   const currentTime = `${formattedHours}:${formattedMinutes}`;
 
   const createNewServiceForm = async (item) => {
+    console.log("item", item);
     try {
       // Tạo service_Form
       const createdResponse = await api.post(`/service_Form/`, {
@@ -116,6 +124,7 @@ const TrackDetail = () => {
           },
         ],
       });
+      console.log("create service form", createdResponse);
     } catch (err) {
       console.log(err);
     }
@@ -176,6 +185,72 @@ const TrackDetail = () => {
                 if (item.service_type_id === "ST001") {
                   createNewServiceForm(item);
                 }
+                navigate("/track");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+
+  const optionsCancel = {
+    title: "Xác nhận",
+    message: "Bạn có chắc huỷ cuộc hẹn?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const handleConfirmCancel = (item) => {
+    const updatedOptions = {
+      ...optionsCancel,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async (item) => {
+            try {
+              const responseCancel = await api.put(
+                `/booking/${item.booking_id}`,
+                {
+                  status: "cancel",
+                }
+              );
+              if (responseCancel) {
+                console.log("đã huỷ cuộc hẹn");
+                toast.success("Đã huỷ thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
                 navigate("/track");
               }
             } catch (error) {
@@ -305,8 +380,16 @@ const TrackDetail = () => {
               >
                 Check-in
               </button>
-              <button className={styles.btnComplete} onClick={handlePrint}>
-                In hoá đơn
+              {showPrintBill && (
+                <button className={styles.btnComplete} onClick={handlePrint}>
+                  In hoá đơn
+                </button>
+              )}
+              <button
+                className={styles.btnComplete}
+                onClick={() => handleConfirmCancel(bookingInfo)}
+              >
+                Huỷ cuộc hẹn
               </button>
             </div>
           </div>
@@ -316,13 +399,16 @@ const TrackDetail = () => {
         open={openModalProfile}
         onClose={() => setOpenModalProfile(false)}
       />
-      <div style={{ display: "none" }}>
-        <HoaDon
-          ref={printRef}
-          billDetailList={billDetailList}
-          bookingInfo={bookingInfo}
-        ></HoaDon>
-      </div>
+      {showPrintBill && (
+        <div style={{ display: "none" }}>
+          <HoaDon
+            ref={printRef}
+            billDetailList={billDetailList}
+            bookingInfo={bookingInfo}
+          ></HoaDon>
+        </div>
+      )}
+
       <div className={styles.footerContent}>
         <button className={styles.btnBack} onClick={() => navigate(`/track`)}>
           Quay lại

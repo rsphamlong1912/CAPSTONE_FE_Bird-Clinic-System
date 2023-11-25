@@ -228,6 +228,12 @@ tbody tr.hide td img {
     border: 1px solid rgba(255, 59, 71, 1);
 }
 
+.status.finish {
+    color: rgb(255, 229, 59);
+    background-color: #fff;
+    border: 1px solid rgb(255, 229, 59);
+}
+
 @media (max-width: 1000px) {
     td:not(:first-of-type) {
         min-width: 12.1rem;

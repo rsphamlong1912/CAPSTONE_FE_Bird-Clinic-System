@@ -145,7 +145,7 @@ const GroomingToday = () => {
                   </p>
                 </td>
                 <td>
-                  {item.status === "on_going" ? <div className={styles.btnCtn} onClick={() => handleChangeStatusBooking(item)}>Tiếp tục</div>
+                  {item.status === "on_going" ? <div className={styles.btnCtn} onClick={() => navigate(`/grooming/${item.booking_id}`)}>Tiếp tục</div>
                   :<div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Tiếp nhận</div>}
                   
                 </td>

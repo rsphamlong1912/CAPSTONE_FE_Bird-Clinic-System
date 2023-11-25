@@ -1,4 +1,3 @@
-import { IoCheckmarkDoneCircleSharp } from "react-icons/io5"
 import React, { useState, useRef, useEffect } from "react";
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
@@ -469,6 +468,7 @@ const Examing = () => {
         }
       );
       console.log("Change Tab Successful");
+      console.log("Change Tab 1: ", sendProcessToApi);
     } catch (error) {
       // Xử lý lỗi nếu có
       console.error("Error:", error);
@@ -491,6 +491,7 @@ const Examing = () => {
         }
       );
       console.log("Change Tab Successfull");
+      console.log("Change Tab 2: ", sendProcessToApi);
     } catch (error) {
       // Xử lý lỗi nếu có
       console.error("Error:", error);

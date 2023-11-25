@@ -121,8 +121,8 @@ const ScheduleGrooming = () => {
                         <th> Chim</th>
                         <th> Dịch vụ</th>
                         <th> Giờ đặt</th>
-                        {/* <th> Giờ checkin</th> */}
-                        <th> Bác sĩ phụ trách</th>
+                        <th> Giờ checkin</th>
+                        <th> Số điện thoại</th>
                         <th> Trạng thái</th>
                         {/* <th> Ngày hẹn</th> */}
                     </tr>
@@ -157,9 +157,9 @@ const ScheduleGrooming = () => {
                                 <td>{item.bird.name}</td>
                                 <td>{item.service_type}</td>
                                 <td>{item.estimate_time}</td>
-                                {/* <td>{item.checkin_time}</td> */}
+                                <td>{item.checkin_time !== null && item.checkin_time !== "" ? item.checkin_time : "Chưa đến"}</td>
                                 <td>
-                                    <strong>{item.veterinarian.name}</strong>
+                                    <strong>{item.bird.customer.phone}</strong>
                                 </td>
                                 <td>
                                     <p

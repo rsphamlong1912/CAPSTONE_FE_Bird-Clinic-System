@@ -76,7 +76,8 @@ const TrackAppoinments = () => {
       try {
         const response = await api.get("/booking");
         const filterBookings = response.data.data.filter(
-          (booking) => booking.status !== "pending"
+          (booking) =>
+            booking.status !== "pending" && booking.status !== "cancel"
         );
         // Sort bookings by checkin_time in ascending order
         // filterBookings.sort((a, b) => {
@@ -246,6 +247,7 @@ const TrackAppoinments = () => {
           <tr>
             <th> STT</th>
             <th> Khách hàng</th>
+            <th>Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Giờ đặt</th>
@@ -273,10 +275,11 @@ const TrackAppoinments = () => {
               <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
+                <td>{item.bird.customer.phone}</td>
                 <td>{item.bird.name}</td>
                 <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
-                <td>{item.checkin_time}</td>
+                <td>{item.checkin_time || "_____"}</td>
                 <td>
                   <strong>{item.veterinarian.name}</strong>
                 </td>

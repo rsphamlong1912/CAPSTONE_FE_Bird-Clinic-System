@@ -15,7 +15,7 @@ const Billing = () => {
   const [billList, setBillList] = useState([]);
   const [serviceFormDetailList, setServiceFormDetailList] = useState([]);
   const [serviceList, setServiceList] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
+  // const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const printRef = useRef();
@@ -23,22 +23,22 @@ const Billing = () => {
     content: () => printRef.current,
   });
 
-  const handlePrint = async (item) => {
-    try {
-      const response = await api.get(`/service_Form/${item.service_form_id}`);
+  // const handlePrint = async (item) => {
+  //   try {
+  //     const response = await api.get(`/service_Form/${item.service_form_id}`);
 
-      //   setServiceFormDetailList(response.data.data[0].service_form_details);
-      const matchedServices = serviceList.filter((service) => {
-        return response.data.data[0].service_form_details.find(
-          (detail) => detail.service_package_id === service.service_package_id
-        );
-      });
-      setSelectedServices(matchedServices);
-      setTimeout(handlePrintWithHook, 1000);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     //   setServiceFormDetailList(response.data.data[0].service_form_details);
+  //     const matchedServices = serviceList.filter((service) => {
+  //       return response.data.data[0].service_form_details.find(
+  //         (detail) => detail.service_package_id === service.service_package_id
+  //       );
+  //     });
+  //     setSelectedServices(matchedServices);
+  //     setTimeout(handlePrintWithHook, 1000);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   //GET DỮ LIỆU BILL
   useEffect(() => {
@@ -301,22 +301,22 @@ const Billing = () => {
                   >
                     Xác nhận
                   </div> */}
-                  {item.status === "paid" && (
+                  {/* {item.status === "paid" && (
                     <div
                       className={`${styles.btnCheckin} ${styles.viewDetail} `}
                       onClick={() => handlePrint(item)}
                     >
                       In hoá đơn
                     </div>
-                  )}
+                  )} */}
                 </td>
               </tr>
             ))}
         </tbody>
       </table>
-      <div style={{ display: "none" }}>
+      {/* <div style={{ display: "none" }}>
         <HoaDon ref={printRef} selectedServices={selectedServices}></HoaDon>
-      </div>
+      </div> */}
       <div className={styles.footerContent}>
         <div className={styles.numberResult}>
           {!loading && billList.length} kết quả

@@ -82,25 +82,33 @@ const ExamingToday = () => {
       console.log("api ne:", response.data.data);
 
       const accountId = localStorage.getItem("account_id");
-      const vetCustomers = response.data.data.filter(
+      let vetCustomers = response.data.data.filter(
         (booking) =>
           booking.veterinarian_id === accountId &&
           booking.status !== "pending" &&
           booking.status !== "booked" &&
           booking.service_type_id === "ST001"
       );
+      console.log("vet customer ne", vetCustomers);
+
+      vetCustomers = vetCustomers.filter(
+        (booking) => booking.checkin_time !== null
+      );
 
       vetCustomers.sort((a, b) => {
-        const timeA = a.checkin_time.split(":").map(Number);
-        const timeB = b.checkin_time.split(":").map(Number);
+        if (a.checkin_time && b.checkin_time) {
+          const timeA = a.checkin_time.split(":").map(Number);
+          const timeB = b.checkin_time.split(":").map(Number);
 
-        // Compare hours
-        if (timeA[0] !== timeB[0]) {
-          return timeA[0] - timeB[0];
+          // So sánh giờ
+          if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
+          }
+
+          // Nếu giờ bằng nhau, so sánh phút
+          return timeA[1] - timeB[1];
         }
-
-        // If hours are the same, compare minutes
-        return timeA[1] - timeB[1];
+        return 0;
       });
 
       setCustomerList(vetCustomers);
@@ -174,7 +182,7 @@ const ExamingToday = () => {
                 <td>Sáo nâu</td>
                 <td>Khám tổng quát</td>
                 <td>{item.estimate_time}</td>
-                <td></td>
+                <td>{item.checkin_time}</td>
                 <td>
                   <strong>Phạm Ngọc Long</strong>
                 </td>

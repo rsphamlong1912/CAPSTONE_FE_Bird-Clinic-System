@@ -314,12 +314,16 @@ tbody td.active {
   }
 }
 
-.btnCheckin {
-  text-align: center;
-  background-color: #32b768;
-  width: 100px;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
+.flexAction {
+  display: flex;
+  .btnCheckin {
+    text-align: center;
+    background-color: #32b768;
+    width: 80px;
+    color: white;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 }

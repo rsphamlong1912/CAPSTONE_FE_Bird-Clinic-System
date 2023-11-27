@@ -83,10 +83,6 @@ const ProfileBirdModal = ({ open, onClose, birdProfile, birdProfileBreed, bookin
                   <td>{birdProfile?.color}</td>
                 </tr>
                 <tr>
-                  <th>Cân nặng</th>
-                  <td>{birdProfile?.weight} gam</td>
-                </tr>
-                <tr>
                   <th>Microchip</th>
                   <td>{birdProfile?.ISO_microchip}</td>
                 </tr>

@@ -14,19 +14,25 @@ const socket = io("https://clinicsystem.io.vn");
 
 const Grooming = () => {
   const { bookingId } = useParams();
+  const [sizeInfo, setSizeInfo] = useState([]);
+  const [birdBreedInfo, setBirdBreedInfo] = useState([]);
+  const [bookingInfo, setBookingInfo] = useState();
   const [birdProfile, setBirdProfile] = useState([]);
   const [customerProfile, setCustomerProfile] = useState([]);
   const [birdProfileSize, setBirdProfileSize] = useState([]);
   const [birdProfileBreed, setBirdProfileBreed] = useState([]);
-  const [bookingInfo, setBookingInfo] = useState();
-  const [sizeInfo, setSizeInfo] = useState();
+  const [birdId, setBirdId] = useState([]);
+  const [selectBirdSizeId, setSelectBirdSizeId] = useState([]);
   const [tab, setTab] = useState(1);
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [sizeBird, setSizeBird] = useState(1);
   const [showInfo, setShowInfo] = useState([]);
   const [serviceFormDetails, setServiceFormDetails] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
+  const [selectedServicesName, setSelectedServicesName] = useState([]);
   const [confirmButtonVisible, setConfirmButtonVisible] = useState(true);
+  const [birdSizeId, setBirdSizeId] = useState(null);
+  const [packageDetail, setPackageDetail] = useState(null);
 
   const toggleInfo1 = (serviceIndex) => {
     const newShowInfo = [...showInfo];
@@ -51,12 +57,35 @@ const Grooming = () => {
     });
   };
 
-  const [birdSizeId, setBirdSizeId] = useState(null);
-
-  const [packageDetail, setPackageDetail] = useState(null);
 
   //LẤY THÔNG TIN BOOKING
   useEffect(() => {
+    const getBirdSize = async () => {
+      try {
+        const response = await api.get(`/bird_size/`);
+
+        const filteredSizeInfo = response.data.data.filter(item => item.bird_size_id !== 'SZ005');
+
+        console.log("filteredSizeInfo", response.data.data)
+        setSizeInfo(filteredSizeInfo);
+
+        const firstBirdSize = filteredSizeInfo[0];
+        setBirdSizeId(firstBirdSize.bird_size_id);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getBirdBreed = async () => {
+      try {
+        const response = await api.get(`/bird_breed/`);
+        setBirdBreedInfo(response.data.data);
+        console.log("setBirdBreedInfo", response.data.data)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const getBooking = async () => {
       try {
         const response = await api.get(
@@ -71,42 +100,6 @@ const Grooming = () => {
         if (response.data.data && response.data.data.bird_id) {
           getBirdProfile(response.data.data.bird_id);
         }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const getCustomerProfile = async (customerId) => {
-      try {
-        const response = await api.get(`/customer/${customerId}`);
-        setCustomerProfile(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const getBirdProfile = async (birdId) => {
-      try {
-        const response = await api.get(`/bird/${birdId}`);
-        setBirdProfile(response.data.data);
-        setBirdProfileSize(response.data.data.bird_breed.bird_size.size);
-        setBirdProfileBreed(response.data.data.bird_breed.breed)
-        console.log("bird:", response.data.data)
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const getBirdSize = async () => {
-      try {
-        const response = await api.get(`/bird_size/`);
-
-        const filteredSizeInfo = response.data.data.filter(item => item.bird_size_id !== 'SZ005');
-
-        setSizeInfo(filteredSizeInfo);
-
-        const firstBirdSize = filteredSizeInfo[0];
-        setBirdSizeId(firstBirdSize.bird_size_id);
       } catch (error) {
         console.log(error);
       }
@@ -131,8 +124,9 @@ const Grooming = () => {
         const response = await api.get(`/service_Form/?booking_id=${bookingId}`);
         setServiceFormDetails(response.data.data[0].service_form_details);
         setSelectedServices(response.data.data[0].service_form_details.map((packageData) => packageData.service_package_id));
+        setSelectedServicesName(response.data.data[0].service_form_details.map((packageData) => packageData.note));
         console.log("selectedServices", response.data.data[0].service_form_details.map((packageData) => packageData.service_package_id))
-
+        console.log("selectedServices", response.data.data[0].service_form_details.map((packageData) => packageData.note))
         if (response.data.data[0] && response.data.data[0].service_form_details[0].service_package_id) {
           getPackageDetails(response.data.data[0].service_form_details[0].service_package_id);
         }
@@ -142,12 +136,37 @@ const Grooming = () => {
     };
 
     getBirdSize();
+    getBirdBreed();
     getBooking();
     getServicePackage();
     getServiceFormDetails();
   }, [bookingId]);
 
+  const getCustomerProfile = async (customerId) => {
+    try {
+      const response = await api.get(`/customer/${customerId}`);
+      setCustomerProfile(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getBirdProfile = async (birdId) => {
+    try {
+      const response = await api.get(`/bird/${birdId}`);
+      setBirdProfile(response.data.data);
+      setBirdProfileSize(response.data.data.bird_breed.bird_size.size);
+      setBirdProfileBreed(response.data.data.bird_breed.breed)
+      setBirdId(response.data.data.bird_id);
+      setSelectBirdSizeId(response.data.data.bird_breed.bird_size.bird_size_id);
+      console.log("bird:", response.data.data)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getPackageDetails = async (packageId) => {
+    console.log("packageId", packageId);
     try {
       const response = await api.get(`/servicePackage/${packageId}`);
       setPackageDetail(response.data.data.bird_size_id);
@@ -158,8 +177,16 @@ const Grooming = () => {
   };
 
   useEffect(() => {
+    if (selectBirdSizeId) {
+      const matchingSize = sizeInfo.find(item => item.bird_size_id === selectBirdSizeId);
+      if (matchingSize) {
+        onSizeBirdSelect(matchingSize.bird_size_id);
+      }
+    }
+  }, [selectBirdSizeId]);
+
+  useEffect(() => {
     if (packageDetail) {
-      // Nếu có packageDetail, tìm size chim tương ứng và tự động chọn nó
       const matchingSize = sizeInfo.find(item => item.bird_size_id === packageDetail);
       if (matchingSize) {
         onSizeBirdSelect(matchingSize.bird_size_id);
@@ -167,8 +194,46 @@ const Grooming = () => {
     }
   }, [packageDetail]);
 
+  const handleBreedChange = async (selectedBreed) => {
+    console.log("selectedBreed ne", selectedBreed);
+    console.log("birdId ne", birdId);
+    try {
+      const response = await api.put(`/bird/${birdId}`, {
+        breed_id: selectedBreed,
+      });
+      if (response) {
+        toast.success("Cập nhật thành công!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        console.log("response doi status ne", response.data);
+        const updateBirdProfile = async () => {
+          try {
+            const response = await api.get(`/bird/${birdId}`);
+            setBirdProfile(response.data.data);
+            setBirdProfileSize(response.data.data.bird_breed.bird_size.size);
+            setBirdProfileBreed(response.data.data.bird_breed.breed)
+            setBirdId(response.data.data.bird_id);
+            setSelectBirdSizeId(response.data.data.bird_breed.bird_size.bird_size_id);
+            console.log("bird update:", response.data.data)
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        updateBirdProfile();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const toggleService = (serviceId) => {
-    const selectedService = packageInfo.find((service) => service.service_package_id === serviceId);
+    const selectedService = packageInfo.find((service) => service.service_package_id === serviceId.service_package_id);
     const selectedBirdSizeId = selectedService?.bird_size_id;
 
     if (
@@ -182,10 +247,16 @@ const Grooming = () => {
       return;
     }
 
-    if (selectedServices.includes(serviceId)) {
-      setSelectedServices(selectedServices.filter((id) => id !== serviceId));
+    if (selectedServices.includes(serviceId.service_package_id)) {
+      setSelectedServices(selectedServices.filter((id) => id !== serviceId.service_package_id));
     } else {
-      setSelectedServices([...selectedServices, serviceId]);
+      setSelectedServices([...selectedServices, serviceId.service_package_id]);
+    }
+
+    if (selectedServicesName.includes(serviceId.package_name)) {
+      setSelectedServicesName(selectedServicesName.filter((name) => name !== serviceId.package_name));
+    } else {
+      setSelectedServicesName([...selectedServicesName, serviceId.package_name]);
     }
   };
 
@@ -194,18 +265,27 @@ const Grooming = () => {
   }, [selectedServices]);
 
   useEffect(() => {
+    localStorage.setItem('selectedServicesName', JSON.stringify(selectedServicesName));
+  }, [selectedServicesName]);
+
+  useEffect(() => {
     const savedSelectedServices = JSON.parse(localStorage.getItem('selectedServices'));
     if (savedSelectedServices) {
       setSelectedServices(savedSelectedServices);
     }
   }, []);
 
-  // console.log('selectedServices', selectedServices)
-
+  useEffect(() => {
+    const savedSelectedServicesName = JSON.parse(localStorage.getItem('selectedServicesName'));
+    if (savedSelectedServicesName) {
+      setSelectedServicesName(savedSelectedServicesName);
+    }
+  }, []);
   const createNewServiceForm = async () => {
     try {
-      const arrServicePack = selectedServices.map((serviceId) => ({
+      const arrServicePack = selectedServices.map((serviceId, index) => ({
         service_package_id: serviceId,
+        note: selectedServicesName[index], // Sử dụng giá trị từ mảng selectedServicesName
       }));
 
       const totalPrice = selectedServices.reduce((total, serviceId) => {
@@ -226,18 +306,23 @@ const Grooming = () => {
         num_ser_has_done: 0,
         arr_service_pack: arrServicePack,
       });
-      console.log('createdResponse', createdResponse.data);
-
-      // if (createdResponse.data.data && createdResponse.data.data.service_form_id) {
-      //   getServiceFormDetails(createdResponse.data.data.service_form_id);
-      // }
       setConfirmButtonVisible(false);
       success();
     } catch (err) {
       console.log(err);
       showError();
     } finally {
-      window.location.reload();
+      const updateServiceFormDetails = async () => {
+        try {
+          const response = await api.get(`/service_Form/?booking_id=${bookingId}`);
+          setServiceFormDetails(response.data.data[0].service_form_details);
+          setSelectedServices(response.data.data[0].service_form_details.map((packageData) => packageData.service_package_id));
+          setSelectedServicesName(response.data.data[0].service_form_details.map((packageData) => packageData.note));
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      updateServiceFormDetails();
     }
   };
 
@@ -256,26 +341,23 @@ const Grooming = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const fileInput1 = document.getElementById("file1");
-    const fileInput2 = document.getElementById("file2");
-
-    const file1 = fileInput1.files;
-    const file2 = fileInput2.files;
-
     for (const serviceId of selectedServices) {
       const serviceFormDetailsForService = serviceFormDetails.filter(
         (detail) => detail.service_package_id === serviceId
       );
-
       if (serviceFormDetailsForService.length === 0) {
         console.error(`length ${serviceFormDetailsForService.length}`);
         console.error(`Service form details not found for serviceId ${serviceId}`);
         continue;
       }
-
-      for (const serviceFormDetail of serviceFormDetailsForService) {
-
+      // for (const serviceFormDetail of serviceFormDetailsForService) {
+      serviceFormDetailsForService.forEach(async (serviceFormDetail, index) => {
         const idDetail = serviceFormDetail.service_form_detail_id;
+
+        const fileInput1 = document.getElementById(`file1-${serviceId}`);
+        const fileInput2 = document.getElementById(`file2-${serviceId}`);
+        const file1 = fileInput1.files;
+        const file2 = fileInput2.files;
 
         const formData1 = new FormData();
         for (let i = 0; i < file1.length; i++) {
@@ -295,25 +377,25 @@ const Grooming = () => {
         formData2.append("type_service", serviceId);
         formData2.append("is_after", true);
 
-
         try {
+
           const response1 = await api.post("/media", formData1, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           });
-
           const response2 = await api.post("/media", formData2, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           });
-          message.success("Tải ảnh thành công");
+
+          message.success("Cập nhật thành công");
         } catch (error) {
-          message.error("Tải ảnh thất bại");
+          message.error("Cập nhật thất bại");
           console.error("Error:", error);
         }
-      }
+      })
     }
   };
 
@@ -457,7 +539,19 @@ const Grooming = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Giống:</span>
-                    <span>{birdProfileBreed}</span>
+                    {/* <span>{birdProfileBreed}</span> */}
+                    <select
+                      value={birdProfileBreed}
+                      onChange={(e) => handleBreedChange(e.target.value)}
+                      className={styles.sizeSelect}
+                    >
+                      <option value="">{birdProfileBreed} - Hiện tại</option>
+                      {birdBreedInfo.map((item, index) => (
+                        <option key={index} value={item.breed_id}>
+                          {item.breed}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Microchip:</span>
@@ -521,7 +615,6 @@ const Grooming = () => {
                             <div
                               className={`${styles.sizeBirdItem} ${sizeBird === item.bird_size_id ? styles.sizeBirdItemActive : ""
                                 }`}
-                              onClick={() => onSizeBirdSelect(item.bird_size_id)}
                             >
                               <p>{item.size}</p>
                               <span>{item.breeds}</span>
@@ -544,8 +637,8 @@ const Grooming = () => {
                               <div className={styles.serviceDesc}>{service.service_description}</div>
                               <span className={styles.price}>{service.price}vnđ</span>
                               <br />
-                              <button onClick={() => toggleService(service.service_package_id)}>
-                                {selectedServices.includes(service.service_package_id) ? "Đã chọn" : "Thêm"}
+                              <button onClick={() => toggleService(service)}>
+                                {selectedServices.includes(service) ? "Đã chọn" : "Thêm"}
                               </button>
                             </div>
                           ))}
@@ -581,9 +674,8 @@ const Grooming = () => {
                                 <input
                                   type="file"
                                   name="file1"
-                                  id="file1"
+                                  id={`file1-${serviceId}`}
                                   className={styles.FILEGrooming}
-                                  data-multiple-caption="{count} files selected"
                                   multiple
                                 />
                                 <div className={styles.BAGrooming}>Trước grooming</div>
@@ -592,9 +684,8 @@ const Grooming = () => {
                                 <input
                                   type="file"
                                   name="file2"
-                                  id="file2"
+                                  id={`file2-${serviceId}`}
                                   className={styles.FILEGrooming}
-                                  data-multiple-caption="{count} files selected"
                                   multiple
                                 />
                                 <div className={styles.BAGrooming}>Sau grooming</div>

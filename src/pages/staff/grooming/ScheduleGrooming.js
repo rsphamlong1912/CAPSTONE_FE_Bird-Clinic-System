@@ -6,52 +6,12 @@ import { api } from "../../../services/axios";
 import { ImFilesEmpty } from "react-icons/im";
 
 const ScheduleGrooming = () => {
+    const today = new Date();
     const [customerList, setCustomerList] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [dates, setDates] = useState([]);
-    const [selectedDate, setSelectedDate] = useState("");
     const [visibleDates, setVisibleDates] = useState([]);
-
-    useEffect(() => {
-        const today = new Date();
-        const dateList = [];
-
-        // Display dates for a range, for example, the past 30 days and the next 30 days
-        const daysToShow = 30;
-
-        for (let i = -daysToShow; i <= daysToShow; i++) {
-            const currentDate = new Date();
-            currentDate.setDate(today.getDate() + i);
-            dateList.push(formatDate(currentDate));
-        }
-
-        setDates(dateList);
-        // Set selectedDate to today when component mounts
-        setSelectedDate(formatDate(today));
-        // Set initially visible dates to include today in the middle
-        const visibleIndex = dateList.indexOf(formatDate(today));
-        setVisibleDates(dateList.slice(visibleIndex - 3, visibleIndex + 4));
-    }, []);
-
-    // const handleDateClick = (date) => {
-    //     setSelectedDate(date);
-    // };
-
-    const handlePrevDates = () => {
-        const currentIndex = dates.indexOf(visibleDates[0]);
-        const prevDates = dates.slice(currentIndex - 1, currentIndex + 6);
-        setVisibleDates(prevDates);
-        setSelectedDate(prevDates[3]); // Set selected date to the last date in the previous set
-    };
-
-    const handleNextDates = () => {
-        const currentIndex = dates.indexOf(visibleDates[0]);
-        const nextDates = dates.slice(currentIndex + 1, currentIndex + 8);
-        setVisibleDates(nextDates);
-        setSelectedDate(nextDates[3]); // Set selected date to the middle date in the new set
-    };
-
+    
     const formatDate = (date) => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -63,6 +23,22 @@ const ScheduleGrooming = () => {
         const [yyyy, mm, dd] = date.split("-");
         return `${dd}/${mm}`;
     };
+    const [selectedDate, setSelectedDate] = useState(formatDate(today));
+
+    useEffect(() => {
+        const dateList = [];
+        const daysToShow = 30;
+
+        for (let i = -daysToShow; i <= daysToShow; i++) {
+            const currentDate = new Date();
+            currentDate.setDate(today.getDate() + i);
+            dateList.push(formatDate(currentDate));
+        }
+
+        setDates(dateList);
+        const visibleIndex = dateList.indexOf(formatDate(today));
+        setVisibleDates(dateList.slice(visibleIndex - 3, visibleIndex + 4));
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -84,6 +60,19 @@ const ScheduleGrooming = () => {
         fetchData();
     }, [selectedDate]);
 
+    const handlePrevDates = () => {
+        const currentIndex = dates.indexOf(visibleDates[0]);
+        const prevDates = dates.slice(currentIndex - 1, currentIndex + 6);
+        setVisibleDates(prevDates);
+        setSelectedDate(prevDates[3]);
+    };
+
+    const handleNextDates = () => {
+        const currentIndex = dates.indexOf(visibleDates[0]);
+        const nextDates = dates.slice(currentIndex + 1, currentIndex + 8);
+        setVisibleDates(nextDates);
+        setSelectedDate(nextDates[3]);
+    };
 
     return (
         <div className={styles.container}>
@@ -97,7 +86,6 @@ const ScheduleGrooming = () => {
                         <span
                             key={index}
                             className={item === selectedDate ? styles.active : ""}
-                            // onClick={() => handleDateClick(item)}
                         >
                             {formatDateForDisplay(item)}
                         </span>
@@ -124,7 +112,6 @@ const ScheduleGrooming = () => {
                         <th> Giờ checkin</th>
                         <th> Số điện thoại</th>
                         <th> Trạng thái</th>
-                        {/* <th> Ngày hẹn</th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -139,7 +126,6 @@ const ScheduleGrooming = () => {
                             <Loading></Loading>
                         </>
                     )}
-
                     {!loading && customerList.length === 0 && (
                         <tr className={styles.NoGroomingDetial}>
                             <td colSpan="9">
@@ -148,7 +134,6 @@ const ScheduleGrooming = () => {
                             </td>
                         </tr>
                     )}
-
                     {!loading &&
                         customerList.map((item, index) => (
                             <tr key={index}>
@@ -181,9 +166,6 @@ const ScheduleGrooming = () => {
                                                     : "Chưa checkin"}
                                     </p>
                                 </td>
-                                {/* <td>
-                                    {item.arrival_date}
-                                </td> */}
                             </tr>
                         ))}
                 </tbody>

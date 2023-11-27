@@ -7,49 +7,24 @@ import { api } from "../../../services/axios";
 import { ImFilesEmpty } from "react-icons/im";
 
 const GroomingToday = () => {
+  const today = new Date();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleChangeStatusBooking = async (item) => {
-    try {
-      const response = await api.put(`/booking/${item.booking_id}`, {
-        status: "on_going",
-      });
-      console.log("response doi status ne", response.data);
-      navigate(`/grooming/${item.booking_id}`);
-    } catch (error) {
-      console.log(error);
-    }
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
-  const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
-
-  useEffect(() => {
-    const today = new Date();
-    const nextFourDays = [];
-
-    for (let i = 0; i < 5; i++) {
-      const nextDay = new Date();
-      nextDay.setDate(today.getDate() + i);
-      const year = nextDay.getFullYear();
-      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-      const day = String(nextDay.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-      nextFourDays.push(formattedDate);
-    }
-    // Set selectedDate to the first date in the array when component mounts
-    if (nextFourDays.length > 0) {
-      setSelectedDate(nextFourDays[0]);
-    }
-    setDates(nextFourDays);
-  }, []);
+  const [dates, setDates] = useState(formatDate(today));
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+        const response = await api.get(`/booking?arrival_date=${dates}`);
         const filterBookings = response.data.data.filter(
           (booking) =>
             booking.service_type_id == "ST002" &&
@@ -64,7 +39,19 @@ const GroomingToday = () => {
       setLoading(false);
     }, 850);
     fetchData();
-  }, [selectedDate]);
+  }, [dates]);
+
+  const handleChangeStatusBooking = async (item) => {
+    try {
+      const response = await api.put(`/booking/${item.booking_id}`, {
+        status: "on_going",
+      });
+      console.log("response doi status ne", response.data);
+      navigate(`/grooming/${item.booking_id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -103,7 +90,6 @@ const GroomingToday = () => {
               <Loading></Loading>
             </>
           )}
-
           {!loading && customerList.length === 0 && (
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="9">
@@ -112,7 +98,6 @@ const GroomingToday = () => {
               </td>
             </tr>
           )}
-
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
@@ -146,8 +131,8 @@ const GroomingToday = () => {
                 </td>
                 <td>
                   {item.status === "on_going" ? <div className={styles.btnCtn} onClick={() => navigate(`/grooming/${item.booking_id}`)}>Tiếp tục</div>
-                  :<div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Tiếp nhận</div>}
-                  
+                    : <div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Tiếp nhận</div>}
+
                 </td>
               </tr>
             ))}

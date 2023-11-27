@@ -7,40 +7,28 @@ import { ImFilesEmpty } from "react-icons/im";
 import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
 
 const HistoryGrooming = () => {
+    const today = new Date();
     const [customerList, setCustomerList] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [dates, setDates] = useState([]);
-    const [selectedDate, setSelectedDate] = useState("");
     const [openModalProfile, setOpenModalProfile] = useState(false);
     const [birdProfile, setBirdProfile] = useState([]);
     const [birdProfileSize, setBirdProfileSize] = useState([]);
     const [birdProfileBreed, setBirdProfileBreed] = useState([]);
     const [bookingID, setBookingID] = useState("");
 
-    useEffect(() => {
-        const today = new Date();
-        const nextFourDays = [];
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
 
-        for (let i = 0; i < 5; i++) {
-            const nextDay = new Date();
-            nextDay.setDate(today.getDate() + i);
-            const year = nextDay.getFullYear();
-            const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-            const day = String(nextDay.getDate()).padStart(2, "0");
-            const formattedDate = `${year}-${month}-${day}`;
-            nextFourDays.push(formattedDate);
-        }
-        // Set selectedDate to the first date in the array when component mounts
-        if (nextFourDays.length > 0) {
-            setSelectedDate(nextFourDays[0]);
-        }
-        setDates(nextFourDays);
-    }, []);
+    const [dates, setDates] = useState(formatDate(today));
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+                const response = await api.get(`/booking?arrival_date=${dates}`);
                 const filterBookings = response.data.data.filter(
                     (booking) =>
                         booking.service_type_id == "ST002" &&
@@ -55,20 +43,15 @@ const HistoryGrooming = () => {
             setLoading(false);
         }, 850);
         fetchData();
-    }, [selectedDate]);
+    }, [dates]);
 
     const handleButtonClick = (item) => {
-        console.log("item ID:", item);
         handleViewButtonClick(item.bird_id);
         setBookingID(item.booking_id)
         setOpenModalProfile(true);
     };
 
     const handleViewButtonClick = (birdId) => {
-        console.log("birdId ID:", birdId);
-        // Add logic here to perform any additional actions with the booking ID
-        // For example, you can open a modal or navigate to a detailed view.
-        // If you have the booking ID in the state, you can pass it to the modal component.
         const getBirdProfile = async () => {
             try {
                 const response = await api.get(`/bird/${birdId}`);
@@ -80,7 +63,6 @@ const HistoryGrooming = () => {
                 console.log(error);
             }
         };
-
         getBirdProfile();
     };
 
@@ -121,7 +103,6 @@ const HistoryGrooming = () => {
                             <Loading></Loading>
                         </>
                     )}
-
                     {!loading && customerList.length === 0 && (
                         <tr className={styles.NoGroomingDetial}>
                             <td colSpan="9">
@@ -130,7 +111,6 @@ const HistoryGrooming = () => {
                             </td>
                         </tr>
                     )}
-
                     {!loading &&
                         customerList.map((item, index) => (
                             <tr key={index}>

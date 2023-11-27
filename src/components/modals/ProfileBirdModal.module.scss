@@ -176,7 +176,6 @@ p {
 }
 .button {
   height: 30px;
-  margin-top: 10px;
   background-color: #00b2ff;
   border: #00b2ff;
   border-radius: 10px;
@@ -184,4 +183,18 @@ p {
   color: #ffff;
   width: 100px;
   cursor: pointer;
+}
+
+.infHSName {
+  width: 160px;
+  height: 30px;
+  display: grid;
+  align-items: center;
+}
+
+.infHSDate {
+  width: 100px;
+  margin-left: 10px;
+  display: grid;
+  align-items: center;
 }

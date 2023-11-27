@@ -18,6 +18,9 @@ const Boarding = () => {
   const [openModalProfile, setOpenModalProfile] = useState(false);
 
   const [bookingInfo, setBookingInfo] = useState();
+  const [boardingInfo, setBoardingInfo] = useState();
+  const [arrivalDate, setArrivalDate] = useState();
+  const [departureDate, setDepartureDate] = useState();
   const [birdProfile, setBirdProfile] = useState();
   const [birdSizeList, setBirdSizeList] = useState();
   const [birdSizeSelected, setBirdSizeSelected] = useState();
@@ -25,11 +28,67 @@ const Boarding = () => {
   const [cageList, setCageList] = useState();
   const [serviceSelected, setServiceSelected] = useState();
   const [cageSelected, setCageSelected] = useState();
+  const [birdBreedSelected, setBirdBreedSelected] = useState();
+  const [birdBreedList, setBirdBreedList] = useState();
+  const [totalDays, setTotalDays] = useState(0);
+
+  useEffect(() => {
+    if (arrivalDate && departureDate) {
+      const oneDay = 24 * 60 * 60 * 1000; // số mili giây trong một ngày
+      const firstDate = new Date(arrivalDate);
+      const secondDate = new Date(departureDate);
+      const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+      setTotalDays(diffDays);
+    }
+  }, [arrivalDate, departureDate]);
 
   const printRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
+
+  const handleBirdBreedSelection = async (event) => {
+    setBirdBreedSelected(event.target.value);
+    try {
+      const responseChangeBreed = await api.put(
+        `/bird/${birdProfile.bird_id}`,
+        {
+          customer_id: bookingInfo.account_id,
+          breed_id: event.target.value,
+        }
+      );
+      console.log("doi giong chim", responseChangeBreed.data.data);
+      getBooking();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchBirdBreed = async () => {
+    try {
+      const responseBirdBreed = await api.get(`/bird_breed`);
+      setBirdBreedList(responseBirdBreed.data.data);
+      console.log("fetch bird breed", responseBirdBreed.data.data);
+    } catch (error) {
+      console.error("Error fetching veterinarians:", error);
+    }
+  };
+  const fetchBoardingInfo = async () => {
+    try {
+      const responseBoarding = await api.get(`/boarding/${bookingId}`);
+      setBoardingInfo(responseBoarding.data.data);
+      setArrivalDate(responseBoarding.data.data.arrival_date);
+      setDepartureDate(responseBoarding.data.data.departure_date);
+      console.log("fetch boading", responseBoarding.data.data.arrival_date);
+    } catch (error) {
+      console.error("Error fetching veterinarians:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBirdBreed();
+    fetchBoardingInfo();
+  }, []);
 
   const handleServiceClick = (selectedService) => {
     console.log("service duoc chon", selectedService);
@@ -50,6 +109,27 @@ const Boarding = () => {
 
   const handleEndDateChange = (event) => {
     setEndDate(event.target.value);
+  };
+
+  const handleArrivalDateChange = async (event) => {
+    setArrivalDate(event.target.value);
+    try {
+      const responseBoarding = await api.put(`/boarding/${bookingId}`, {
+        arrival_date: event.target.value,
+      });
+    } catch (error) {
+      console.error("Error fetching veterinarians:", error);
+    }
+  };
+  const handleDepartureDateChange = async (event) => {
+    setDepartureDate(event.target.value);
+    try {
+      const responseBoarding = await api.put(`/boarding/${bookingId}`, {
+        departure_date: event.target.value,
+      });
+    } catch (error) {
+      console.error("Error fetching veterinarians:", error);
+    }
   };
 
   useEffect(() => {
@@ -121,7 +201,6 @@ const Boarding = () => {
           (item) => item.bird_size_id !== "SZ005"
         );
         setBirdSizeList(filterList);
-        setBirdSizeSelected(responseBirdSize.data.data[0].bird_size_id);
       } catch (error) {
         console.log(error);
       }
@@ -159,49 +238,52 @@ const Boarding = () => {
     getServiceList();
     getCage();
   }, [birdSizeSelected]);
+  const getBooking = async () => {
+    try {
+      const response = await api.get(`/booking/${bookingId}`);
+      setBookingInfo(response.data.data);
+      console.log("thong tin booking ne:", response.data.data);
+
+      const responseBird = await api.get(`/bird/${response.data.data.bird_id}`);
+      setBirdProfile(responseBird.data.data);
+      setBirdSizeSelected(
+        responseBird.data.data.bird_breed.bird_size.bird_size_id
+      );
+      console.log(
+        "thong tin bird ne:",
+        responseBird.data.data.bird_breed.bird_size
+      );
+
+      //     //cong them
+      //     setAccountId(response.data.data[0].account_id);
+      //     setBirdId(response.data.data[0].bird_id);
+      //     setVeterinarianId(response.data.data[0].veterinarian_id);
+      //     setCustomerName(response.data.data[0].customer_name);
+      //     setServiceType(response.data.data[0].service_type);
+      //     setServiceTypeId(response.data.data[0].service_type_id);
+
+      //     // Only call getBirdProfile if bookingInfo is available
+      //     if (response.data.data[0] && response.data.data[0].bird_id) {
+      //       getBirdProfile(response.data.data[0].bird_id);
+      //     }
+      //     if (response.data.data[0] && response.data.data[0].process_at) {
+      //       setTab(response.data.data[0].process_at);
+      //       console.log("Set tab r nha", response.data.data[0].process_at);
+      //     }
+
+      //     //GET SERVICE FORM DETAIL
+      //     const responseServiceFormDetail = await api.get(
+      //       `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
+      //     );
+      //     console.log("form detail ne", responseServiceFormDetail.data.data[0]);
+      //     setServiceFormDetail(responseServiceFormDetail.data.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //LẤY THÔNG TIN BOOKING
   useEffect(() => {
-    const getBooking = async () => {
-      try {
-        const response = await api.get(`/booking/${bookingId}`);
-        setBookingInfo(response.data.data);
-        console.log("thong tin booking ne:", response.data.data);
-
-        const responseBird = await api.get(
-          `/bird/${response.data.data.bird_id}`
-        );
-        setBirdProfile(responseBird.data.data);
-        console.log("thong tin bird ne:", responseBird.data.data);
-
-        //     //cong them
-        //     setAccountId(response.data.data[0].account_id);
-        //     setBirdId(response.data.data[0].bird_id);
-        //     setVeterinarianId(response.data.data[0].veterinarian_id);
-        //     setCustomerName(response.data.data[0].customer_name);
-        //     setServiceType(response.data.data[0].service_type);
-        //     setServiceTypeId(response.data.data[0].service_type_id);
-
-        //     // Only call getBirdProfile if bookingInfo is available
-        //     if (response.data.data[0] && response.data.data[0].bird_id) {
-        //       getBirdProfile(response.data.data[0].bird_id);
-        //     }
-        //     if (response.data.data[0] && response.data.data[0].process_at) {
-        //       setTab(response.data.data[0].process_at);
-        //       console.log("Set tab r nha", response.data.data[0].process_at);
-        //     }
-
-        //     //GET SERVICE FORM DETAIL
-        //     const responseServiceFormDetail = await api.get(
-        //       `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
-        //     );
-        //     console.log("form detail ne", responseServiceFormDetail.data.data[0]);
-        //     setServiceFormDetail(responseServiceFormDetail.data.data[0]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     getBooking();
   }, [bookingId]);
 
@@ -235,14 +317,27 @@ const Boarding = () => {
           label: "Xác nhận",
           onClick: async () => {
             try {
-              if (startDate && endDate && cageSelected) {
-                const responsePostBoarding = await api.post(`/boarding`, {
-                  booking_id: bookingId,
-                  arrival_date: startDate,
-                  departure_date: endDate,
-                  room_type: "any",
-                  bird_id: birdProfile.bird_id,
-                });
+              if (arrivalDate && departureDate && cageSelected) {
+                const responseUpdateBoarding = await api.put(
+                  `/boarding/${bookingId}`,
+                  {
+                    act_arrival_date: arrivalDate,
+                    // act_departure_date: departureDate,
+                    room_type: serviceSelected.package_name,
+                    cage_id: cageSelected.cage_id,
+                  }
+                );
+
+                const responseUpdateCage = await api.put(
+                  `/cage/${cageSelected.cage_id}`,
+                  {
+                    boarding_id: bookingId,
+                    bird_id: bookingInfo.bird_id,
+                    status: "not_empty",
+                  }
+                );
+
+                console.log("update cage", responseUpdateCage);
 
                 const createdResponseServiceForm = await api.post(
                   `/service_Form/`,
@@ -251,9 +346,9 @@ const Boarding = () => {
                     booking_id: bookingId,
                     reason_referral: "any",
                     status: "pending",
-                    date: bookingInfo.arrival_date,
+                    date: arrivalDate,
                     veterinarian_referral: bookingInfo.veterinarian_id,
-                    total_price: serviceSelected.price * dateRange.length,
+                    total_price: serviceSelected.price * totalDays,
                     qr_code: "any",
                     num_ser_must_do: 1,
                     num_ser_has_done: 1,
@@ -302,6 +397,20 @@ const Boarding = () => {
       ],
     };
     confirmAlert(updatedOptions);
+  };
+
+  const handleClickSize = () => {
+    // Kiểm tra điều kiện trước khi xử lý sự kiện onClick
+    toast.error("Size chim không phù hợp!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   };
 
   return (
@@ -374,7 +483,36 @@ const Boarding = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Giống:</span>
-                    <span>{birdProfile?.breed}</span>
+                    <select
+                      onChange={handleBirdBreedSelection}
+                      className={styles.selectBreed}
+                    >
+                      {birdBreedList &&
+                        birdBreedList.length > 0 &&
+                        birdBreedList.map((item) => {
+                          if (item.breed === birdProfile?.bird_breed.breed) {
+                            return (
+                              <option
+                                key={item.breed_id}
+                                value={item.breed_id}
+                                selected={true}
+                              >
+                                {item.breed}
+                              </option>
+                            );
+                          } else {
+                            return (
+                              <option key={item.breed_id} value={item.breed_id}>
+                                {item.breed}
+                              </option>
+                            );
+                          }
+                        })}
+                    </select>
+                  </div>
+                  <div className={styles.lineItem}>
+                    <span className={styles.label}>Kích thước:</span>
+                    <span>{birdProfile?.bird_breed.bird_size.size}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Microchip:</span>
@@ -388,20 +526,33 @@ const Boarding = () => {
                 <div className={styles.sizeBirdChosen}>
                   <h4 className={styles.title}>Chọn size chim: </h4>
                   <div className={styles.sizeBirdWrapper}>
-                    {birdSizeList.map((item, index) => (
-                      <div
-                        key={item.size}
-                        className={`${
-                          birdSizeSelected === item.bird_size_id
-                            ? styles.sizeBirdItemActive
-                            : styles.sizeBirdItem
-                        }`}
-                        onClick={() => setBirdSizeSelected(item.bird_size_id)}
-                      >
-                        <p>{item.size}</p>
-                        <span>{item.breeds}</span>
-                      </div>
-                    ))}
+                    {birdSizeList.map((item, index) => {
+                      if (birdSizeSelected === item.bird_size_id) {
+                        return (
+                          <div
+                            key={item.size}
+                            className={styles.sizeBirdItemActive}
+                            onClick={() =>
+                              setBirdSizeSelected(item.bird_size_id)
+                            }
+                          >
+                            <p>{item.size}</p>
+                            <span>{item.breeds}</span>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            key={item.size}
+                            className={styles.sizeBirdItem}
+                            onClick={() => handleClickSize()}
+                          >
+                            <p>{item.size}</p>
+                            <span>{item.breeds}</span>
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
                 <div className={styles.serviceChosen}>
@@ -432,14 +583,33 @@ const Boarding = () => {
                     ))}
                   </div>
                 </div>
+                <div className={styles.timeManage}>
+                  <h4 className={styles.title}>Thời gian đặt: </h4>
+                  <div>
+                    <label className={styles.labelSelect}>Ngày gửi: </label>
+                    <input
+                      type="date"
+                      value={arrivalDate || ""}
+                      onChange={handleArrivalDateChange}
+                    />
+                  </div>
+                  <div>
+                    <label className={styles.labelSelect}>Ngày trả: </label>
+                    <input
+                      type="date"
+                      value={departureDate || ""}
+                      onChange={handleDepartureDateChange}
+                    />
+                  </div>
+                </div>
               </div>
             )}
             {tab == 3 && (
               <div className={styles.boardingChosen}>
                 <div className={styles.timeManage}>
-                  <h4 className={styles.title}>Chọn ngày nội trú: </h4>
+                  <h4 className={styles.title}>Tra lịch lồng: </h4>
                   <div>
-                    <label className={styles.labelSelect}>Ngày đến: </label>
+                    <label className={styles.labelSelect}>Từ: </label>
                     <input
                       type="date"
                       value={startDate || ""}
@@ -447,9 +617,7 @@ const Boarding = () => {
                     />
                   </div>
                   <div>
-                    <label className={styles.labelSelect}>
-                      Ngày kết thúc:{" "}
-                    </label>
+                    <label className={styles.labelSelect}>Đến: </label>
                     <input
                       type="date"
                       value={endDate || ""}
@@ -507,7 +675,7 @@ const Boarding = () => {
                         }
                         onClick={() => handleCageClick(item)}
                       >
-                        <p>L.{item.cage_id}</p>
+                        <p>B00{item.cage_id}</p>
                         <span>BCS_2FEVGF</span>
                       </div>
                     ))}
@@ -547,12 +715,12 @@ const Boarding = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Ngày đến:</span>
-                    <span>{startDate}</span>
+                    <span>{arrivalDate}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Ngày trả:</span>
                     <span>
-                      {endDate} ({dateRange.length} ngày lưu trú)
+                      {departureDate} ({dateRange.length} ngày lưu trú)
                     </span>
                   </div>
                   <div>
@@ -580,6 +748,8 @@ const Boarding = () => {
                 <span>Hồ sơ chim khám</span>
               </div>
             </div>
+            <button className={styles.btnComplete}>Huỷ khám</button>
+
             {tab === 4 && (
               <button
                 className={styles.btnComplete}

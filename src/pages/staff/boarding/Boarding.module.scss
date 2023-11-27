@@ -166,12 +166,12 @@ span.active {
 }
 
 .sizeBirdItem {
+  background-color: #ccc;
   text-align: center;
   width: 260px;
   height: auto;
   padding: 12px;
   border-radius: 5px;
-  border: 1px solid #32b768;
   gap: 25px;
   margin: 0 5px;
   cursor: pointer;
@@ -428,4 +428,12 @@ ion-icon {
 .tableTimeManageDesc {
   font-size: 13px;
   font-style: italic;
+}
+
+.selectBreed {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
 }

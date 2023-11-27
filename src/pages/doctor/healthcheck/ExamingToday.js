@@ -153,7 +153,7 @@ const ExamingToday = () => {
             <th> STT</th>
             <th> Khách hàng</th>
             <th> Chim</th>
-            <th> Dịch vụ</th>
+            <th> Số điện thoại</th>
             <th> Giờ đặt</th>
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
@@ -179,8 +179,8 @@ const ExamingToday = () => {
               <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
-                <td>Sáo nâu</td>
-                <td>Khám tổng quát</td>
+                <td>{item.bird.name}</td>
+                <td>{item.bird.customer.phone}</td>
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
                 <td>

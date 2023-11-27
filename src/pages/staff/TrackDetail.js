@@ -25,6 +25,7 @@ const TrackDetail = () => {
   const [bookingInfo, setBookingInfo] = useState();
   const [billDetailList, setBillDetailList] = useState();
   const [showPrintBill, setShowPrintBill] = useState(false);
+  const [bookingStatus, setBookingStatus] = useState();
 
   //Print
   const printRef = useRef();
@@ -48,6 +49,7 @@ const TrackDetail = () => {
     try {
       const responseBooking = await api.get(`/booking/${bookingId}`);
       setBookingInfo(responseBooking.data.data);
+      setBookingStatus(responseBooking.data.data.status);
       setSelectedVet(responseBooking.data.data.veterinarian_id);
       fetchVeterinarians(responseBooking.data.data.veterinarian);
     } catch (error) {
@@ -231,12 +233,77 @@ const TrackDetail = () => {
       buttons: [
         {
           label: "Xác nhận",
-          onClick: async (item) => {
+          onClick: async () => {
             try {
               const responseCancel = await api.put(
                 `/booking/${item.booking_id}`,
                 {
-                  status: "cancel",
+                  status: "cancelled",
+                }
+              );
+              if (responseCancel) {
+                console.log("đã huỷ cuộc hẹn");
+                toast.success("Đã huỷ thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                navigate("/track");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+  const optionsCheckinAfter = {
+    title: "Xác nhận",
+    message: "Tiến hành checkin sau xét nghiệm?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const handleCheckinAfter = (item) => {
+    const updatedOptions = {
+      ...optionsCheckinAfter,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const responseCancel = await api.put(
+                `/booking/${item.booking_id}`,
+                {
+                  status: "checked_in_after_test",
                 }
               );
               if (responseCancel) {
@@ -373,13 +440,31 @@ const TrackDetail = () => {
                   <ion-icon name="calendar-clear-outline"></ion-icon>
                   <span>Hồ sơ chim khám</span>
                 </div>
+                <div
+                  className={styles.boxDataItem}
+                  onClick={() => setOpenModalProfile(true)}
+                >
+                  <ion-icon name="print-outline"></ion-icon>
+                  <span>In phiếu khám bệnh</span>
+                </div>
               </div>
-              <button
-                className={styles.btnComplete}
-                onClick={() => handleConfirmAlert(bookingInfo)}
-              >
-                Check-in
-              </button>
+              {bookingStatus === "booked" ? (
+                <button
+                  className={styles.btnComplete}
+                  onClick={() => handleConfirmAlert(bookingInfo)}
+                >
+                  Check-in
+                </button>
+              ) : bookingStatus === "test_requested" ? (
+                <button
+                  className={styles.btnComplete}
+                  onClick={() => handleCheckinAfter(bookingInfo)}
+                >
+                  Check-in sau xét nghiệm
+                </button>
+              ) : (
+                ""
+              )}
               {showPrintBill && (
                 <button className={styles.btnComplete} onClick={handlePrint}>
                   In hoá đơn

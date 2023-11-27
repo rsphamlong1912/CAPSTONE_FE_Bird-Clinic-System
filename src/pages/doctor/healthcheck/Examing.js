@@ -22,6 +22,8 @@ import "react-calendar/dist/Calendar.css";
 import io from "socket.io-client";
 import Popup from "reactjs-popup";
 import { PhieuKetQua } from "../../../components/pdfData/PhieuKetQua";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
 const socket = io("https://clinicsystem.io.vn/");
 
 const Examing = () => {
@@ -271,16 +273,33 @@ const Examing = () => {
               (item, index) => item.service_form_detail_id
             )
           );
+          // setServiceFormDetailSideArr(
+          //   responseServiceForm.data.data[0].service_form_details.filter(
+          //     (item) => item.status !== "cancelled"
+          //   )
+          // );
+          // setServiceFormDetailSideIdArr(
+          //   responseServiceForm.data.data[0].service_form_details
+          //     .filter((item) => item.status !== "cancelled")
+          //     .map((item, index) => item.service_form_detail_id)
+          // );
           try {
             const responsesMedicalMedia = await Promise.all(
-              responseServiceForm.data.data[0].service_form_details
-                .map((item, index) => item.service_form_detail_id)
-                .map(async (item) => {
-                  const responseDetail = await api.get(
-                    `/medicalRecord/?service_form_detail_id=${item}`
-                  );
-                  return responseDetail.data.data[0];
-                })
+              responseServiceForm.data.data[0].service_form_details.map(
+                async (item) => {
+                  if (item.status === "done") {
+                    const responseDetail = await api.get(
+                      `/medicalRecord/?service_form_detail_id=${item.service_form_detail_id}`
+                    );
+                    return responseDetail.data.data[0];
+                  } else {
+                    return {
+                      note: item.note,
+                      service_form_detail_id: item.service_form_detail_id,
+                    };
+                  }
+                }
+              )
             );
             // Thêm dữ liệu vào medicalRecordData
             setMedicalRecordData(responsesMedicalMedia);
@@ -566,6 +585,72 @@ const Examing = () => {
     }
   };
 
+  const optionsCancel = {
+    title: "Xác nhận",
+    message: "Bạn có chắc huỷ cuộc hẹn?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const handleConfirmCancel = (item) => {
+    const updatedOptions = {
+      ...optionsCancel,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const responseCancel = await api.put(
+                `/booking/${item.booking_id}`,
+                {
+                  status: "cancel",
+                }
+              );
+              if (responseCancel) {
+                console.log("đã huỷ cuộc hẹn");
+                toast.success("Đã huỷ thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                navigate("/track");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -646,18 +731,31 @@ const Examing = () => {
                       nghiệm:
                     </h3>
                     {serviceFormDetailSideArr.map((item, index) => {
+                      console.log("medical record data", medicalRecordData);
                       const matchingMedicalRecord = medicalRecordData.find(
                         (record) =>
                           record.service_form_detail_id ===
                           item.service_form_detail_id
                       );
-                      console.log("record", matchingMedicalRecord);
+                      console.log("record ne huu", matchingMedicalRecord);
 
                       if (matchingMedicalRecord) {
                         return (
                           <div key={index} className={styles.resultDetail}>
                             <div className={styles.titleService}>
-                              <h4>{item.note}</h4>
+                              <h4>
+                                {item.note}
+                                {matchingMedicalRecord.hasOwnProperty(
+                                  "symptom"
+                                ) ? (
+                                  <span></span>
+                                ) : (
+                                  <span className={styles.cancelled}>
+                                    Đã huỷ
+                                  </span>
+                                )}
+                              </h4>
+
                               <span
                                 onClick={() =>
                                   openPopup(item.service_form_detail_id)
@@ -976,6 +1074,14 @@ const Examing = () => {
               </div>
             </div>
             <button className={styles.btnComplete}>Hoàn thành khám</button>
+            <button
+              className={styles.btnComplete}
+              onClick={() => {
+                handleConfirmCancel(bookingInfo);
+              }}
+            >
+              Huỷ khám
+            </button>
             <button className={styles.btnHospitalize} onClick={handlePrint}>
               In phiếu kết quả
             </button>

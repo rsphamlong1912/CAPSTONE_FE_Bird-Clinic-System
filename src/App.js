@@ -25,8 +25,10 @@ import TrackDetail from "./pages/staff/TrackDetail";
 import BillingDetail from "./pages/staff/BillingDetail";
 import ResultToday from "./pages/doctor/healthcheck/ResultToday";
 import Result from "./pages/doctor/healthcheck/Result";
+import CreateAppoinment from "./pages/staff/CreateAppoinment";
 import HistoryGrooming from "./pages/staff/grooming/HistoryGrooming";
 import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
+
 
 const listTabsStaff = [
   {
@@ -49,11 +51,11 @@ const listTabsStaff = [
     name: "Thanh toán",
     to: "/billing",
   },
-  // {
-  //   id: 5,
-  //   name: "Đã thanh toán",
-  //   to: "/billing-history",
-  // },
+  {
+    id: 5,
+    name: "Tạo cuộc hẹn",
+    to: "/create",
+  },
 ];
 const listTabsHealthCheck = [
   {
@@ -201,6 +203,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsStaff}>
               <BillingHistory></BillingHistory>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/create"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <CreateAppoinment></CreateAppoinment>
             </MainLayout>
           }
         ></Route>

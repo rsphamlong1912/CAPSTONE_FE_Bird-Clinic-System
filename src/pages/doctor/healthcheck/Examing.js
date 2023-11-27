@@ -252,27 +252,34 @@ const Examing = () => {
         const responseServiceFormDetail = await api.get(
           `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
         );
-
-        console.log("form detail ne", responseServiceFormDetail.data.data[0]);
+        console.log("form detail ne nha", responseServiceFormDetail.data.data);
         setServiceFormDetail(responseServiceFormDetail.data.data[0]);
 
         //GET SERVICE FORM
         const responseServiceForm = await api.get(
           `/service_Form/?booking_id=${bookingId}`
         );
-        console.log(
-          "service form status",
-          responseServiceForm.data.data.length
-        );
+        console.log("fix loi ne", responseServiceForm.data.data);
+
         if (responseServiceForm.data.data.length > 0) {
-          setServiceFormDetailSideArr(
-            responseServiceForm.data.data[0].service_form_details
-          );
-          setServiceFormDetailSideIdArr(
-            responseServiceForm.data.data[0].service_form_details.map(
-              (item, index) => item.service_form_detail_id
-            )
-          );
+          const tempArr = [];
+
+          // Lặp qua dữ liệu response và thêm các phần tử vào mảng tạm thời
+          responseServiceForm.data.data.forEach((item) => {
+            item.service_form_details.forEach((item2) => {
+              tempArr.push(item2);
+            });
+            console.log("temp arr", tempArr);
+          });
+
+          // Cập nhật serviceFormDetailSideArr một lần duy nhất sau khi thu thập được tất cả các giá trị
+          setServiceFormDetailSideArr(tempArr);
+
+          // setServiceFormDetailSideIdArr(
+          //   responseServiceForm.data.data[0].service_form_details.map(
+          //     (item, index) => item.service_form_detail_id
+          //   )
+          // );
           // setServiceFormDetailSideArr(
           //   responseServiceForm.data.data[0].service_form_details.filter(
           //     (item) => item.status !== "cancelled"
@@ -285,21 +292,19 @@ const Examing = () => {
           // );
           try {
             const responsesMedicalMedia = await Promise.all(
-              responseServiceForm.data.data[0].service_form_details.map(
-                async (item) => {
-                  if (item.status === "done") {
-                    const responseDetail = await api.get(
-                      `/medicalRecord/?service_form_detail_id=${item.service_form_detail_id}`
-                    );
-                    return responseDetail.data.data[0];
-                  } else {
-                    return {
-                      note: item.note,
-                      service_form_detail_id: item.service_form_detail_id,
-                    };
-                  }
+              tempArr.map(async (item) => {
+                if (item.status === "done") {
+                  const responseDetail = await api.get(
+                    `/medicalRecord/?service_form_detail_id=${item.service_form_detail_id}`
+                  );
+                  return responseDetail.data.data[0];
+                } else {
+                  return {
+                    note: item.note,
+                    service_form_detail_id: item.service_form_detail_id,
+                  };
                 }
-              )
+              })
             );
             // Thêm dữ liệu vào medicalRecordData
             setMedicalRecordData(responsesMedicalMedia);

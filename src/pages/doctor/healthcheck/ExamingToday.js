@@ -87,6 +87,7 @@ const ExamingToday = () => {
           booking.veterinarian_id === accountId &&
           booking.status !== "pending" &&
           booking.status !== "booked" &&
+          booking.status !== "test_requested" &&
           booking.service_type_id === "ST001"
       );
       console.log("vet customer ne", vetCustomers);
@@ -127,9 +128,10 @@ const ExamingToday = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
-        <div className={styles.middle}>
-          {/* <span className={styles.active}>06/10</span> */}
+        <div className={styles.left}>
+          <h3>DANH SÁCH KHÔM HÔM NAY</h3>
+        </div>
+        {/* <div className={styles.middle}>
           {dates.map((item, index) => (
             <span
               key={index}
@@ -139,7 +141,7 @@ const ExamingToday = () => {
               {formatDateForDisplay(item)}
             </span>
           ))}
-        </div>
+        </div> */}
         <div className={styles.right}>
           <div className={styles.btnSearch}>
             <SearchOutlined />

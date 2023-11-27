@@ -246,7 +246,7 @@
 
 .headerPopup {
   display: flex;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 500;
 }
 
@@ -506,4 +506,16 @@
 .imgChat {
   width: 200px;
   height: 150px;
+}
+
+.serviceItem {
+  font-weight: 500;
+  padding: 10px 30px;
+  cursor: pointer;
+}
+.serviceItem:hover {
+  font-weight: 500;
+  padding: 10px 30px;
+  cursor: pointer;
+  color: #32b768;
 }

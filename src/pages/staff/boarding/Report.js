@@ -13,6 +13,9 @@ const socket = io("https://clinicsystem.io.vn/");
 const Report = () => {
   const { boarding_id } = useParams();
   const [boardingInfo, setBoardingInfo] = useState();
+  const [serviceFormList, setServiceFormList] = useState();
+  const [serviceFormSelect, setServiceFormSelect] = useState();
+  const [serviceFormDetailList, setServiceFormDetailList] = useState();
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [tables, setTables] = useState([]);
   const [selectedType, setSelectedType] = useState("");
@@ -79,8 +82,23 @@ const Report = () => {
       console.log(error);
     }
   };
+
+  const fetchServiceForm = async () => {
+    try {
+      const responseServiceForm = await api.get(
+        `/service_Form/?booking_id=${boarding_id}`
+      );
+      if (responseServiceForm) {
+        console.log("service form list ne: ", responseServiceForm.data.data);
+        setServiceFormList(responseServiceForm.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getBoardingInfo();
+    fetchServiceForm();
   }, []);
 
   const sendMessage = async () => {
@@ -184,6 +202,12 @@ const Report = () => {
     });
   }, []);
 
+  const handleFetchServiceDetail = (item) => {
+    setServiceFormSelect(item.service_form_id);
+    setServiceFormDetailList(item.service_form_details);
+    console.log("select ne", item.service_form_details);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
@@ -248,40 +272,42 @@ const Report = () => {
                 <div className={styles.popup}>
                   <div className={styles.headerPopup}>
                     <span>Dịch vụ</span>
-                    <span>Dịch vụ đã làm</span>
+                    <span>Dịch vụ chi tiết</span>
                   </div>
                   <div className={styles.bodyPopup}>
                     <div className={styles.addPopup}>
-                      <div>{tables}</div>
+                      {/* <div>{tables}</div>
                       <button
                         onClick={createTable}
                         className={styles.addServices}
                       >
                         + Thêm dịch vụ
-                      </button>
+                      </button> */}
+                      {serviceFormList &&
+                        serviceFormList.length > 0 &&
+                        serviceFormList.map((item, index) => (
+                          <div
+                            className={styles.serviceItem}
+                            onClick={() => handleFetchServiceDetail(item)}
+                          >
+                            {index + 1}. <span>{item.service_form_id}</span>
+                          </div>
+                        ))}
                     </div>
                     <div className={styles.tablePopup}>
                       <table>
                         <tr>
                           <th>Tên dịch vụ</th>
-                          <th>Số lượng</th>
-                          <th>Thành tiền</th>
+                          <th>Trạng thái</th>
                         </tr>
-                        <tr>
-                          <td>Cắt móng</td>
-                          <td>x2</td>
-                          <td>300.000đ</td>
-                        </tr>
-                        <tr>
-                          <td>Tỉa lông</td>
-                          <td>x1</td>
-                          <td>200.00đ</td>
-                        </tr>
-                        <tr>
-                          <td>Cắt cánh</td>
-                          <td>x3</td>
-                          <td>500.000đ</td>
-                        </tr>
+                        {serviceFormDetailList &&
+                          serviceFormDetailList.length > 0 &&
+                          serviceFormDetailList.map((item, index) => (
+                            <tr>
+                              <td>{item.note}</td>
+                              <td>{item.status}</td>
+                            </tr>
+                          ))}
                       </table>
                     </div>
                   </div>

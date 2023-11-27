@@ -322,8 +322,8 @@ const Boarding = () => {
                   `/boarding/${bookingId}`,
                   {
                     act_arrival_date: arrivalDate,
-                    act_departure_date: departureDate,
-                    room_type: serviceSelected.service_package_id,
+                    // act_departure_date: departureDate,
+                    room_type: serviceSelected.package_name,
                     cage_id: cageSelected.cage_id,
                   }
                 );

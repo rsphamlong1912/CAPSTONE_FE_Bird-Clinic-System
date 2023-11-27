@@ -159,7 +159,7 @@ const PendingBooking = () => {
               const responseCancel = await api.put(
                 `/booking/${item.booking_id}`,
                 {
-                  status: "cancel",
+                  status: "cancelled",
                 }
               );
               if (responseCancel) {

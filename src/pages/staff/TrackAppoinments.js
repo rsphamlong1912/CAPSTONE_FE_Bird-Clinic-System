@@ -76,8 +76,7 @@ const TrackAppoinments = () => {
       try {
         const response = await api.get("/booking");
         const filterBookings = response.data.data.filter(
-          (booking) =>
-            booking.status !== "pending" && booking.status !== "cancel"
+          (booking) => booking.status !== "pending"
         );
         // Sort bookings by checkin_time in ascending order
         // filterBookings.sort((a, b) => {

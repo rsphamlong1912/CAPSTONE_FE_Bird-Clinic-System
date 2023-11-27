@@ -240,6 +240,114 @@ const ReTesting = () => {
     }
   };
 
+  const optionsCancel = {
+    title: "Xác nhận",
+    message: "Bạn có chắc huỷ cuộc hẹn?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const handleConfirmCancel = () => {
+    const updatedOptions = {
+      ...optionsCancel,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const responseCancel = await api.put(
+                `/service_Form_detail/${serviceFormDetailId}`,
+                {
+                  status: "cancelled",
+                }
+              );
+              if (responseCancel) {
+                //TĂNG SERVICE HAS DONE LÊN 1
+                const serviceFormId = serviceFormDetailInfo.service_form_id;
+                // Lấy thông tin hiện tại của service form
+                const serviceFormResult = await api.get(
+                  `/service_Form/${serviceFormId}`
+                );
+                // Lấy giá trị hiện tại của num_ser_has_done từ response
+
+                const currentNumSerHasDone =
+                  serviceFormResult.data.data[0].num_ser_has_done;
+                // Tăng giá trị lên 1
+                const updatedNumSerHasDone = currentNumSerHasDone + 1;
+
+                const isDone =
+                  serviceFormResult.data.data[0].num_ser_must_do ===
+                  updatedNumSerHasDone;
+
+                //   if (isDone) {
+                //     try {
+                //       const updateBookingResponse = await api.put(
+                //         `/booking/${serviceFormDetailInfo.booking_id}`,
+                //         {
+                //           status: "checked_in_after_test",
+                //         }
+                //       );
+                //     } catch (error) {
+                //       console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
+                //     }
+                //   }
+
+                // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
+                const increaseResponse = await api.put(
+                  `/service_Form/${serviceFormId}`,
+                  {
+                    num_ser_has_done: updatedNumSerHasDone,
+                    status: isDone ? "done" : "paid",
+                  }
+                );
+
+                console.log("increaseRes", increaseResponse.data);
+
+                //TOAST THÔNG BÁO
+                toast.success("Huỷ thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+
+                navigate(`/retesting`);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -292,7 +400,12 @@ const ReTesting = () => {
             <button className={styles.btnComplete} onClick={handleConfirmAlert}>
               Xác nhận xét nghiệm
             </button>
-            <button className={styles.btnHospitalize}>Nhập viện</button>
+            <button
+              className={styles.btnHospitalize}
+              onClick={handleConfirmCancel}
+            >
+              Huỷ
+            </button>
           </div>
         </div>
       </div>

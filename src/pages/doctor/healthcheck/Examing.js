@@ -487,6 +487,7 @@ const Examing = () => {
         }
       );
       console.log("Change Tab Successful");
+      console.log("Change Tab 1: ", sendProcessToApi);
     } catch (error) {
       // Xử lý lỗi nếu có
       console.error("Error:", error);
@@ -509,6 +510,7 @@ const Examing = () => {
         }
       );
       console.log("Change Tab Successfull");
+      console.log("Change Tab 2: ", sendProcessToApi);
     } catch (error) {
       // Xử lý lỗi nếu có
       console.error("Error:", error);

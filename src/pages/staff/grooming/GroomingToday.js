@@ -46,27 +46,14 @@ const GroomingToday = () => {
     setDates(nextFourDays);
   }, []);
 
-  const handleDateClick = (date) => {
-    const clickedDate = new Date(date);
-    const year = clickedDate.getFullYear();
-    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(clickedDate.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    setSelectedDate(formattedDate);
-  };
-
-  const formatDateForDisplay = (date) => {
-    const [yyyy, mm, dd] = date.split("-");
-    return `${dd}/${mm}`;
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get(`/booking?arrival_date=${selectedDate}`);
         const filterBookings = response.data.data.filter(
           (booking) =>
-            booking.service_type_id == "ST002"
+            booking.service_type_id == "ST002" &&
+            booking.status !== "pending" && booking.status !== "booked" && booking.status !== "finish"
         );
         setCustomerList(filterBookings);
       } catch (error) {
@@ -83,17 +70,6 @@ const GroomingToday = () => {
     <div className={styles.container}>
       <div className={styles.headerContent}>
         <div className={styles.left}></div>
-        <div className={styles.middle}>
-          {dates.map((item, index) => (
-            <span
-              key={index}
-              className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
-            >
-              {formatDateForDisplay(item)}
-            </span>
-          ))}
-        </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>
             <SearchOutlined />
@@ -132,7 +108,7 @@ const GroomingToday = () => {
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="9">
                 <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>No grooming appointments for the selected date.</h3>
+                <h3 className={styles.txtNoGrooming}>Không có cuộc hẹn chải chuốt cho ngày đã chọn.</h3>
               </td>
             </tr>
           )}
@@ -151,7 +127,7 @@ const GroomingToday = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${item.status === "check_in"
+                    className={`${styles.status} ${item.status === "checked_in"
                       ? styles.checkin
                       : item.status === "on_going" ||
                         item.status === "test_requested"
@@ -159,7 +135,7 @@ const GroomingToday = () => {
                         : ""
                       } `}
                   >
-                    {item.status === "check_in"
+                    {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
                         ? "Đang chăm sóc"
@@ -169,7 +145,9 @@ const GroomingToday = () => {
                   </p>
                 </td>
                 <td>
-                  <div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Tiếp nhận</div>
+                  {item.status === "on_going" ? <div className={styles.btnCtn} onClick={() => navigate(`/grooming/${item.booking_id}`)}>Tiếp tục</div>
+                  :<div className={styles.btnCheckin} onClick={() => handleChangeStatusBooking(item)}>Tiếp nhận</div>}
+                  
                 </td>
               </tr>
             ))}

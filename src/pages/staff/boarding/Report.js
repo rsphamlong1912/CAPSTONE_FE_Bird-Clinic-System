@@ -300,12 +300,14 @@ const Report = () => {
                           <th>Tên dịch vụ</th>
                           <th>Trạng thái</th>
                         </tr>
-                        {serviceFormDetailList.map((item, index) => (
-                          <tr>
-                            <td>{item.note}</td>
-                            <td>{item.status}</td>
-                          </tr>
-                        ))}
+                        {serviceFormDetailList &&
+                          serviceFormDetailList.length > 0 &&
+                          serviceFormDetailList.map((item, index) => (
+                            <tr>
+                              <td>{item.note}</td>
+                              <td>{item.status}</td>
+                            </tr>
+                          ))}
                       </table>
                     </div>
                   </div>

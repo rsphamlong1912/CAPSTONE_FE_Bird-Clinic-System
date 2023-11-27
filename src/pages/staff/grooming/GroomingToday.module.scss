@@ -317,11 +317,21 @@ tbody td.active {
   .iconEmpty {
     width: auto;
     height: 40px;
-    margin-left: 760px;
+    margin-left: 750px;
     margin-bottom: 20px;
   }
 
   .txtNoGrooming {
     text-align: center;
   }
+}
+
+.btnCtn {
+  text-align: center;
+  background-color: #00B2FF;
+  width: 100px;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }

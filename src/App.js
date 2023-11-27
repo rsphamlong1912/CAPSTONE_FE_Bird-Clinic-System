@@ -26,6 +26,9 @@ import BillingDetail from "./pages/staff/BillingDetail";
 import ResultToday from "./pages/doctor/healthcheck/ResultToday";
 import Result from "./pages/doctor/healthcheck/Result";
 import CreateAppoinment from "./pages/staff/CreateAppoinment";
+import HistoryGrooming from "./pages/staff/grooming/HistoryGrooming";
+import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
+
 
 const listTabsStaff = [
   {
@@ -109,7 +112,7 @@ const listTabsGrooming = [
   {
     id: 2,
     name: "Lịch hẹn",
-    to: "/schedule",
+    to: "/schedule-grooming",
   },
   {
     id: 3,
@@ -300,6 +303,22 @@ function App() {
           element={
             <MainLayout listTabs={listTabsGrooming}>
               <Grooming></Grooming>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/schedule-grooming"
+          element={
+            <MainLayout listTabs={listTabsGrooming}>
+              <ScheduleGrooming></ScheduleGrooming>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/history-grooming"
+          element={
+            <MainLayout listTabs={listTabsGrooming}>
+              <HistoryGrooming></HistoryGrooming>
             </MainLayout>
           }
         ></Route>

@@ -8,6 +8,7 @@ import { AiOutlinePrinter } from "react-icons/ai";
 import { api } from "../../../services/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
+import { toast } from "react-toastify";
 const socket = io("https://clinicsystem.io.vn/");
 
 const Report = () => {
@@ -202,10 +203,35 @@ const Report = () => {
     });
   }, []);
 
-  const handleFetchServiceDetail = (item) => {
+  const handleFetchServiceDetail = async (item) => {
     setServiceFormSelect(item.service_form_id);
     setServiceFormDetailList(item.service_form_details);
-    console.log("select ne", item.service_form_details);
+    const responseServiceForm = await api.get(
+      `/service_Form/?booking_id=${boarding_id}`
+    );
+    if (responseServiceForm) {
+      console.log("service form list ne: ", responseServiceForm.data.data);
+      setServiceFormList(responseServiceForm.data.data);
+    }
+  };
+
+  const handleDoneService = async (id) => {
+    const responseHandleDone = await api.put(`/service_Form_detail/${id}`, {
+      status: "done",
+    });
+    handleFetchServiceDetail(serviceFormSelect);
+    if (responseHandleDone) {
+      toast.success("Thay đổi trạng thái thành công!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -230,33 +256,36 @@ const Report = () => {
               <div className={styles.headerReports}>Nội dung báo cáo</div>
               <div className={styles.chatContainer}>
                 <div className={styles.chatMessages}>
-                  {chatContent.map((message, index) => {
-                    if (message.img_link) {
-                      return (
-                        <img
-                          className={`${styles.message} ${styles.imgChat} ${
-                            message.type === "sent"
-                              ? styles.clinic
-                              : styles.customer
-                          }`}
-                          src={message.img_link}
-                          alt=""
-                        />
-                      );
-                    } else
-                      return (
-                        <div
-                          key={index}
-                          className={`${styles.message} ${
-                            message.type === "sent"
-                              ? styles.clinic
-                              : styles.customer
-                          }`}
-                        >
-                          {message.message}
-                        </div>
-                      );
-                  })}
+                  {chatContent &&
+                    chatContent.length > 0 &&
+                    chatContent.map((message, index) => {
+                      if (message?.img_link) {
+                        return (
+                          <img
+                            key={index}
+                            className={`${styles.message} ${styles.imgChat} ${
+                              message.type === "sent"
+                                ? styles.clinic
+                                : styles.customer
+                            }`}
+                            src={message?.img_link}
+                            alt=""
+                          />
+                        );
+                      } else
+                        return (
+                          <div
+                            key={index}
+                            className={`${styles.message} ${
+                              message.type === "sent"
+                                ? styles.clinic
+                                : styles.customer
+                            }`}
+                          >
+                            {message.message}
+                          </div>
+                        );
+                    })}
                 </div>
               </div>
             </div>
@@ -289,6 +318,7 @@ const Report = () => {
                           <div
                             className={styles.serviceItem}
                             onClick={() => handleFetchServiceDetail(item)}
+                            key={index}
                           >
                             {index + 1}. <span>{item.service_form_id}</span>
                           </div>
@@ -303,9 +333,26 @@ const Report = () => {
                         {serviceFormDetailList &&
                           serviceFormDetailList.length > 0 &&
                           serviceFormDetailList.map((item, index) => (
-                            <tr>
+                            <tr key={index}>
                               <td>{item.note}</td>
-                              <td>{item.status}</td>
+                              {item.status === "pending" ? (
+                                <td
+                                  className={styles.flexStatus}
+                                  onClick={() =>
+                                    handleDoneService(
+                                      item.service_form_detail_id
+                                    )
+                                  }
+                                >
+                                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                  <span>Chưa thực hiện</span>
+                                </td>
+                              ) : (
+                                <td className={styles.flexStatus}>
+                                  <ion-icon name="checkmark-circle"></ion-icon>
+                                  <span>Đã hoàn thành</span>
+                                </td>
+                              )}
                             </tr>
                           ))}
                       </table>

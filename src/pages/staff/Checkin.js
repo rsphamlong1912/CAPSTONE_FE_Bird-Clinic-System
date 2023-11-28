@@ -74,7 +74,7 @@ const Checkin = () => {
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>{item.bird.name}</td>
-                <td>Khám tổng quát</td>
+                <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
                 <td></td>
                 <td>

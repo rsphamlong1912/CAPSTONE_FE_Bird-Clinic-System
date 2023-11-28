@@ -46,6 +46,8 @@ const Examing = () => {
   const [openModalConfirmService, setOpenModalConfirmService] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const [serviceFormList, setServiceFormList] = useState();
+
   const openPopup = async (id) => {
     const responseImgUrl = await api.get(
       `/media/?type=service_form_details&type_id=${id}`
@@ -259,7 +261,6 @@ const Examing = () => {
         const responseServiceForm = await api.get(
           `/service_Form/?booking_id=${bookingId}`
         );
-        console.log("fix loi ne", responseServiceForm.data.data);
 
         if (responseServiceForm.data.data.length > 0) {
           const tempArr = [];
@@ -272,24 +273,8 @@ const Examing = () => {
             console.log("temp arr", tempArr);
           });
 
-          // Cập nhật serviceFormDetailSideArr một lần duy nhất sau khi thu thập được tất cả các giá trị
           setServiceFormDetailSideArr(tempArr);
 
-          // setServiceFormDetailSideIdArr(
-          //   responseServiceForm.data.data[0].service_form_details.map(
-          //     (item, index) => item.service_form_detail_id
-          //   )
-          // );
-          // setServiceFormDetailSideArr(
-          //   responseServiceForm.data.data[0].service_form_details.filter(
-          //     (item) => item.status !== "cancelled"
-          //   )
-          // );
-          // setServiceFormDetailSideIdArr(
-          //   responseServiceForm.data.data[0].service_form_details
-          //     .filter((item) => item.status !== "cancelled")
-          //     .map((item, index) => item.service_form_detail_id)
-          // );
           try {
             const responsesMedicalMedia = await Promise.all(
               tempArr.map(async (item) => {
@@ -313,6 +298,9 @@ const Examing = () => {
             console.error("Lỗi khi gọi API:", error);
           }
         }
+
+        setServiceFormList(responseServiceForm.data.data);
+        console.log("service form list", responseServiceForm.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -729,7 +717,7 @@ const Examing = () => {
             )}
             {tab == 2 && (
               <div className={styles.examingService}>
-                {serviceFormDetailSideArr?.length > 0 && (
+                {/* {serviceFormDetailSideArr?.length > 0 && (
                   <div>
                     <h3 className={styles.requireText}>
                       <ion-icon name="documents-outline"></ion-icon>Kết quả xét
@@ -805,7 +793,91 @@ const Examing = () => {
                       return null;
                     })}
                   </div>
-                )}
+                )} */}
+
+                {serviceFormList &&
+                  serviceFormList.length > 0 &&
+                  serviceFormList.map((item, index) => (
+                    <div>
+                      <h3 className={styles.requireText}>
+                        <ion-icon name="documents-outline"></ion-icon>Kết quả
+                        xét nghiệm {index + 1}:
+                      </h3>
+                      {item.service_form_details.map((item, index) => {
+                        const matchingMedicalRecord = medicalRecordData.find(
+                          (record) =>
+                            record.service_form_detail_id ===
+                            item.service_form_detail_id
+                        );
+                        console.log("record ne huu", matchingMedicalRecord);
+
+                        if (matchingMedicalRecord) {
+                          return (
+                            <div key={index} className={styles.resultDetail}>
+                              <div className={styles.titleService}>
+                                <h4>
+                                  {item.note}
+                                  {matchingMedicalRecord.hasOwnProperty(
+                                    "symptom"
+                                  ) ? (
+                                    <span></span>
+                                  ) : (
+                                    <span className={styles.cancelled}>
+                                      Đã huỷ
+                                    </span>
+                                  )}
+                                </h4>
+
+                                <span
+                                  onClick={() =>
+                                    openPopup(item.service_form_detail_id)
+                                  }
+                                  className={styles.viewFile}
+                                >
+                                  <ion-icon name="document-outline"></ion-icon>
+                                  Xem file
+                                </span>
+                                <Popup
+                                  open={isOpen}
+                                  closeOnDocumentClick
+                                  onClose={closePopup}
+                                >
+                                  <div className={styles.popup}>
+                                    <br></br>
+                                    <img
+                                      src={imgUrl}
+                                      alt=""
+                                      className={styles.imgPopup}
+                                    />
+                                  </div>
+                                </Popup>
+                              </div>
+                              <div className={styles.lineItem}>
+                                <span className={styles.label}>
+                                  Triệu chứng:
+                                </span>
+                                <span>{matchingMedicalRecord.symptom}</span>
+                              </div>
+                              <div className={styles.lineItem}>
+                                <span className={styles.label}>Chẩn đoán:</span>
+                                <span>{matchingMedicalRecord.diagnose}</span>
+                              </div>
+                              <div className={styles.lineItem}>
+                                <span className={styles.label}>
+                                  Khuyến nghị:
+                                </span>
+                                <span>
+                                  {matchingMedicalRecord.recommendations}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                      <div key={index}>{item.note}</div>
+                    </div>
+                  ))}
 
                 <h3 className={styles.requireText}>
                   <ion-icon name="alert-circle-outline"></ion-icon>Yêu cầu các

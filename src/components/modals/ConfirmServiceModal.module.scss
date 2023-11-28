@@ -115,3 +115,19 @@ td {
   padding-top: 2px;
   padding-bottom: 2px;
 }
+
+.printService {
+  background-color: #32b768;
+  padding: 10px 15px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 0 5px;
+}
+
+.serviceSelected {
+  margin-bottom: 20px;
+}

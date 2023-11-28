@@ -32,9 +32,12 @@ const ConfirmServiceModal = ({ open, onClose, selectedServices }) => {
         </div>
         <div className={styles.container}>
           <div className={styles.element}>
-            {selectedServices.map((item, index) => (
-              <div key={index}>{item.package_name}</div>
-            ))}
+            <div className={styles.serviceSelected}>
+              {selectedServices.map((item, index) => (
+                <div key={index}>{item.package_name}</div>
+              ))}
+            </div>
+
             <button
               className={styles.printService}
               onClick={() => navigate("/examing")}

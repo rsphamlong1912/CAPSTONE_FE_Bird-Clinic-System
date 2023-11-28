@@ -7,6 +7,7 @@ import { api } from "../../services/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
+import readNumber from "vietnamese-number";
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn");
 
@@ -354,6 +355,9 @@ const BillingDetail = () => {
                 <div className={styles.totalPrice}>
                   <span className={styles.totalLabel}>Tổng cộng:</span>
                   <span>{totalPrice && formattedPrice(totalPrice)}</span>
+                  <div className={styles.vietnameseNumber}>
+                    {readNumber(totalPrice)} đồng
+                  </div>
                 </div>
               )}
             </div>

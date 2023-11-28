@@ -704,7 +704,7 @@ const Examing = () => {
                   progress: undefined,
                   theme: "light",
                 });
-                navigate("/track");
+                navigate("/examing");
               }
             } catch (error) {
               console.log(error);

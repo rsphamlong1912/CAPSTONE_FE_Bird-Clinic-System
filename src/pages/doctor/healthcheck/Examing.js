@@ -561,7 +561,7 @@ const Examing = () => {
         reason_referral: "any",
         status: "pending",
         date: bookingInfo.arrival_date,
-        veterinarian_referral: "any",
+        veterinarian_referral: bookingInfo.veterinarian_id,
         total_price: totalPrice,
         qr_code: "any",
         num_ser_must_do: newArray.length,
@@ -638,7 +638,7 @@ const Examing = () => {
                   progress: undefined,
                   theme: "light",
                 });
-                navigate("/track");
+                navigate("/examing");
               }
             } catch (error) {
               console.log(error);

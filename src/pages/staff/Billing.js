@@ -279,10 +279,12 @@ const Billing = () => {
                 <td>
                   <p
                     className={`${styles.status} ${
-                      item.status === "paid" ? styles.paid : styles.pending
+                      item.status === "paid" || item.status === "done"
+                        ? styles.paid
+                        : styles.pending
                     } `}
                   >
-                    {item.status === "paid"
+                    {item.status === "paid" || item.status === "done"
                       ? "Đã thanh toán"
                       : "Chưa thanh toán"}
                   </p>

@@ -263,6 +263,7 @@
 
 .tablePopup {
   width: 500px;
+  border-left: 1px solid #ccc;
 }
 
 .addPopup {
@@ -518,4 +519,11 @@
   padding: 10px 30px;
   cursor: pointer;
   color: #32b768;
+}
+
+.flexStatus {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  cursor: pointer;
 }

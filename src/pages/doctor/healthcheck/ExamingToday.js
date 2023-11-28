@@ -88,7 +88,8 @@ const ExamingToday = () => {
           booking.status !== "pending" &&
           booking.status !== "booked" &&
           booking.status !== "test_requested" &&
-          booking.service_type_id === "ST001"
+          booking.service_type_id === "ST001" &&
+          booking.money_has_paid !== "0.00"
       );
       console.log("vet customer ne", vetCustomers);
 

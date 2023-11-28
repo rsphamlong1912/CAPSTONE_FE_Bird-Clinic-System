@@ -327,6 +327,12 @@ const Boarding = () => {
                     cage_id: cageSelected.cage_id,
                   }
                 );
+                const responseUpdateBooking = await api.put(
+                  `/booking/${bookingId}`,
+                  {
+                    status: "finish",
+                  }
+                );
 
                 const responseUpdateCage = await api.put(
                   `/cage/${cageSelected.cage_id}`,
@@ -345,7 +351,7 @@ const Boarding = () => {
                     bird_id: birdProfile.bird_id,
                     booking_id: bookingId,
                     reason_referral: "any",
-                    status: "pending",
+                    status: "done",
                     date: arrivalDate,
                     veterinarian_referral: bookingInfo.veterinarian_id,
                     total_price: serviceSelected.price * totalDays,

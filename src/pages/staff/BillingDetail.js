@@ -355,9 +355,9 @@ const BillingDetail = () => {
                 <div className={styles.totalPrice}>
                   <span className={styles.totalLabel}>Tổng cộng:</span>
                   <span>{totalPrice && formattedPrice(totalPrice)}</span>
-                  <div className={styles.vietnameseNumber}>
+                  {/* <div className={styles.vietnameseNumber}>
                     {readNumber(totalPrice)} đồng
-                  </div>
+                  </div> */}
                 </div>
               )}
             </div>

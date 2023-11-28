@@ -592,11 +592,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -643,6 +643,85 @@ const Examing = () => {
     };
     confirmAlert(updatedOptions);
   };
+
+  const optionsFinish = {
+    title: "Xác nhận",
+    message: "Bạn có chắc hoàn tất khám?",
+    buttons: [
+      {
+        label: "Xác nhận",
+      },
+      {
+        label: "Huỷ",
+      },
+    ],
+    closeOnEscape: true,
+    closeOnClickOutside: true,
+    keyCodeForClose: [8, 32],
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
+    overlayClassName: "overlay-custom-class-name",
+  };
+
+  const handleConfirmFinish = (item) => {
+    const updatedOptions = {
+      ...optionsFinish,
+      buttons: [
+        {
+          label: "Xác nhận",
+          onClick: async () => {
+            try {
+              const responseSFD = await api.put(
+                `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
+                {
+                  status: "done",
+                }
+              );
+              const responseSF = await api.put(
+                `/service_Form/${serviceFormDetail.service_form_id}`,
+                {
+                  status: "done",
+                }
+              );
+              const responseBooking = await api.put(
+                `/booking/${item.booking_id}`,
+                {
+                  status: "finish",
+                }
+              );
+              if (responseSFD && responseSF && responseBooking) {
+                console.log("đã hoàn thành cuộc hẹn");
+                toast.success("Xác nhận thành công!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                navigate("/examing");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+        {
+          label: "Huỷ",
+          onClick: () => {
+            console.log("click no");
+          },
+        },
+      ],
+    };
+    confirmAlert(updatedOptions);
+  };
+
 
   return (
     <div className={styles.wrapper}>
@@ -1037,7 +1116,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  {}
+                                  { }
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -1150,7 +1229,14 @@ const Examing = () => {
                 <span>Hồ sơ chim khám</span>
               </div>
             </div>
-            <button className={styles.btnComplete}>Hoàn thành khám</button>
+            <button
+              className={styles.btnComplete}
+              onClick={() => {
+                handleConfirmFinish(bookingInfo);
+              }}
+            >
+              Hoàn thành khám
+            </button>
             <button
               className={styles.btnComplete}
               onClick={() => {

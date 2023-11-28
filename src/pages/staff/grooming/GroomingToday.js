@@ -56,7 +56,9 @@ const GroomingToday = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
+        <div className={styles.left}>
+          <h3>DANH SÁCH KHÁM HÔM NAY</h3>
+        </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>
             <SearchOutlined />

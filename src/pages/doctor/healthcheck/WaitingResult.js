@@ -10,41 +10,43 @@ const WaitingResult = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
-  useEffect(() => {
-    const today = new Date();
-    const nextFourDays = [];
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const nextFourDays = [];
 
-    for (let i = 0; i < 5; i++) {
-      const nextDay = new Date();
-      nextDay.setDate(today.getDate() + i);
-      const year = nextDay.getFullYear();
-      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-      const day = String(nextDay.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-      nextFourDays.push(formattedDate);
-    }
-    // Set selectedDate to the first date in the array when component mounts
-    if (nextFourDays.length > 0) {
-      setSelectedDate(nextFourDays[0]);
-    }
-    setDates(nextFourDays);
-  }, []);
+  //   for (let i = 0; i < 5; i++) {
+  //     const nextDay = new Date();
+  //     nextDay.setDate(today.getDate() + i);
+  //     const year = nextDay.getFullYear();
+  //     const month = String(nextDay.getMonth() + 1).padStart(2, "0");
+  //     const day = String(nextDay.getDate()).padStart(2, "0");
+  //     const formattedDate = `${year}-${month}-${day}`;
+  //     nextFourDays.push(formattedDate);
+  //   }
+  //   // Set selectedDate to the first date in the array when component mounts
+  //   if (nextFourDays.length > 0) {
+  //     setSelectedDate(nextFourDays[0]);
+  //   }
+  //   setDates(nextFourDays);
+  // }, []);
 
-  const handleDateClick = (date) => {
-    const clickedDate = new Date(date);
-    const year = clickedDate.getFullYear();
-    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(clickedDate.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    setSelectedDate(formattedDate);
-  };
+  // const handleDateClick = (date) => {
+  //   const clickedDate = new Date(date);
+  //   const year = clickedDate.getFullYear();
+  //   const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
+  //   const day = String(clickedDate.getDate()).padStart(2, "0");
+  //   const formattedDate = `${year}-${month}-${day}`;
+  //   setSelectedDate(formattedDate);
+  // };
 
-  const formatDateForDisplay = (date) => {
-    const [yyyy, mm, dd] = date.split("-");
-    return `${dd}/${mm}`;
-  };
+  // const formatDateForDisplay = (date) => {
+  //   const [yyyy, mm, dd] = date.split("-");
+  //   return `${dd}/${mm}`;
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,8 +78,10 @@ const WaitingResult = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
-        <div className={styles.middle}>
+        <div className={styles.left}>
+          <h3>DANH SÁCH CHỜ KẾT QUẢ</h3>
+        </div>
+        {/* <div className={styles.middle}>
           {dates.map((item, index) => (
             <span
               key={index}
@@ -87,7 +91,7 @@ const WaitingResult = () => {
               {formatDateForDisplay(item)}
             </span>
           ))}
-        </div>
+        </div> */}
         <div className={styles.right}>
           <div className={styles.btnSearch}>
             <SearchOutlined />

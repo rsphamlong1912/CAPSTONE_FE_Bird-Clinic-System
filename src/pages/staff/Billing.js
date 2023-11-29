@@ -309,7 +309,7 @@ const Billing = () => {
                       onClick={() => handlePrint(item)}
                     >
                       In hoá đơn
-                    </div>
+                    </div>      
                   )} */}
                 </td>
               </tr>

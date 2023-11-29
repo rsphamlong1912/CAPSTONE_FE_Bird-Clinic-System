@@ -592,11 +592,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -658,11 +658,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -721,7 +721,6 @@ const Examing = () => {
     };
     confirmAlert(updatedOptions);
   };
-
 
   return (
     <div className={styles.wrapper}>
@@ -787,6 +786,7 @@ const Examing = () => {
                     name="additionalNotes"
                     value={examData.additionalNotes}
                     onChange={handleInputChange}
+                    rows={3}
                   />
                   <span className={styles.inputLabelDesc}>
                     *Lời khuyên của bác sĩ cho chim bệnh
@@ -1116,7 +1116,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  { }
+                                  {}
                                 </div>
                               </div>
                               <div className={styles.createThird}>

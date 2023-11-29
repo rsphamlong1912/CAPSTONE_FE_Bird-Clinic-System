@@ -12,7 +12,9 @@ const AppointmentSchedule = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     console.log("socket id khi mới vào bên booking: ", socket.id);

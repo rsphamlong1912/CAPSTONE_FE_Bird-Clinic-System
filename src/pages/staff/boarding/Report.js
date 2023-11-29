@@ -260,22 +260,29 @@ const Report = () => {
                     chatContent.length > 0 &&
                     chatContent.map((message, index) => {
                       if (message?.img_link) {
+                        const imgUrl = URL.createObjectURL(
+                          new Blob([message?.img_link])
+                        );
                         return (
                           <img
-                            key={index}
+                            key={message.content_chat_id}
                             className={`${styles.message} ${styles.imgChat} ${
                               message.type === "sent"
                                 ? styles.clinic
                                 : styles.customer
                             }`}
-                            src={message?.img_link}
+                            src={
+                              message.img_link
+                                ? message.img_link
+                                : "https://limosa.vn/wp-content/uploads/2023/08/Loading-la-gi.jpg"
+                            }
                             alt=""
                           />
                         );
                       } else
                         return (
                           <div
-                            key={index}
+                            key={message.content_chat_id}
                             className={`${styles.message} ${
                               message.type === "sent"
                                 ? styles.clinic

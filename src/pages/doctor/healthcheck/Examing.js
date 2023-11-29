@@ -690,6 +690,8 @@ const Examing = () => {
                 `/booking/${item.booking_id}`,
                 {
                   status: "finish",
+                  diagnosis: examData.diagnosis,
+                  recommendations: examData.additionalNotes,
                 }
               );
               if (responseSFD && responseSF && responseBooking) {

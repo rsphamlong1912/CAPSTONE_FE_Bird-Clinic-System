@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import styles from "./HoaDonTong.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
 
-export const HoaDon = React.forwardRef(
-  ({ bookingInfo, serviceFormDetailList }, ref) => {
+export const HoaDonTong = React.forwardRef(
+  ({ bookingInfo, billDetailList }, ref) => {
     const { currentDate } = useCurrentDate();
 
     // Tính tổng số tiền từ cột price
-    const totalPrice = serviceFormDetailList.reduce((total, service) => {
-      const price = parseFloat(service.service_package.price);
+    const totalPrice = billDetailList.reduce((total, service) => {
+      const price = parseFloat(service.price);
       return total + price;
     }, 0);
 
@@ -31,7 +31,7 @@ export const HoaDon = React.forwardRef(
             Mã số: BCS_0FUBFEN
           </div>
         </div>
-        <h3 className={styles.title}>HOÁ ĐƠN</h3>
+        <h3 className={styles.title}>HOÁ ĐƠN TỔNG</h3>
         <div className={styles.flex}>
           <div className={styles.left}>
             <div className={styles.customerInfo}>
@@ -71,12 +71,12 @@ export const HoaDon = React.forwardRef(
               <th>Tên dịch vụ</th>
               <th>Giá</th>
             </tr>
-            {serviceFormDetailList &&
-              serviceFormDetailList.length > 0 &&
-              serviceFormDetailList.map((item, index) => (
+            {billDetailList &&
+              billDetailList.length > 0 &&
+              billDetailList.map((item, index) => (
                 <tr key={index}>
                   <td>{item.service_package.package_name}</td>
-                  <td>{formattedPrice(item.service_package.price)}</td>
+                  <td>{formattedPrice(item.price)}</td>
                 </tr>
               ))}
           </table>

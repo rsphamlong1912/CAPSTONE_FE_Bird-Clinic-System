@@ -172,7 +172,7 @@ const BoardingToday = () => {
                 <td>Sáo nâu</td>
                 <td>Nội trú</td>
                 <td>{item.estimate_time}</td>
-                <td></td>
+                <td>{item.checkin_time}</td>
                 <td>
                   <strong>Phạm Ngọc Long</strong>
                 </td>

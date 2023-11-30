@@ -7,21 +7,41 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { api } from "../../services/axios";
 import { useReactToPrint } from "react-to-print";
-import { HoaDon } from "../../components/pdfData/HoaDon";
+import { HoaDon } from "../../components/pdfData/HoaDonTong";
 import { toast } from "react-toastify";
+
+import { Tabs } from "antd";
 
 const Billing = () => {
   const navigate = useNavigate();
   const [billList, setBillList] = useState([]);
+  const [serviceFormBoardingList, setServiceFormBoardingList] = useState([]);
   const [serviceFormDetailList, setServiceFormDetailList] = useState([]);
   const [serviceList, setServiceList] = useState([]);
   // const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState(1);
+
+  const serviceArray = [
+    {
+      name: "Khám tổng quát & SPA",
+      id: 1,
+    },
+    {
+      name: "Nội trú",
+      id: 2,
+    },
+  ];
 
   const printRef = useRef();
   const handlePrintWithHook = useReactToPrint({
     content: () => printRef.current,
   });
+
+  const onChange = (key) => {
+    console.log("change me", key);
+    setTab(key);
+  };
 
   // const handlePrint = async (item) => {
   //   try {
@@ -53,11 +73,23 @@ const Billing = () => {
         console.log(error);
       }
     };
+    const fetchDataBoarding = async () => {
+      try {
+        const responseBoarding = await api.get("/booking/");
+        const filterList = responseBoarding.data.data.filter(
+          (item) => item.service_type_id === "ST003"
+        );
+        setServiceFormBoardingList(filterList);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     setTimeout(() => {
       setLoading(false);
     }, 850);
     fetchData();
+    fetchDataBoarding();
   });
 
   //GET DỊCH VỤ TỪ API
@@ -247,83 +279,171 @@ const Billing = () => {
         <div className={styles.left}>DANH SÁCH HOÁ ĐƠN</div>
         <div className={styles.right}>{currentDate}</div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th> STT</th>
-            <th> Khách hàng</th>
-            <th> Số lượng dịch vụ</th>
-            <th> Tổng tiền</th>
-            <th> Trạng thái</th>
-            <th> Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading && (
-            <>
-              <Loading></Loading>
-              <Loading></Loading>
-              <Loading></Loading>
-              <Loading></Loading>
-              <Loading></Loading>
-            </>
-          )}
+      <Tabs
+        onChange={onChange}
+        type="card"
+        items={serviceArray.map((item, i) => {
+          return {
+            label: item.name,
+            key: item.id,
+          };
+        })}
+      />
+      {tab === 1 && (
+        <table>
+          <thead>
+            <tr>
+              <th> STT</th>
+              <th> Khách hàng</th>
+              <th> Số lượng dịch vụ</th>
+              <th> Tổng tiền</th>
+              <th> Trạng thái</th>
+              <th> Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && (
+              <>
+                <Loading></Loading>
+                <Loading></Loading>
+                <Loading></Loading>
+                <Loading></Loading>
+                <Loading></Loading>
+              </>
+            )}
 
-          {!loading &&
-            billList.map((item, index) => (
-              <tr key={index}>
-                <td> {index + 1} </td>
-                <td>{item.booking.customer_name}</td>
-                <td>{item.num_ser_must_do}</td>
-                <td>{item.total_price}</td>
-                <td>
-                  <p
-                    className={`${styles.status} ${
-                      item.status === "paid" || item.status === "done"
-                        ? styles.paid
-                        : styles.pending
-                    } `}
-                  >
-                    {item.status === "paid" || item.status === "done"
-                      ? "Đã thanh toán"
-                      : "Chưa thanh toán"}
-                  </p>
-                </td>
+            {!loading &&
+              billList.map((item, index) => (
+                <tr key={index}>
+                  <td> {index + 1} </td>
+                  <td>{item.booking.customer_name}</td>
+                  <td>{item.num_ser_must_do}</td>
+                  <td>{item.total_price}</td>
+                  <td>
+                    <p
+                      className={`${styles.status} ${
+                        item.status === "paid" || item.status === "done"
+                          ? styles.paid
+                          : styles.pending
+                      } `}
+                    >
+                      {item.status === "paid" || item.status === "done"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán"}
+                    </p>
+                  </td>
 
-                <td className={styles.grAction}>
-                  <div
-                    className={styles.btnCheckin}
-                    onClick={() => navigate(`/billing/${item.service_form_id}`)}
-                  >
-                    Xem
-                  </div>
-                  {/* <div
+                  <td className={styles.grAction}>
+                    <div
+                      className={styles.btnCheckin}
+                      onClick={() =>
+                        navigate(`/billing/${item.service_form_id}`)
+                      }
+                    >
+                      Xem
+                    </div>
+                    {/* <div
                     className={styles.btnCheckin}
                     onClick={() => handleConfirmAlert(item)}
                   >
                     Xác nhận
                   </div> */}
-                  {/* {item.status === "paid" && (
+                    {/* {item.status === "paid" && (
                     <div
                       className={`${styles.btnCheckin} ${styles.viewDetail} `}
                       onClick={() => handlePrint(item)}
                     >
                       In hoá đơn
-                    </div>
+                    </div>      
                   )} */}
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+      {tab === 2 && (
+        <table>
+          <thead>
+            <tr>
+              <th> STT</th>
+              <th> Khách hàng</th>
+              <th> Chim </th>
+              <th>Ngày bắt đầu</th>
+              {/* <th> Trạng thái</th> */}
+              <th> Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && (
+              <>
+                <Loading></Loading>
+                <Loading></Loading>
+                <Loading></Loading>
+                <Loading></Loading>
+                <Loading></Loading>
+              </>
+            )}
+
+            {!loading &&
+              serviceFormBoardingList.map((item, index) => (
+                <tr key={index}>
+                  <td> {index + 1} </td>
+                  <td>{item.customer_name}</td>
+                  <td>{item.bird.name}</td>
+                  <td>{item.arrival_date}</td>
+                  {/* <td>
+                    <p
+                      className={`${styles.status} ${
+                        item.status === "paid" || item.status === "done"
+                          ? styles.paid
+                          : styles.pending
+                      } `}
+                    >
+                      {item.status === "paid" || item.status === "done"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán"}
+                    </p>
+                  </td> */}
+
+                  <td className={styles.grAction}>
+                    <div
+                      className={styles.btnCheckin}
+                      onClick={() =>
+                        navigate(`/billing-boarding/${item.booking_id}`)
+                      }
+                    >
+                      Xem
+                    </div>
+                    {/* <div
+                    className={styles.btnCheckin}
+                    onClick={() => handleConfirmAlert(item)}
+                  >
+                    Xác nhận
+                  </div> */}
+                    {/* {item.status === "paid" && (
+                    <div
+                      className={`${styles.btnCheckin} ${styles.viewDetail} `}
+                      onClick={() => handlePrint(item)}
+                    >
+                      In hoá đơn
+                    </div>      
+                  )} */}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+
       {/* <div style={{ display: "none" }}>
         <HoaDon ref={printRef} selectedServices={selectedServices}></HoaDon>
       </div> */}
-      <div className={styles.footerContent}>
+      {/* <div className={styles.footerContent}>
         <div className={styles.numberResult}>
           {!loading && billList.length} kết quả
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -9,7 +9,7 @@ import { confirmAlert } from "react-confirm-alert";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import io from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
-import { HoaDon } from "../../components/pdfData/HoaDon";
+import { HoaDonTong } from "../../components/pdfData/HoaDonTong";
 const socket = io("https://clinicsystem.io.vn");
 
 const TrackDetail = () => {
@@ -62,7 +62,7 @@ const TrackDetail = () => {
       const responseBill = await api.get(
         `/billDetail/?booking_id=${bookingId}`
       );
-      console.log("fetch bill", responseBill.data.data.length);
+      console.log("fetch bill", responseBill.data);
       if (responseBill.data.data.length !== 0) {
         setBillDetailList(responseBill.data.data);
         setShowPrintBill(true);
@@ -486,11 +486,11 @@ const TrackDetail = () => {
       />
       {showPrintBill && (
         <div style={{ display: "none" }}>
-          <HoaDon
+          <HoaDonTong
             ref={printRef}
             billDetailList={billDetailList}
             bookingInfo={bookingInfo}
-          ></HoaDon>
+          ></HoaDonTong>
         </div>
       )}
 

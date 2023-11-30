@@ -7,7 +7,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { api } from "../../services/axios";
 import { useReactToPrint } from "react-to-print";
-import { HoaDon } from "../../components/pdfData/HoaDon";
+// import { HoaDon } from "../../components/pdfData/HoaDon";
 
 const BillingHistory = () => {
   const navigate = useNavigate();
@@ -240,7 +240,7 @@ const BillingHistory = () => {
         </tbody>
       </table>
       <div style={{ display: "none" }}>
-        <HoaDon ref={printRef} selectedServices={selectedServices}></HoaDon>
+        {/* <HoaDon ref={printRef} selectedServices={selectedServices}></HoaDon> */}
       </div>
       <div className={styles.footerContent}>
         <div className={styles.numberResult}>

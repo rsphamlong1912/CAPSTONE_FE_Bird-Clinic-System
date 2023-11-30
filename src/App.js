@@ -28,7 +28,7 @@ import Result from "./pages/doctor/healthcheck/Result";
 import CreateAppoinment from "./pages/staff/CreateAppoinment";
 import HistoryGrooming from "./pages/staff/grooming/HistoryGrooming";
 import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
-
+import BillingBoardingDetail from "./pages/staff/BillingBoardingDetail";
 
 const listTabsStaff = [
   {
@@ -195,6 +195,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsStaff}>
               <BillingDetail></BillingDetail>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/billing-boarding/:id"
+          element={
+            <MainLayout listTabs={listTabsStaff}>
+              <BillingBoardingDetail></BillingBoardingDetail>
             </MainLayout>
           }
         ></Route>

@@ -14,6 +14,7 @@ import { api } from "../../../services/axios";
 
 import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
+import { DonThuoc } from "../../../components/pdfData/DonThuoc";
 
 import { message } from "antd";
 
@@ -367,14 +368,26 @@ const Examing = () => {
   ]);
 
   const handleMedicineSelect = (index, selectedMedicine) => {
-    const updatedForms = [...forms];
-    updatedForms[index].selectedMedicine = selectedMedicine;
-    const selectedType = medicineNames.find(
-      (medicine) => medicine.name === selectedMedicine
-    )?.unit;
-    updatedForms[index].type = selectedType || "";
+    // Check if the selectedMedicine has already been selected
+    const isAlreadySelected = forms.some(
+      (form, i) => i !== index && form.selectedMedicine === selectedMedicine
+    );
 
-    setForms(updatedForms);
+    if (!isAlreadySelected) {
+      const updatedForms = [...forms];
+      updatedForms[index].selectedMedicine = selectedMedicine;
+
+      const selectedType = medicineNames.find(
+        (medicine) => medicine.name === selectedMedicine
+      )?.unit;
+
+      updatedForms[index].type = selectedType || "";
+
+      setForms(updatedForms);
+    } else {
+      // Display a warning or handle the situation where the medicine has already been selected
+      message.error("Thuốc đã được chọn trước đó. Vui lòng chọn một thuốc khác.");
+    }
   };
 
   const findMedicineIdByName = (medicineName) => {
@@ -423,6 +436,7 @@ const Examing = () => {
         // usage: "",
         arr_medicine: forms.map((medicineData) => ({
           medicine_id: findMedicineIdByName(medicineData.selectedMedicine),
+          usage: medicineData.usage,
           total_dose: medicineData.unit * medicineData.day,
           dose: medicineData.unit,
           day: medicineData.day,
@@ -443,6 +457,11 @@ const Examing = () => {
   const printRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
+  });
+
+  const printRefMd = useRef();
+  const handlePrintMd = useReactToPrint({
+    content: () => printRefMd.current,
   });
 
   const handleChange = (event) => {
@@ -692,6 +711,7 @@ const Examing = () => {
                   status: "finish",
                 }
               );
+              addPrescriptionData();
               if (responseSFD && responseSF && responseBooking) {
                 console.log("đã hoàn thành cuộc hẹn");
                 toast.success("Xác nhận thành công!", {
@@ -1018,7 +1038,15 @@ const Examing = () => {
                                 />
                               </div>
                               <div className={styles.hsdMedicine}>
-                                HDSD: {form.note}
+                                {medicineNames
+                                  .filter(
+                                    (timeSlot) =>
+                                      timeSlot.name ===
+                                      form.selectedMedicine
+                                  )
+                                  .map((filteredSlot, index) => (
+                                    <div key={index}>HDSD: {filteredSlot.usage}</div>
+                                  ))}
                               </div>
                               <div className={styles.createFirst}>
                                 <div className={styles.First}>
@@ -1121,7 +1149,7 @@ const Examing = () => {
                               </div>
                               <div className={styles.createThird}>
                                 <p className={styles.txtThird}>
-                                  Hướng dẫn sử dụng
+                                  Lời khuyên của bác sĩ
                                 </p>
                                 <textarea
                                   type="text"
@@ -1139,7 +1167,7 @@ const Examing = () => {
                         </div>
                       </div>
                       <div className={styles.boxMedicine}>
-                        <div>
+                        {/* <div>
                           <button
                             className={styles.AddMedicine}
                             onClick={addPrescriptionData}
@@ -1147,7 +1175,7 @@ const Examing = () => {
                             Xác nhận
                           </button>
                           {contextHolder}
-                        </div>
+                        </div> */}
                         <button
                           onClick={addForm}
                           className={styles.AddMedicine}
@@ -1156,10 +1184,11 @@ const Examing = () => {
                         </button>
                         <div
                           className={styles.PrintMedicine}
-                          onClick={() => setOpenModalPrescription(true)}
+                          onClick={handlePrintMd}
+                        // onClick={() => setOpenModalPrescription(true)}
                         >
                           <ion-icon name="thermometer-outline"></ion-icon>
-                          <span>Xem đơn thuốc</span>
+                          <span>In đơn thuốc</span>
                         </div>
                       </div>
                     </div>
@@ -1281,6 +1310,14 @@ const Examing = () => {
         onClose={() => setOpenModalConfirmService(false)}
         selectedServices={selectedServices}
       />
+      <div style={{ display: "none" }}>
+        <DonThuoc
+          ref={printRefMd}
+          bookingInfo={bookingInfo}
+          birdProfile={birdProfile}
+          forms={forms}
+        ></DonThuoc>
+      </div>
       <div className={styles.footerContent}>
         {tab !== 1 && (
           <button className={styles.btnBack} onClick={handleBackTab}>

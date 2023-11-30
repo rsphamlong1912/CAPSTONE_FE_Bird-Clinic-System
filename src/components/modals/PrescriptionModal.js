@@ -4,7 +4,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 
 const PrescriptionModal = ({ open, onClose, forms, examMedicineType}) => {
   if (!open) return null;
-  // console.log('selectedUnit',selectedUnit);
+  console.log('forms',forms);
   // console.log('medicineNames',medicineNames);
   // console.log('examMedicine',examMedicine);
   return (

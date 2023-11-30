@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./BillingDetail.module.scss";
+import styles from "./BillingBoardingDetail.module.scss";
 import "reactjs-popup/dist/index.css";
 import ProfileBirdModal from "../../components/modals/ProfileBirdModal";
 import { api } from "../../services/axios";
@@ -9,24 +9,24 @@ import { confirmAlert } from "react-confirm-alert";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import readNumber from "vietnamese-number";
 import io from "socket.io-client";
-import { useReactToPrint } from "react-to-print";
-import { HoaDon } from "../../components/pdfData/HoaDon";
-
+import { Modal } from "antd";
 const socket = io("https://clinicsystem.io.vn");
 
-const BillingDetail = () => {
+const BillingBoardingDetail = () => {
   // const location = useLocation();
   // const { socket } = location.state || {};
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [bookingInfo, setBookingInfo] = useState();
-  const [serviceFormInfo, setServiceFormInfo] = useState();
+  const [serviceFormList, setServiceFormList] = useState([]);
   const [serviceSelected, setServiceSelected] = useState();
   const [serviceFormDetailList, setServiceFormDetailList] = useState([]);
   const [vetDetailArr, setVetDetailArr] = useState();
   const [customerId, setCustomerId] = useState();
   const [customerName, setCustomerName] = useState();
+  const [customerPhone, setCustomerPhone] = useState();
   const [totalPrice, setTotalPrice] = useState();
+  const [open, setOpen] = useState(false);
+  const [serviceDetailModal, setServiceDetailModal] = useState();
   const navigate = useNavigate();
 
   // Định dạng tổng tiền theo tiền tệ Việt Nam
@@ -37,67 +37,45 @@ const BillingDetail = () => {
     }).format(price);
   };
 
-  const printRef = useRef();
-  const handlePrintWithHook = useReactToPrint({
-    content: () => printRef.current,
-  });
-
-  const handlePrint = async () => {
-    try {
-      const response = await api.get(
-        `/service_Form/${serviceFormInfo.service_form_id}`
-      );
-      console.log("print ne", response.data.data[0].service_form_details);
-
-      setServiceFormDetailList(response.data.data[0].service_form_details);
-      // const matchedServices = serviceList.filter((service) => {
-      //   return response.data.data[0].service_form_details.find(
-      //     (detail) => detail.service_package_id === service.service_package_id
-      //   );
-      // });
-      // setSelectedServices(matchedServices);
-      setTimeout(handlePrintWithHook, 1000);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleOpenDetail = (item) => {
+    console.log("service chi tiet ne", item);
+    setOpen(true);
+    setServiceDetailModal(item.service_form_details);
   };
 
   const fetchServiceForm = async () => {
     try {
-      const responseServiceForm = await api.get(`/service_Form/${id}`);
+      const responseBookingInfo = await api.get(`/booking/${id}`);
+      if (responseBookingInfo) {
+        console.log("booking", responseBookingInfo.data.data);
+        setCustomerName(responseBookingInfo.data.data.customer_name);
+        setCustomerPhone(responseBookingInfo.data.data.bird.customer.phone);
+        setCustomerId(responseBookingInfo.data.data.bird.customer.customer_id);
+      }
+      const responseServiceForm = await api.get(
+        `/service_Form//boarding?booking_id=${id}`
+      );
       if (responseServiceForm) {
-        setServiceFormInfo(responseServiceForm.data.data[0]);
+        console.log("service form list", responseServiceForm.data.data);
+        setServiceFormList(responseServiceForm.data.data);
+        setTotalPrice(
+          responseServiceForm.data.data.reduce((total, item) => {
+            const price = parseFloat(item.total_price);
+            return total + price;
+          }, 0)
+        );
         // console.log(
         //   "detail",
         //   responseServiceForm.data.data[0].service_form_details
         // );
-        const vetDetailArr =
-          responseServiceForm.data.data[0].service_form_details.map(
-            (item, index) => item.veterinarian_id
-          );
-        setVetDetailArr(vetDetailArr);
-        setServiceSelected(
-          responseServiceForm.data.data[0].service_form_details
-        );
-        setTotalPrice(
-          responseServiceForm.data.data[0].service_form_details.reduce(
-            (total, service) => {
-              const price = parseFloat(service.service_package.price);
-              return total + price;
-            },
-            0
-          )
-        );
-        const responseBookingInfo = await api.get(
-          `/booking/${responseServiceForm.data.data[0].booking_id}`
-        );
-        if (responseBookingInfo) {
-          setBookingInfo(responseBookingInfo.data.data);
-          setCustomerName(responseBookingInfo.data.data.customer_name);
-          setCustomerId(
-            responseBookingInfo.data.data.bird.customer.customer_id
-          );
-        }
+        // const vetDetailArr =
+        //   responseServiceForm.data.data[0].service_form_details.map(
+        //     (item, index) => item.veterinarian_id
+        //   );
+        // setVetDetailArr(vetDetailArr);
+        // setServiceSelected(
+        //   responseServiceForm.data.data[0].service_form_details
+        // );
       }
     } catch (error) {
       console.log(error);
@@ -161,17 +139,6 @@ const BillingDetail = () => {
               });
 
               if (createdBill) {
-                toast.success("Dịch vụ đã được thanh toán!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-
                 //CHANGE STATUS SERVICE FORM
                 try {
                   const responseChange = await api.put(
@@ -198,7 +165,7 @@ const BillingDetail = () => {
                     const detailResponse = await api.put(
                       `/service_Form_detail/${item.service_form_detail_id}`,
                       {
-                        status: "checked_in",
+                        status: "done",
                         veterinarian_id: item.veterinarian_id,
                         process_at: item.process_at,
                       }
@@ -206,31 +173,21 @@ const BillingDetail = () => {
 
                     console.log(" doi ròi", detailResponse);
                   }
-                  // const responseGetBooking = await api.get(
-                  //   `/booking/${item.booking_id}`
-                  // );
-                  // if (responseGetBooking) {
-                  //   console.log(
-                  //     "booking ne",
-                  //     responseGetBooking.data.data.money_has_paid
-                  //   );
-                  //   const newMoney =
-                  //     parseFloat(responseGetBooking.data.data.money_has_paid) +
-                  //     parseFloat(item.total_price);
-                  //   console.log("Tổng tiền mới:", newMoney);
-                  //   const responseUpdateBooking = await api.put(
-                  //     `/booking/${item.booking_id}`,
-                  //     {
-                  //       money_has_paid: newMoney,
-                  //     }
-                  //   );
-                  //   console.log("update money", responseUpdateBooking);
-                  // }
                   socket.emit("complete-payment", {
                     customer_id: customerId,
                     vet: vetDetailArr,
                   });
-                  navigate("/billing");
+                  fetchServiceForm();
+                  toast.success("Dịch vụ đã được thanh toán!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });
                 } catch (error) {
                   console.log(error);
                 }
@@ -343,7 +300,7 @@ const BillingDetail = () => {
               </div>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Số điện thoại:</span>
-                <span>0938186659</span>
+                <span>{customerPhone}</span>
               </div>
             </div>
             <div className={styles.billingInfo}>
@@ -352,10 +309,11 @@ const BillingDetail = () => {
                 <thead>
                   <tr>
                     <th> STT</th>
-                    <th> Tên</th>
-                    <th> Đơn giá</th>
-                    <th> Số lượng</th>
-                    <th> Thành tiền</th>
+                    <th>Mã ID</th>
+                    <th>Số dịch vụ</th>
+                    <th>Thành tiền</th>
+                    <th> Trạng thái</th>
+                    <th> Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -368,26 +326,107 @@ const BillingDetail = () => {
                       <Loading></Loading>
                     </>
                   )}
+
                   {!loading &&
-                    serviceSelected &&
-                    serviceSelected.map((item, index) => (
+                    serviceFormList.map((item, index) => (
                       <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{item.service_package.package_name}</td>
-                        <td>{formattedPrice(item.service_package.price)}</td>
-                        <td>1</td>
-                        <td>{formattedPrice(item.service_package.price)}</td>
+                        <td> {index + 1} </td>
+                        <td> {item.service_form_id} </td>
+                        <td>{item.num_ser_must_do}</td>
+                        <td>{formattedPrice(item.total_price)}</td>
+                        <td>
+                          <p
+                            className={`${styles.status} ${
+                              item.status === "paid" || item.status === "done"
+                                ? styles.paid
+                                : styles.pending
+                            } `}
+                          >
+                            {item.status === "paid" || item.status === "done"
+                              ? "Đã thanh toán"
+                              : "Chưa thanh toán"}
+                          </p>
+                        </td>
+
+                        <td className={styles.grAction}>
+                          <ion-icon
+                            name="eye-outline"
+                            onClick={() => handleOpenDetail(item)}
+                          ></ion-icon>
+                          <div
+                            className={styles.btnCheckin}
+                            onClick={() => handleConfirmAlert(item)}
+                          >
+                            Thanh toán
+                          </div>
+                          {/* <div
+                    className={styles.btnCheckin}
+                    onClick={() => handleConfirmAlert(item)}
+                  >
+                    Xác nhận
+                  </div> */}
+                          {/* {item.status === "paid" && (
+                    <div
+                      className={`${styles.btnCheckin} ${styles.viewDetail} `}
+                      onClick={() => handlePrint(item)}
+                    >
+                      In hoá đơn
+                    </div>      
+                  )} */}
+                        </td>
                       </tr>
                     ))}
                 </tbody>
               </table>
+              <Modal
+                title="Chi tiết dịch vụ"
+                centered
+                open={open}
+                onOk={() => setOpen(false)}
+                onCancel={() => setOpen(false)}
+                width={900}
+                footer={null}
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th> STT</th>
+                      <th> Tên</th>
+                      <th> Đơn giá</th>
+                      <th> Số lượng</th>
+                      <th> Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading && (
+                      <>
+                        <Loading></Loading>
+                        <Loading></Loading>
+                        <Loading></Loading>
+                        <Loading></Loading>
+                        <Loading></Loading>
+                      </>
+                    )}
+                    {serviceDetailModal &&
+                      serviceDetailModal.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{item.note}</td>
+                          <td>{formattedPrice(item.service_package.price)}</td>
+                          <td>1</td>
+                          <td>{formattedPrice(item.service_package.price)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </Modal>
               {!loading && (
                 <div className={styles.totalPrice}>
                   <span className={styles.totalLabel}>Tổng cộng:</span>
                   <span>{totalPrice && formattedPrice(totalPrice)}</span>
-                  {/* <div className={styles.vietnameseNumber}>
-                    {readNumber(totalPrice)} đồng
-                  </div> */}
+                  <div className={styles.vietnameseNumber}>
+                    {totalPrice && readNumber(totalPrice)} đồng
+                  </div>
                 </div>
               )}
             </div>
@@ -404,25 +443,12 @@ const BillingDetail = () => {
             </div>
             <button
               className={styles.btnComplete}
-              onClick={() => handleConfirmAlert(serviceFormInfo)}
+              //   onClick={() => handleConfirmAlert(serviceFormInfo)}
             >
-              Xác nhận thanh toán
-            </button>
-            <button
-              className={styles.btnComplete}
-              onClick={() => handlePrint()}
-            >
-              In hoá đơn
+              Thanh toán tất cả
             </button>
           </div>
         </div>
-      </div>
-      <div style={{ display: "none" }}>
-        <HoaDon
-          serviceFormDetailList={serviceFormDetailList}
-          bookingInfo={bookingInfo}
-          ref={printRef}
-        ></HoaDon>
       </div>
       {/* <ProfileBirdModal
         open={openModalProfile}
@@ -462,8 +488,11 @@ const Loading = () => {
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
     </tr>
   );
 };
 
-export default BillingDetail;
+export default BillingBoardingDetail;

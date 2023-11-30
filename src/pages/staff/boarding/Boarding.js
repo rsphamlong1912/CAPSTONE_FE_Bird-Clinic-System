@@ -327,12 +327,12 @@ const Boarding = () => {
                     cage_id: cageSelected.cage_id,
                   }
                 );
-                const responseUpdateBooking = await api.put(
-                  `/booking/${bookingId}`,
-                  {
-                    status: "finish",
-                  }
-                );
+                // const responseUpdateBooking = await api.put(
+                //   `/booking/${bookingId}`,
+                //   {
+                //     status: "finish",
+                //   }
+                // );
 
                 const responseUpdateCage = await api.put(
                   `/cage/${cageSelected.cage_id}`,
@@ -366,17 +366,25 @@ const Boarding = () => {
                     ],
                   }
                 );
-                toast.success("Xác nhận thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                setTab((tab) => (tab += 1));
+                if (createdResponseServiceForm) {
+                  console.log(
+                    "tao servicee form roi",
+                    createdResponseServiceForm.data.data
+                  );
+                  toast.success("Xác nhận thành công!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });
+                  setTab((tab) => (tab += 1));
+                } else {
+                  console.log("KHONG TAO DUOC SERVICE FORM");
+                }
               } else {
                 toast.error("Không thành công!", {
                   position: "top-right",

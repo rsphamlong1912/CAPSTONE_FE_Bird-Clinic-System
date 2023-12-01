@@ -24,6 +24,7 @@ const TrackDetail = () => {
   const [selectedVet, setSelectedVet] = useState("");
   const [bookingInfo, setBookingInfo] = useState();
   const [billDetailList, setBillDetailList] = useState();
+  const [serviceFormDetailList, setServiceFormDetailList] = useState();
   const [showPrintBill, setShowPrintBill] = useState(false);
   const [bookingStatus, setBookingStatus] = useState();
 
@@ -56,26 +57,29 @@ const TrackDetail = () => {
       console.log(error);
     }
   };
-  const fetchBillDetail = async () => {
-    console.log("booking id", bookingId);
+
+  const fetchServiceForm = async () => {
     try {
-      const responseBill = await api.get(
-        `/billDetail/?booking_id=${bookingId}`
+      const responseServiceForm = await api.get(
+        `/service_Form/?booking_id=${bookingId}`
       );
-      console.log("fetch bill", responseBill.data);
-      if (responseBill.data.data.length !== 0) {
-        setBillDetailList(responseBill.data.data);
+      if (responseServiceForm.data.data.length !== 0) {
         setShowPrintBill(true);
+        const serviceFormDetailArr = [];
+        responseServiceForm.data.data.forEach((item) => {
+          serviceFormDetailArr.push(...item.service_form_details);
+        });
+        setServiceFormDetailList(serviceFormDetailArr);
       }
-      console.log("response bill", responseBill.data.data);
     } catch (error) {
       console.log(error);
+      setLoading(false); // Handle error and set loading to false
     }
   };
 
   useEffect(() => {
     fetchBookingInfo();
-    fetchBillDetail();
+    fetchServiceForm();
     setTimeout(() => {
       setLoading(false);
     }, 850);
@@ -489,6 +493,7 @@ const TrackDetail = () => {
           <HoaDonTong
             ref={printRef}
             billDetailList={billDetailList}
+            serviceFormDetailList={serviceFormDetailList}
             bookingInfo={bookingInfo}
           ></HoaDonTong>
         </div>

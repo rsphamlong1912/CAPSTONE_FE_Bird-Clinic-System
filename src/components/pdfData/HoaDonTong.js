@@ -3,12 +3,12 @@ import styles from "./HoaDonTong.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
 
 export const HoaDonTong = React.forwardRef(
-  ({ bookingInfo, billDetailList }, ref) => {
+  ({ bookingInfo, serviceFormDetailList }, ref) => {
     const { currentDate } = useCurrentDate();
 
     // Tính tổng số tiền từ cột price
-    const totalPrice = billDetailList.reduce((total, service) => {
-      const price = parseFloat(service.price);
+    const totalPrice = serviceFormDetailList.reduce((total, service) => {
+      const price = parseFloat(service.service_package.price);
       return total + price;
     }, 0);
 
@@ -71,12 +71,12 @@ export const HoaDonTong = React.forwardRef(
               <th>Tên dịch vụ</th>
               <th>Giá</th>
             </tr>
-            {billDetailList &&
-              billDetailList.length > 0 &&
-              billDetailList.map((item, index) => (
+            {serviceFormDetailList &&
+              serviceFormDetailList.length > 0 &&
+              serviceFormDetailList.map((item, index) => (
                 <tr key={index}>
                   <td>{item.service_package.package_name}</td>
-                  <td>{formattedPrice(item.price)}</td>
+                  <td>{formattedPrice(item.service_package.price)}</td>
                 </tr>
               ))}
           </table>

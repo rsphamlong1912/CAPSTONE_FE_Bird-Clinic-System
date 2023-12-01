@@ -107,7 +107,7 @@ const ScheduleGrooming = () => {
                         <th> STT</th>
                         <th> Khách hàng</th>
                         <th> Chim</th>
-                        <th> Dịch vụ</th>
+                        <th> Số điện thoại</th>
                         <th> Giờ đặt</th>
                         <th> Giờ checkin</th>
                         <th> Số điện thoại</th>
@@ -130,7 +130,7 @@ const ScheduleGrooming = () => {
                         <tr className={styles.NoGroomingDetial}>
                             <td colSpan="9">
                                 <ImFilesEmpty className={styles.iconEmpty} />
-                                <h3 className={styles.txtNoGrooming}>Không có lịch sử tiếp nhận nào.</h3>
+                                <h3 className={styles.txtNoGrooming}>Không có lịch hẹn nào cho ngày này.</h3>
                             </td>
                         </tr>
                     )}
@@ -140,7 +140,7 @@ const ScheduleGrooming = () => {
                                 <td> {index + 1} </td>
                                 <td>{item.customer_name}</td>
                                 <td>{item.bird.name}</td>
-                                <td>{item.service_type}</td>
+                                <td>{item.bird.customer.phone}</td>
                                 <td>{item.estimate_time}</td>
                                 <td>{item.checkin_time !== null && item.checkin_time !== "" ? item.checkin_time : "Chưa đến"}</td>
                                 <td>
@@ -180,6 +180,9 @@ const ScheduleGrooming = () => {
 const Loading = () => {
     return (
         <tr>
+            <td>
+                <LoadingSkeleton></LoadingSkeleton>
+            </td>
             <td>
                 <LoadingSkeleton></LoadingSkeleton>
             </td>

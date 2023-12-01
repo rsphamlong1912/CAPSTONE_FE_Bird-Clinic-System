@@ -299,3 +299,18 @@ tbody td.active {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.NoGroomingDetial {
+  height: 500px;
+
+  .iconEmpty {
+    width: auto;
+    height: 40px;
+    margin-left: 750px;
+    margin-bottom: 20px;
+  }
+
+  .txtNoGrooming {
+    text-align: center;
+  }
+}

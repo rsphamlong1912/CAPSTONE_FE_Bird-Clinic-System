@@ -11,42 +11,7 @@ const PendingBooking = () => {
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
 
-  useEffect(() => {
-    const today = new Date();
-    const nextFourDays = [];
-
-    for (let i = 0; i < 5; i++) {
-      const nextDay = new Date();
-      nextDay.setDate(today.getDate() + i);
-      const year = nextDay.getFullYear();
-      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-      const day = String(nextDay.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-      nextFourDays.push(formattedDate);
-    }
-    // Set selectedDate to the first date in the array when component mounts
-    if (nextFourDays.length > 0) {
-      setSelectedDate(nextFourDays[0]);
-    }
-    setDates(nextFourDays);
-  }, []);
-
-  const handleDateClick = (date) => {
-    const clickedDate = new Date(date);
-    const year = clickedDate.getFullYear();
-    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(clickedDate.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    setSelectedDate(formattedDate);
-  };
-
-  const formatDateForDisplay = (date) => {
-    const [yyyy, mm, dd] = date.split("-");
-    return `${dd}/${mm}`;
-  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -81,11 +46,11 @@ const PendingBooking = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -140,11 +105,11 @@ const PendingBooking = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -195,17 +160,8 @@ const PendingBooking = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
-        <div className={styles.middle}>
-          {dates.map((item, index) => (
-            <span
-              key={index}
-              className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
-            >
-              {formatDateForDisplay(item)}
-            </span>
-          ))}
+        <div className={styles.left}>
+          <h3>DANH SÁCH CẦN DUYỆT HẸN</h3>
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>
@@ -219,6 +175,7 @@ const PendingBooking = () => {
           <tr>
             <th> STT</th>
             <th> Khách hàng</th>
+            <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Giờ đặt</th>
@@ -245,6 +202,7 @@ const PendingBooking = () => {
               <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
+                <td>{item.bird.customer.phone}</td>
                 <td>{item.bird.name}</td>
                 <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
@@ -253,13 +211,12 @@ const PendingBooking = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "pending"
-                        ? styles.pending
-                        : item.status === "booked"
+                    className={`${styles.status} ${item.status === "pending"
+                      ? styles.pending
+                      : item.status === "booked"
                         ? styles.booked
                         : ""
-                    } `}
+                      } `}
                   >
                     {item.status === "pending" ? "Chờ duyệt" : ""}
                   </p>
@@ -294,6 +251,9 @@ const PendingBooking = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

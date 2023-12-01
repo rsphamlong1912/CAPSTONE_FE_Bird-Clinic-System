@@ -224,6 +224,12 @@ tbody tr.hide td img {
   border: 1px solid rgba(255, 59, 71, 1);
 }
 
+.status.finish {
+  color: rgb(255, 229, 59);
+  background-color: #fff;
+  border: 1px solid rgb(255, 229, 59);
+}
+
 @media (max-width: 1000px) {
   td:not(:first-of-type) {
     min-width: 12.1rem;
@@ -262,10 +268,10 @@ thead th.asc span.icon-arrow {
   font-size: 16px;
 }
 
-.left {
-  font-size: 30px;
-  margin-bottom: 30px;
-}
+// .left {
+//   font-size: 30px;
+//   margin-bottom: 30px;
+// }
 
 .btnCheckin {
   text-align: center;
@@ -275,4 +281,19 @@ thead th.asc span.icon-arrow {
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.NoGroomingDetial {
+  height: 500px;
+
+  .iconEmpty {
+    width: auto;
+    height: 40px;
+    margin-left: 750px;
+    margin-bottom: 20px;
+  }
+
+  .txtNoGrooming {
+    text-align: center;
+  }
 }

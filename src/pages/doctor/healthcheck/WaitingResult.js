@@ -4,6 +4,7 @@ import styles from "./WaitingResult.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import { ImFilesEmpty } from "react-icons/im";
 
 const WaitingResult = () => {
   const [customerList, setCustomerList] = useState([]);
@@ -105,7 +106,7 @@ const WaitingResult = () => {
             <th> STT</th>
             <th> Khách hàng</th>
             <th> Chim</th>
-            <th> Dịch vụ</th>
+            <th> Số điện thoại</th>
             <th> Giờ đặt</th>
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
@@ -125,32 +126,38 @@ const WaitingResult = () => {
               <Loading></Loading>
             </>
           )}
-
+          {!loading && customerList.length === 0 && (
+            <tr className={styles.NoGroomingDetial}>
+              <td colSpan="9">
+                <ImFilesEmpty className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>Hiện tại không có hàng chờ kết quả nào.</h3>
+              </td>
+            </tr>
+          )}
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
-                <td>Sáo nâu</td>
-                <td>Khám tổng quát</td>
+                <td>{item.bird.name}</td>
+                <td>{item.bird.customer.phone}</td>
                 <td>{item.estimate_time}</td>
-                <td></td>
+                <td>{item.checkin_time}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
+                  <strong>{item.veterinarian.name}</strong>
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "test_requested"
+                    className={`${styles.status} ${item.status === "test_requested"
                         ? styles.being
                         : styles.checkin
-                    } `}
+                      } `}
                   >
                     {item.status === "test_requested"
                       ? "Chờ xét nghiệm"
                       : item.status === "checked_in_after_test"
-                      ? "Có kết quả"
-                      : ""}
+                        ? "Có kết quả"
+                        : ""}
                   </p>
                 </td>
                 <td>
@@ -177,6 +184,9 @@ const WaitingResult = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

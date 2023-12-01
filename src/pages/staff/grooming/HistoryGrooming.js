@@ -70,7 +70,7 @@ const HistoryGrooming = () => {
         <div className={styles.container}>
             <div className={styles.headerContent}>
                 <div className={styles.left}>
-                    <h3>LỊCH SỬ KHÁM HÔM NAY</h3>
+                    <h3>LỊCH SỬ CHĂM SÓC HÔM NAY</h3>
                 </div>
                 <div className={styles.right}>
                     <div className={styles.btnSearch}>
@@ -85,7 +85,7 @@ const HistoryGrooming = () => {
                         <th> STT</th>
                         <th> Khách hàng</th>
                         <th> Chim</th>
-                        <th> Dịch vụ</th>
+                        <th> Số điện thoại</th>
                         <th> Giờ đặt</th>
                         <th> Giờ checkin</th>
                         <th> Số điện thoại</th>
@@ -119,7 +119,7 @@ const HistoryGrooming = () => {
                                 <td> {index + 1} </td>
                                 <td>{item.customer_name}</td>
                                 <td>{item.bird.name}</td>
-                                <td>{item.service_type}</td>
+                                <td>{item.bird.customer.phone}</td>
                                 <td>{item.estimate_time}</td>
                                 <td>{item.checkin_time}</td>
                                 <td>
@@ -162,6 +162,9 @@ const HistoryGrooming = () => {
 const Loading = () => {
     return (
         <tr>
+            <td>
+                <LoadingSkeleton></LoadingSkeleton>
+            </td>
             <td>
                 <LoadingSkeleton></LoadingSkeleton>
             </td>

@@ -32,7 +32,21 @@ const MainLayout = (props) => {
                     ? "Dịch vụ nội trú"
                     : localStorage.getItem("service_id") === "S009"
                       ? "Dịch vụ chăm sóc, làm đẹp"
-                      : ""
+                      : localStorage.getItem("service_id") === "S002"
+                        ? "Dịch vụ khám X-Rays"
+                        : localStorage.getItem("service_id") === "S003"
+                          ? "Dịch vụ kiểm tra máu"
+                          : localStorage.getItem("service_id") === "S004"
+                            ? "Dịch vụ phẩu thuật"
+                            : localStorage.getItem("service_id") === "S005"
+                              ? "Dịch vụ xét nghiệm DNA giới tính"
+                              : localStorage.getItem("service_id") === "S006"
+                                ? "Dịch vụ xét nghiệm phân chim"
+                                : localStorage.getItem("service_id") === "S007"
+                                  ? "Dịch vụ nội soi"
+                                  : localStorage.getItem("service_id") === "S008"
+                                    ? "Dịch vụ xét nghiệm bệnh truyền nhiễm"
+                                    : ""
                 : "Nhân viên phòng khám"}
             </span>
           </div>

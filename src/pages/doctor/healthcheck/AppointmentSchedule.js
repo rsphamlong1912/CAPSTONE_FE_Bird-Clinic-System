@@ -4,17 +4,16 @@ import styles from "./styles/ExamingToday.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import { ImFilesEmpty } from "react-icons/im";
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn");
 
 const AppointmentSchedule = () => {
+  const today = new Date();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
 
   useEffect(() => {
     console.log("socket id khi mới vào bên booking: ", socket.id);
@@ -27,39 +26,35 @@ const AppointmentSchedule = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const today = new Date();
-    const nextFourDays = [];
+  const [visibleDates, setVisibleDates] = useState([]);
 
-    for (let i = 0; i < 5; i++) {
-      const nextDay = new Date();
-      nextDay.setDate(today.getDate() + i);
-      const year = nextDay.getFullYear();
-      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-      const day = String(nextDay.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-      nextFourDays.push(formattedDate);
-    }
-    // Set selectedDate to the first date in the array when component mounts
-    if (nextFourDays.length > 0) {
-      setSelectedDate(nextFourDays[0]);
-    }
-    setDates(nextFourDays);
-  }, []);
-
-  const handleDateClick = (date) => {
-    const clickedDate = new Date(date);
-    const year = clickedDate.getFullYear();
-    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(clickedDate.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    setSelectedDate(formattedDate);
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   const formatDateForDisplay = (date) => {
     const [yyyy, mm, dd] = date.split("-");
     return `${dd}/${mm}`;
   };
+  const [selectedDate, setSelectedDate] = useState(formatDate(today));
+
+  useEffect(() => {
+    const dateList = [];
+    const daysToShow = 30;
+
+    for (let i = -daysToShow; i <= daysToShow; i++) {
+      const currentDate = new Date();
+      currentDate.setDate(today.getDate() + i);
+      dateList.push(formatDate(currentDate));
+    }
+
+    setDates(dateList);
+    const visibleIndex = dateList.indexOf(formatDate(today));
+    setVisibleDates(dateList.slice(visibleIndex - 3, visibleIndex + 4));
+  }, []);
 
   const handleChangeStatusBooking = async (item) => {
     try {
@@ -126,21 +121,40 @@ const AppointmentSchedule = () => {
     console.log(selectedDate);
     fetchData();
   }, [selectedDate]);
+
+  const handlePrevDates = () => {
+    const currentIndex = dates.indexOf(visibleDates[0]);
+    const prevDates = dates.slice(currentIndex - 1, currentIndex + 6);
+    setVisibleDates(prevDates);
+    setSelectedDate(prevDates[3]);
+  };
+
+  const handleNextDates = () => {
+    const currentIndex = dates.indexOf(visibleDates[0]);
+    const nextDates = dates.slice(currentIndex + 1, currentIndex + 8);
+    setVisibleDates(nextDates);
+    setSelectedDate(nextDates[3]);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
         <div className={styles.left}></div>
+        <div className={styles.navigation}>
+          <button onClick={handlePrevDates}>&lt;</button>
+        </div>
         <div className={styles.middle}>
-          {/* <span className={styles.active}>06/10</span> */}
-          {dates.map((item, index) => (
+          {visibleDates.map((item, index) => (
             <span
               key={index}
               className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
             >
               {formatDateForDisplay(item)}
             </span>
           ))}
+        </div>
+        <div className={styles.navigation}>
+          <button onClick={handleNextDates}>&gt;</button>
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>
@@ -175,7 +189,14 @@ const AppointmentSchedule = () => {
               <Loading></Loading>
             </>
           )}
-
+          {!loading && customerList.length === 0 && (
+            <tr className={styles.NoGroomingDetial}>
+              <td colSpan="9">
+                <ImFilesEmpty className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>Không có lịch hẹn nào cho ngày này.</h3>
+              </td>
+            </tr>
+          )}
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
@@ -186,29 +207,32 @@ const AppointmentSchedule = () => {
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
+                  <strong>{item.veterinarian.name}</strong>
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "checked_in" ||
+                    className={`${styles.status} ${item.status === "checked_in" ||
                       item.status === "checked_in_after_test"
-                        ? styles.checkin
-                        : item.status === "on_going" ||
-                          item.status === "test_requested"
+                      ? styles.checkin
+                      : item.status === "on_going" ||
+                        item.status === "test_requested"
                         ? styles.being
-                        : styles.booked
-                    } `}
+                        : item.status === "finish"
+                          ? styles.finish
+                          : styles.booked
+                      } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
-                      ? "Đang khám"
-                      : item.status === "test_requested"
-                      ? "Chờ xét nghiệm"
-                      : item.status === "checked_in_after_test"
-                      ? "Có kết quả"
-                      : "Chưa checkin"}
+                        ? "Đang khám"
+                        : item.status === "test_requested"
+                          ? "Chờ xét nghiệm"
+                          : item.status === "checked_in_after_test"
+                            ? "Có kết quả"
+                            : item.status === "finish"
+                              ? "Hoàn thành"
+                              : "Chưa checkin"}
                   </p>
                 </td>
                 <td>
@@ -235,6 +259,9 @@ const AppointmentSchedule = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

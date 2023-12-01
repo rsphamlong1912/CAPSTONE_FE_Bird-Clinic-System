@@ -4,23 +4,33 @@ import useCurrentDate from "../../hooks/useCurrentDate";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/axios";
-import { confirmAlert } from "react-confirm-alert";
-import { toast } from "react-toastify";
+import { ImFilesEmpty } from "react-icons/im";
 
 const Checkin = () => {
+  const today = new Date();
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentDate } = useCurrentDate();
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const [selectedDate, setSelectedDate] = useState(formatDate(today));
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/booking");
+        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
         const filterBookings = response.data.data.filter(
           (booking) =>
             booking.status !== "pending" && booking.status !== "booked"
         );
+        console.log('filterBookings', filterBookings)
         setCustomerList(filterBookings);
       } catch (error) {
         console.log(error);
@@ -35,7 +45,9 @@ const Checkin = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>DANH SÁCH CHECKIN HÔM NAY</div>
+        <div className={styles.left}>
+          <h3>DANH SÁCH CHECKIN HÔM NAY</h3>
+        </div>
         <div className={styles.right}>{currentDate}</div>
       </div>
       <table>
@@ -43,13 +55,13 @@ const Checkin = () => {
           <tr>
             <th> STT</th>
             <th> Khách hàng</th>
+            <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Giờ đặt</th>
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
             <th> Trạng thái</th>
-            <th> Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -64,49 +76,56 @@ const Checkin = () => {
               <Loading></Loading>
             </>
           )}
-
+          {!loading && customerList.length === 0 && (
+            <tr className={styles.NoGroomingDetial}>
+              <td colSpan="9">
+                <ImFilesEmpty className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>Không có buổi checkin nào cho ngày hôm nay.</h3>
+              </td>
+            </tr>
+          )}
           {!loading &&
             customerList.map((item, index) => (
               <tr
                 key={index}
-                // onClick={() => navigate(`/examing/${item.booking_id}`)}
+              // onClick={() => navigate(`/examing/${item.booking_id}`)}
               >
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
+                <td>{item.bird.customer.phone}</td>
                 <td>{item.bird.name}</td>
                 <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
-                <td></td>
+                <td>{item.checkin_time || "_____"}</td>
                 <td>
                   <strong>{item.veterinarian.name}</strong>
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "checked_in"
-                        ? styles.checkin
-                        : item.status === "on_going" ||
-                          item.status === "test_requested"
+                    className={`${styles.status} ${item.status === "checked_in"
+                      ? styles.checkin
+                      : item.status === "on_going" ||
+                        item.status === "test_requested"
                         ? styles.being
                         : item.status === "booked"
-                        ? styles.booked
-                        : ""
-                    } `}
+                          ? styles.booked
+                          : item.status === "finish"
+                            ? styles.finish
+                            : ""
+                      } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "test_requested"
-                      ? "Chờ xét nghiệm"
-                      : item.status === "on_going"
-                      ? "Đang khám"
-                      : item.status === "booked"
-                      ? "Chưa checkin"
-                      : ""}
+                        ? "Chờ xét nghiệm"
+                        : item.status === "on_going"
+                          ? "Đang khám"
+                          : item.status === "booked"
+                            ? "Chưa checkin"
+                            : item.status === "finish"
+                              ? "Hoàn thành"
+                              : ""}
                   </p>
-                </td>
-
-                <td>
-                  <div className={styles.btnCheckin}>Xem</div>
                 </td>
               </tr>
             ))}
@@ -124,6 +143,9 @@ const Checkin = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

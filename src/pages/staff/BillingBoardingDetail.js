@@ -379,8 +379,8 @@ const BillingBoardingDetail = () => {
                   {!loading && (
                     <tr>
                       <td>0</td>
-                      <td> {boardingInfo.arrival_date} </td>
-                      <td>{boardingInfo.departure_date}</td>
+                      <td> {boardingInfo?.arrival_date} </td>
+                      <td>{boardingInfo?.departure_date}</td>
                       <td>
                         {formattedPrice(serviceFormBoardingInfo.total_price)}
                       </td>

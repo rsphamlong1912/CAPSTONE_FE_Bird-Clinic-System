@@ -57,7 +57,7 @@ const GroomingToday = () => {
     <div className={styles.container}>
       <div className={styles.headerContent}>
         <div className={styles.left}>
-          <h3>DANH SÁCH KHÁM HÔM NAY</h3>
+          <h3>DANH SÁCH CHĂM SÓC HÔM NAY</h3>
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>
@@ -72,7 +72,7 @@ const GroomingToday = () => {
             <th> STT</th>
             <th> Khách hàng</th>
             <th> Chim</th>
-            <th> Dịch vụ</th>
+            <th> Số điện thoại</th>
             <th> Giờ đặt</th>
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
@@ -96,7 +96,7 @@ const GroomingToday = () => {
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="9">
                 <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>Không có cuộc hẹn chải chuốt cho ngày đã chọn.</h3>
+                <h3 className={styles.txtNoGrooming}>Không có cuộc hẹn chải chuốt cho ngày hôm nay.</h3>
               </td>
             </tr>
           )}
@@ -106,7 +106,7 @@ const GroomingToday = () => {
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
                 <td>{item.bird.name}</td>
-                <td>{item.service_type}</td>
+                <td>{item.bird.customer.phone}</td>
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
                 <td>
@@ -150,6 +150,9 @@ const GroomingToday = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

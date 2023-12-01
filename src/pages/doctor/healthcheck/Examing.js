@@ -775,7 +775,7 @@ const Examing = () => {
                 Hẹn tái khám
               </span>
             </div>
-            {tab == 1 && (
+            {tab == 3 && (
               <div className={styles.examing}>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Triệu chứng</label>
@@ -1016,7 +1016,7 @@ const Examing = () => {
                 </button> */}
               </div>
             )}
-            {tab == 3 && (
+            {tab == 1 && (
               <div className={styles.examing}>
                 <div className={styles.create}>
                   {showButton && (
@@ -1076,7 +1076,7 @@ const Examing = () => {
                                   </select>
                                 </div>
                                 <div className={styles.First}>
-                                  <p>Loại</p>
+                                  <p>Đơn vị</p>
                                   <p className={styles.TypeList}>
                                     {medicineNames
                                       .filter(
@@ -1092,7 +1092,7 @@ const Examing = () => {
                               </div>
                               <div className={styles.createSecond}>
                                 <div className={styles.Second}>
-                                  <p>Đơn vị</p>
+                                  <p>Liều</p>
                                   <select
                                     className={styles.UnitList}
                                     name="unit"
@@ -1138,7 +1138,7 @@ const Examing = () => {
                                   </select>
                                 </div>
                                 <div className={styles.Second}>
-                                  <p>Số liều dùng</p>
+                                  <p>Tổng số liều dùng</p>
                                   <p
                                     className={styles.AmountList}
                                     name="amount"

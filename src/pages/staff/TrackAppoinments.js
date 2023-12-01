@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import DetailBookingModal from "../../components/modals/DetailBookingModal";
+import { ImFilesEmpty } from "react-icons/im";
 
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn");
 
 const TrackAppoinments = () => {
+  const today = new Date();
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +21,6 @@ const TrackAppoinments = () => {
   const [openModalDetailBooking, setOpenModalDetailBooking] = useState(false);
 
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
   const [bookingSelectedInfo, setBookingSelectedInfo] = useState();
 
   //SOCKET CHECKIN
@@ -37,60 +38,63 @@ const TrackAppoinments = () => {
     }, 500);
   }, []);
 
-  useEffect(() => {
-    const today = new Date();
-    const nextFourDays = [];
+  const [visibleDates, setVisibleDates] = useState([]);
 
-    for (let i = 0; i < 5; i++) {
-      const nextDay = new Date();
-      nextDay.setDate(today.getDate() + i);
-      const year = nextDay.getFullYear();
-      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-      const day = String(nextDay.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-      nextFourDays.push(formattedDate);
-    }
-    // Set selectedDate to the first date in the array when component mounts
-    if (nextFourDays.length > 0) {
-      setSelectedDate(nextFourDays[0]);
-    }
-    setDates(nextFourDays);
-  }, []);
-
-  const handleDateClick = (date) => {
-    const clickedDate = new Date(date);
-    const year = clickedDate.getFullYear();
-    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(clickedDate.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    setSelectedDate(formattedDate);
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   const formatDateForDisplay = (date) => {
     const [yyyy, mm, dd] = date.split("-");
     return `${dd}/${mm}`;
   };
+  const [selectedDate, setSelectedDate] = useState(formatDate(today));
+
+  useEffect(() => {
+    const dateList = [];
+    const daysToShow = 30;
+
+    for (let i = -daysToShow; i <= daysToShow; i++) {
+      const currentDate = new Date();
+      currentDate.setDate(today.getDate() + i);
+      dateList.push(formatDate(currentDate));
+    }
+
+    setDates(dateList);
+    const visibleIndex = dateList.indexOf(formatDate(today));
+    setVisibleDates(dateList.slice(visibleIndex - 3, visibleIndex + 4));
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/booking");
-        const filterBookings = response.data.data.filter(
+        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+        let filterBookings = response.data.data.filter(
           (booking) => booking.status !== "pending"
         );
-        // Sort bookings by checkin_time in ascending order
-        // filterBookings.sort((a, b) => {
-        //   const timeA = a.checkin_time.split(":").map(Number);
-        //   const timeB = b.checkin_time.split(":").map(Number);
+        filterBookings = filterBookings.filter(
+          (booking) => booking.checkin_time !== null
+        );
 
-        //   // Compare hours
-        //   if (timeA[0] !== timeB[0]) {
-        //     return timeA[0] - timeB[0];
-        //   }
+        filterBookings.sort((a, b) => {
+          if (a.checkin_time && b.checkin_time) {
+            const timeA = a.checkin_time.split(":").map(Number);
+            const timeB = b.checkin_time.split(":").map(Number);
 
-        //   // If hours are the same, compare minutes
-        //   return timeA[1] - timeB[1];
-        // });
+            // So sánh giờ
+            if (timeA[0] !== timeB[0]) {
+              return timeA[0] - timeB[0];
+            }
+
+            // Nếu giờ bằng nhau, so sánh phút
+            return timeA[1] - timeB[1];
+          }
+          return 0;
+        });
+
         setCustomerList(filterBookings);
       } catch (error) {
         console.log(error);
@@ -101,7 +105,7 @@ const TrackAppoinments = () => {
       setLoading(false);
     }, 850);
     fetchData();
-  }, []);
+  }, [selectedDate]);
 
   const options = {
     title: "Xác nhận check-in",
@@ -117,11 +121,11 @@ const TrackAppoinments = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -219,20 +223,39 @@ const TrackAppoinments = () => {
     }
   };
 
+  const handlePrevDates = () => {
+    const currentIndex = dates.indexOf(visibleDates[0]);
+    const prevDates = dates.slice(currentIndex - 1, currentIndex + 6);
+    setVisibleDates(prevDates);
+    setSelectedDate(prevDates[3]);
+  };
+
+  const handleNextDates = () => {
+    const currentIndex = dates.indexOf(visibleDates[0]);
+    const nextDates = dates.slice(currentIndex + 1, currentIndex + 8);
+    setVisibleDates(nextDates);
+    setSelectedDate(nextDates[3]);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
         <div className={styles.left}></div>
+        <div className={styles.navigation}>
+          <button onClick={handlePrevDates}>&lt;</button>
+        </div>
         <div className={styles.middle}>
-          {dates.map((item, index) => (
+          {visibleDates.map((item, index) => (
             <span
               key={index}
               className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
             >
               {formatDateForDisplay(item)}
             </span>
           ))}
+        </div>
+        <div className={styles.navigation}>
+          <button onClick={handleNextDates}>&gt;</button>
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>
@@ -268,7 +291,14 @@ const TrackAppoinments = () => {
               <Loading></Loading>
             </>
           )}
-
+          {!loading && customerList.length === 0 && (
+            <tr className={styles.NoGroomingDetial}>
+              <td colSpan="10">
+                <ImFilesEmpty className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>Không có lịch khám nào cho ngày này.</h3>
+              </td>
+            </tr>
+          )}
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
@@ -284,29 +314,32 @@ const TrackAppoinments = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "checked_in" ||
+                    className={`${styles.status} ${item.status === "checked_in" ||
                       item.status === "checked_in_after_test"
-                        ? styles.checkin
-                        : item.status === "on_going" ||
-                          item.status === "test_requested"
+                      ? styles.checkin
+                      : item.status === "on_going" ||
+                        item.status === "test_requested"
                         ? styles.being
                         : item.status === "booked"
-                        ? styles.booked
-                        : ""
-                    } `}
+                          ? styles.booked
+                          : item.status === "finish"
+                            ? styles.finish
+                            : ""
+                      } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "test_requested"
-                      ? "Chờ xét nghiệm"
-                      : item.status === "on_going"
-                      ? "Đang khám"
-                      : item.status === "booked"
-                      ? "Chưa checkin"
-                      : item.status === "checked_in_after_test"
-                      ? "Có kết quả"
-                      : ""}
+                        ? "Chờ xét nghiệm"
+                        : item.status === "on_going"
+                          ? "Đang khám"
+                          : item.status === "booked"
+                            ? "Chưa checkin"
+                            : item.status === "checked_in_after_test"
+                              ? "Có kết quả"
+                              : item.status === "finish"
+                                ? "Hoàn thành"
+                                : ""}
                   </p>
                 </td>
                 <td className={styles.flexBtn}>
@@ -355,6 +388,12 @@ const TrackAppoinments = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

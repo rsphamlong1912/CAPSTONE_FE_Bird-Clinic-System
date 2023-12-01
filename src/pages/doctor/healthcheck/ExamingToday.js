@@ -4,6 +4,7 @@ import styles from "./styles/ExamingToday.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
+import { ImFilesEmpty } from "react-icons/im";
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn");
 
@@ -12,9 +13,7 @@ const ExamingToday = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState("");
 
   useEffect(() => {
     console.log("socket id khi mới vào bên booking: ", socket.id);
@@ -27,39 +26,39 @@ const ExamingToday = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const today = new Date();
-  //   const nextFourDays = [];
+  useEffect(() => {
+    const today = new Date();
+    const nextFourDays = [];
 
-  //   for (let i = 0; i < 5; i++) {
-  //     const nextDay = new Date();
-  //     nextDay.setDate(today.getDate() + i);
-  //     const year = nextDay.getFullYear();
-  //     const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-  //     const day = String(nextDay.getDate()).padStart(2, "0");
-  //     const formattedDate = `${year}-${month}-${day}`;
-  //     nextFourDays.push(formattedDate);
-  //   }
-  //   // Set selectedDate to the first date in the array when component mounts
-  //   if (nextFourDays.length > 0) {
-  //     setSelectedDate(nextFourDays[0]);
-  //   }
-  //   setDates(nextFourDays);
-  // }, []);
+    for (let i = 0; i < 5; i++) {
+      const nextDay = new Date();
+      nextDay.setDate(today.getDate() + i);
+      const year = nextDay.getFullYear();
+      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
+      const day = String(nextDay.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      nextFourDays.push(formattedDate);
+    }
+    // Set selectedDate to the first date in the array when component mounts
+    if (nextFourDays.length > 0) {
+      setSelectedDate(nextFourDays[0]);
+    }
+    setDates(nextFourDays);
+  }, []);
 
-  // const handleDateClick = (date) => {
-  //   const clickedDate = new Date(date);
-  //   const year = clickedDate.getFullYear();
-  //   const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-  //   const day = String(clickedDate.getDate()).padStart(2, "0");
-  //   const formattedDate = `${year}-${month}-${day}`;
-  //   setSelectedDate(formattedDate);
-  // };
+  const handleDateClick = (date) => {
+    const clickedDate = new Date(date);
+    const year = clickedDate.getFullYear();
+    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(clickedDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    setSelectedDate(formattedDate);
+  };
 
-  // const formatDateForDisplay = (date) => {
-  //   const [yyyy, mm, dd] = date.split("-");
-  //   return `${dd}/${mm}`;
-  // };
+  const formatDateForDisplay = (date) => {
+    const [yyyy, mm, dd] = date.split("-");
+    return `${dd}/${mm}`;
+  };
 
   const handleChangeStatusBooking = async (item) => {
     try {
@@ -90,6 +89,7 @@ const ExamingToday = () => {
           booking.status !== "pending" &&
           booking.status !== "booked" &&
           booking.status !== "test_requested" &&
+          booking.status !== "finish" &&
           booking.service_type_id === "ST001" &&
           booking.money_has_paid !== "0.00"
       );
@@ -125,6 +125,7 @@ const ExamingToday = () => {
     setTimeout(() => {
       setLoading(false);
     }, 850);
+    console.log(selectedDate);
     fetchData();
   }, [selectedDate]);
   return (
@@ -177,7 +178,14 @@ const ExamingToday = () => {
               <Loading></Loading>
             </>
           )}
-
+          {!loading && customerList.length === 0 && (
+            <tr className={styles.NoGroomingDetial}>
+              <td colSpan="9">
+                <ImFilesEmpty className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>Không có cuộc hẹn khám nào cho ngày hôm nay.</h3>
+              </td>
+            </tr>
+          )}
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
@@ -188,29 +196,28 @@ const ExamingToday = () => {
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
+                  <strong>{item.veterinarian.name}</strong>
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${
-                      item.status === "checked_in" ||
-                      item.status === "checked_in_after_test"
+                    className={`${styles.status} ${item.status === "checked_in" ||
+                        item.status === "checked_in_after_test"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
-                        ? styles.being
-                        : styles.booked
-                    } `}
+                          ? styles.being
+                          : styles.booked
+                      } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
-                      ? "Đang khám"
-                      : item.status === "test_requested"
-                      ? "Chờ xét nghiệm"
-                      : item.status === "checked_in_after_test"
-                      ? "Có kết quả"
-                      : "Chưa checkin"}
+                        ? "Đang khám"
+                        : item.status === "test_requested"
+                          ? "Chờ xét nghiệm"
+                          : item.status === "checked_in_after_test"
+                            ? "Có kết quả"
+                            : "Chưa checkin"}
                   </p>
                 </td>
                 <td>
@@ -237,6 +244,9 @@ const ExamingToday = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

@@ -72,12 +72,13 @@ const TrackAppoinments = () => {
     const fetchData = async () => {
       try {
         const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+        console.log("sdjvbcs", response.data.data);
         let filterBookings = response.data.data.filter(
           (booking) => booking.status !== "pending"
         );
-        filterBookings = filterBookings.filter(
-          (booking) => booking.checkin_time !== null
-        );
+        // filterBookings = filterBookings.filter(
+        //   (booking) => booking.checkin_time !== null
+        // );
 
         filterBookings.sort((a, b) => {
           if (a.checkin_time && b.checkin_time) {
@@ -121,11 +122,11 @@ const TrackAppoinments = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -295,7 +296,9 @@ const TrackAppoinments = () => {
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="10">
                 <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>Không có lịch khám nào cho ngày này.</h3>
+                <h3 className={styles.txtNoGrooming}>
+                  Không có lịch khám nào cho ngày này.
+                </h3>
               </td>
             </tr>
           )}
@@ -314,32 +317,33 @@ const TrackAppoinments = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${item.status === "checked_in" ||
+                    className={`${styles.status} ${
+                      item.status === "checked_in" ||
                       item.status === "checked_in_after_test"
-                      ? styles.checkin
-                      : item.status === "on_going" ||
-                        item.status === "test_requested"
+                        ? styles.checkin
+                        : item.status === "on_going" ||
+                          item.status === "test_requested"
                         ? styles.being
                         : item.status === "booked"
-                          ? styles.booked
-                          : item.status === "finish"
-                            ? styles.finish
-                            : ""
-                      } `}
+                        ? styles.booked
+                        : item.status === "finish"
+                        ? styles.finish
+                        : ""
+                    } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "test_requested"
-                        ? "Chờ xét nghiệm"
-                        : item.status === "on_going"
-                          ? "Đang khám"
-                          : item.status === "booked"
-                            ? "Chưa checkin"
-                            : item.status === "checked_in_after_test"
-                              ? "Có kết quả"
-                              : item.status === "finish"
-                                ? "Hoàn thành"
-                                : ""}
+                      ? "Chờ xét nghiệm"
+                      : item.status === "on_going"
+                      ? "Đang khám"
+                      : item.status === "booked"
+                      ? "Chưa checkin"
+                      : item.status === "checked_in_after_test"
+                      ? "Có kết quả"
+                      : item.status === "finish"
+                      ? "Hoàn thành"
+                      : ""}
                   </p>
                 </td>
                 <td className={styles.flexBtn}>

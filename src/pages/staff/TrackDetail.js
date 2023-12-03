@@ -418,7 +418,7 @@ const TrackDetail = () => {
               </div>
               <div className={styles.history}>
                 <img
-                  src="https://s3-media0.fl.yelpcdn.com/bphoto/hk8tThrdX-iEkolBrYLZBQ/348s.jpg"
+                  src={bookingInfo.bird.image}
                   className={styles.image}
                   alt=""
                 />

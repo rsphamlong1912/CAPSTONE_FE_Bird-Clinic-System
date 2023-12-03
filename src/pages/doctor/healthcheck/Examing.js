@@ -263,11 +263,13 @@ const Examing = () => {
           `/service_Form/?booking_id=${bookingId}`
         );
 
-        if (responseServiceForm.data.data.length > 0) {
+        const filterList = responseServiceForm.data.data.slice(0, -1);
+
+        if (filterList.length > 0) {
           const tempArr = [];
 
           // Lặp qua dữ liệu response và thêm các phần tử vào mảng tạm thời
-          responseServiceForm.data.data.forEach((item) => {
+          filterList.forEach((item) => {
             item.service_form_details.forEach((item2) => {
               tempArr.push(item2);
             });
@@ -300,8 +302,8 @@ const Examing = () => {
           }
         }
 
-        setServiceFormList(responseServiceForm.data.data);
-        console.log("service form list", responseServiceForm.data.data);
+        setServiceFormList(filterList);
+        console.log("service form list", filterList);
       } catch (error) {
         console.log(error);
       }
@@ -386,7 +388,9 @@ const Examing = () => {
       setForms(updatedForms);
     } else {
       // Display a warning or handle the situation where the medicine has already been selected
-      message.error("Thuốc đã được chọn trước đó. Vui lòng chọn một thuốc khác.");
+      message.error(
+        "Thuốc đã được chọn trước đó. Vui lòng chọn một thuốc khác."
+      );
     }
   };
 
@@ -775,7 +779,7 @@ const Examing = () => {
                 Hẹn tái khám
               </span>
             </div>
-            {tab == 3 && (
+            {tab == 1 && (
               <div className={styles.examing}>
                 <div className={styles.inputItem}>
                   <label htmlFor="temperature">Triệu chứng</label>
@@ -1016,7 +1020,7 @@ const Examing = () => {
                 </button> */}
               </div>
             )}
-            {tab == 1 && (
+            {tab == 3 && (
               <div className={styles.examing}>
                 <div className={styles.create}>
                   {showButton && (
@@ -1043,11 +1047,12 @@ const Examing = () => {
                                 {medicineNames
                                   .filter(
                                     (timeSlot) =>
-                                      timeSlot.name ===
-                                      form.selectedMedicine
+                                      timeSlot.name === form.selectedMedicine
                                   )
                                   .map((filteredSlot, index) => (
-                                    <div key={index}>HDSD: {filteredSlot.usage}</div>
+                                    <div key={index}>
+                                      HDSD: {filteredSlot.usage}
+                                    </div>
                                   ))}
                               </div>
                               <div className={styles.createFirst}>
@@ -1187,7 +1192,7 @@ const Examing = () => {
                         <div
                           className={styles.PrintMedicine}
                           onClick={handlePrintMd}
-                        // onClick={() => setOpenModalPrescription(true)}
+                          // onClick={() => setOpenModalPrescription(true)}
                         >
                           <ion-icon name="thermometer-outline"></ion-icon>
                           <span>In đơn thuốc</span>

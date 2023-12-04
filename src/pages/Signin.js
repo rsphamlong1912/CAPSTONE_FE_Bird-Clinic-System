@@ -23,8 +23,9 @@ const Signin = () => {
         // Xử lý phản hồi từ API khi đăng nhập thành công
         console.log("Đăng nhập thành công:", response.data.data);
         const { accessToken } = response.data.data;
+        const { account_id, name, service_id, service_type_id, is_primary } =
+          response.data.data.data;
         localStorage.setItem("accessToken", accessToken);
-        const { account_id, name, service_id } = response.data.data.data;
         localStorage.setItem("account_id", account_id);
         localStorage.setItem("name", name);
         localStorage.setItem("service_id", service_id);
@@ -32,14 +33,16 @@ const Signin = () => {
         const role = response.data.data.role;
         console.log(role);
         if (role === "vet") {
-          if (service_id === "S001") {
-            window.location.href = "/examing";
-          } else if (service_id === "S013") {
-            window.location.href = "/boarding";
-          } else if (service_id === "S009") {
+          if (service_type_id === "ST001") {
+            if (is_primary === "1") {
+              window.location.href = "/examing";
+            } else {
+              window.location.href = "/retesting";
+            }
+          } else if (service_type_id === "ST002") {
             window.location.href = "/grooming";
-          } else {
-            window.location.href = "/retesting";
+          } else if (service_type_id === "ST003") {
+            window.location.href = "/boarding";
           }
         } else if (role === "staff") {
           window.location.href = "/track";

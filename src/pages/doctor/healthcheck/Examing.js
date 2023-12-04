@@ -497,7 +497,7 @@ const Examing = () => {
       const sendProcessToApi = await api.put(
         `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
         {
-          status: "any",
+          status: "on_going",
           veterinarian_id: localStorage.getItem("account_id"),
           process_at: newTabValue, // Sử dụng giá trị mới của tab
         }
@@ -520,7 +520,7 @@ const Examing = () => {
       const sendProcessToApi = await api.put(
         `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
         {
-          status: "any",
+          status: "on_going",
           veterinarian_id: localStorage.getItem("account_id"),
           process_at: newTabValue, // Sử dụng giá trị mới của tab
         }

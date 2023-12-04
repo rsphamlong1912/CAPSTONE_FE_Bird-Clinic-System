@@ -33,6 +33,7 @@ const Grooming = () => {
   const [confirmButtonVisible, setConfirmButtonVisible] = useState(true);
   const [birdSizeId, setBirdSizeId] = useState(null);
   const [packageDetail, setPackageDetail] = useState(null);
+  const [sfds, setSfds] = useState([]);
 
   const toggleInfo1 = (serviceIndex) => {
     const newShowInfo = [...showInfo];
@@ -100,6 +101,13 @@ const Grooming = () => {
         if (response.data.data && response.data.data.bird_id) {
           getBirdProfile(response.data.data.bird_id);
         }
+
+        const responseServiceFormDetail = await api.get(
+          `/service_Form_detail/?veterinarian_id=vet0&booking_id=${bookingId}`
+        );
+        console.log("form detail ne nha", responseServiceFormDetail.data.data);
+        setSfds(responseServiceFormDetail.data.data);
+
       } catch (error) {
         console.log(error);
       }
@@ -430,10 +438,22 @@ const Grooming = () => {
           label: "Xác nhận",
           onClick: async () => {
             try {
-              const response = await api.put(`/booking/${item.booking_id}`, {
+              console.log("serviceFormDetails", sfds)
+              for (let i = 0; i < sfds.length; i++) {
+                const responseSFD = await api.put(`/service_Form_detail/${sfds[i].service_form_detail_id}`, {
+                  status: "done",
+                });
+              }
+              const responseSF = await api.put(
+                `/service_Form/${serviceFormDetails[0].service_form_id}`,
+                {
+                  status: "done",
+                }
+              );
+              const responseBookking = await api.put(`/booking/${item.booking_id}`, {
                 status: "finish",
               });
-              if (response) {
+              if (responseSF && responseBookking) {
                 socket.emit("confirm-check-in", {
                   customer_id: item.account_id,
                   veterinarian_id: item.veterinarian_id,
@@ -448,8 +468,7 @@ const Grooming = () => {
                   progress: undefined,
                   theme: "light",
                 });
-                console.log("response doi status ne", response.data);
-                navigate("/history-grooming");
+                navigate("/grooming");
               }
             } catch (error) {
               console.log(error);

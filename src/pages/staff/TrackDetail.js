@@ -41,6 +41,9 @@ const TrackDetail = () => {
       );
       setVeterinarians(responseVeterinarians.data.data);
       console.log("fetch", responseVeterinarians.data.data);
+      console.log("vet.service_id", vet.service_id);
+      console.log("vet.service_type_id", vet.service_type_id);
+      console.log("fetch", responseVeterinarians);
     } catch (error) {
       console.error("Error fetching veterinarians:", error);
     }
@@ -53,6 +56,7 @@ const TrackDetail = () => {
       setBookingStatus(responseBooking.data.data.status);
       setSelectedVet(responseBooking.data.data.veterinarian_id);
       fetchVeterinarians(responseBooking.data.data.veterinarian);
+      console.log('responseBooking', responseBooking);
     } catch (error) {
       console.log(error);
     }
@@ -111,26 +115,30 @@ const TrackDetail = () => {
   const createNewServiceForm = async (item) => {
     console.log("item", item);
     try {
-      // Tạo service_Form
-      const createdResponse = await api.post(`/service_Form/`, {
-        bird_id: item.bird_id,
-        booking_id: item.booking_id,
-        reason_referral: "any",
-        status: "pending",
-        date: item.arrival_date,
-        veterinarian_referral: item.veterinarian_id,
-        total_price: 50000,
-        qr_code: "any",
-        num_ser_must_do: 1,
-        num_ser_has_done: 0,
-        arr_service_pack: [
-          {
-            service_package_id: "SP1",
-            note: "Khám tổng quát",
-          },
-        ],
-      });
-      console.log("create service form", createdResponse);
+      const sp1 = await api.get(`/servicePackage/SP1`)
+      if (sp1) {
+        // Tạo service_Form
+        const createdResponse = await api.post(`/service_Form/`, {
+          bird_id: item.bird_id,
+          booking_id: item.booking_id,
+          reason_referral: "any",
+          status: "pending",
+          date: item.arrival_date,
+          veterinarian_referral: item.veterinarian_id,
+          total_price: sp1.data.data.price,
+          qr_code: "any",
+          num_ser_must_do: 1,
+          num_ser_has_done: 0,
+          arr_service_pack: [
+            {
+              service_package_id: "SP1",
+              note: "Khám tổng quát",
+            },
+          ],
+        });
+        console.log("create service form", createdResponse);
+      }
+
     } catch (err) {
       console.log(err);
     }
@@ -150,11 +158,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -223,11 +231,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -288,11 +296,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 

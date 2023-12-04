@@ -6,17 +6,29 @@ import useCurrentDate from "../../../hooks/useCurrentDate";
 import { api } from "../../../services/axios";
 
 const ReTestingToday = () => {
+  const today = new Date();
   const navigate = useNavigate();
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentDate } = useCurrentDate();
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // const response = await api.get(
+        //   `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
+        //     "account_id"
+        //   )}&service_type_id=ST001`
+        // );
         const response = await api.get(
           `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
             "account_id"
-          )}&service_type_id=ST001`
+          )}&arrival_date=${formatDate(today)}`
         );
 
         const allRequested = response.data.data;
@@ -86,11 +98,11 @@ const ReTestingToday = () => {
           {!loading &&
             customerList.map((item, index) => (
               <tr key={index}>
-                <td> {index + 1} </td>
-                <td>Sáo nâu</td>
+                <td> {index + 1}</td>
+                <td> {}</td>
                 <td>{item.note}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
+                  <strong>{localStorage.getItem("name")}</strong>
                 </td>
                 <td>
                   <p

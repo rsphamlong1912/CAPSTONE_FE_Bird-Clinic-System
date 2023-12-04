@@ -26,6 +26,7 @@ const BillingDetail = () => {
   const [vetDetailArr, setVetDetailArr] = useState();
   const [customerId, setCustomerId] = useState();
   const [customerName, setCustomerName] = useState();
+  const [customerPhone, setCustomerPhone] = useState();
   const [totalPrice, setTotalPrice] = useState();
   const navigate = useNavigate();
 
@@ -94,6 +95,8 @@ const BillingDetail = () => {
         if (responseBookingInfo) {
           setBookingInfo(responseBookingInfo.data.data);
           setCustomerName(responseBookingInfo.data.data.customer_name);
+          setCustomerPhone(responseBookingInfo.data.data.bird.customer.phone);
+          console.log('setBookingInfo', responseBookingInfo.data.data.bird.customer.phone)
           setCustomerId(
             responseBookingInfo.data.data.bird.customer.customer_id
           );
@@ -343,7 +346,7 @@ const BillingDetail = () => {
               </div>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Số điện thoại:</span>
-                <span>0938186659</span>
+                <span>{customerPhone}</span>
               </div>
             </div>
             <div className={styles.billingInfo}>
@@ -352,7 +355,8 @@ const BillingDetail = () => {
                 <thead>
                   <tr>
                     <th> STT</th>
-                    <th> Tên</th>
+                    <th> Bác sĩ phụ trách</th>
+                    <th> Tên dịch vụ</th>
                     <th> Đơn giá</th>
                     <th> Số lượng</th>
                     <th> Thành tiền</th>
@@ -366,6 +370,7 @@ const BillingDetail = () => {
                       <Loading></Loading>
                       <Loading></Loading>
                       <Loading></Loading>
+                      <Loading></Loading>
                     </>
                   )}
                   {!loading &&
@@ -373,6 +378,7 @@ const BillingDetail = () => {
                     serviceSelected.map((item, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
+                        <td>{item.veterinarian.name}</td>
                         <td>{item.service_package.package_name}</td>
                         <td>{formattedPrice(item.service_package.price)}</td>
                         <td>1</td>

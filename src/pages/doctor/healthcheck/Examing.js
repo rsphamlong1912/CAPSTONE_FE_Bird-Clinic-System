@@ -615,11 +615,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -681,11 +681,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -747,6 +747,21 @@ const Examing = () => {
     };
     confirmAlert(updatedOptions);
   };
+
+  
+  const [customerPhone, setCustomerPhone] = useState();
+  useEffect(() => {
+    const sendApiforData = async () => {
+      console.log("bookingInfo.account_id:", accountId);
+      try {
+        const response = await api.get(`/customer/${accountId}`);
+        setCustomerPhone(response.data.data.phone);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    sendApiforData();
+  }, [accountId]);
 
   return (
     <div className={styles.wrapper}>
@@ -1151,7 +1166,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  {}
+                                  { }
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -1192,7 +1207,7 @@ const Examing = () => {
                         <div
                           className={styles.PrintMedicine}
                           onClick={handlePrintMd}
-                          // onClick={() => setOpenModalPrescription(true)}
+                        // onClick={() => setOpenModalPrescription(true)}
                         >
                           <ion-icon name="thermometer-outline"></ion-icon>
                           <span>In đơn thuốc</span>
@@ -1322,6 +1337,7 @@ const Examing = () => {
           ref={printRefMd}
           bookingInfo={bookingInfo}
           birdProfile={birdProfile}
+          customerPhone={customerPhone}
           forms={forms}
         ></DonThuoc>
       </div>

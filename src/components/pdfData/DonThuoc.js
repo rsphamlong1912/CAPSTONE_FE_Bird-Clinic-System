@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "./DonThuoc.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
+import { api } from "../../services/axios";
 
 export const DonThuoc = React.forwardRef(
-    ({ bookingInfo, birdProfile, forms }, ref) => {
+    ({ bookingInfo, birdProfile, forms, customerPhone }, ref) => {
         const { currentDate } = useCurrentDate();
-        console.log('bookingInfo', bookingInfo)
-        console.log('birdProfile', birdProfile)
-        console.log('forms', forms)
         return (
             <div ref={ref} className={styles.container}>
                 <div className={styles.flex}>
@@ -31,7 +29,7 @@ export const DonThuoc = React.forwardRef(
                             </div>
                             <div className={styles.lineItem}>
                                 <span className={styles.label}>Số điện thoại:</span>
-                                <span></span>
+                                <span>{customerPhone}</span>
                             </div>
                         </div>
                         <div className={styles.birdInfo}>

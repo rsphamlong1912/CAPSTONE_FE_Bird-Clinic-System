@@ -186,7 +186,7 @@ const TrackAppoinments = () => {
   const createNewServiceForm = async (item) => {
     try {
       // Tạo service_Form
-      const createdResponse = await api.post(`/service_Form/`, {
+      const createdResponse = await api.post(`/service-form/`, {
         bird_id: item.bird_id,
         booking_id: item.booking_id,
         reason_referral: "any",

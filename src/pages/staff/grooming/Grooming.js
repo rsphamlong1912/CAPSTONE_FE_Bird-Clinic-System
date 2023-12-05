@@ -63,7 +63,7 @@ const Grooming = () => {
   useEffect(() => {
     const getBirdSize = async () => {
       try {
-        const response = await api.get(`/bird_size/`);
+        const response = await api.get(`/bird-size/`);
 
         const filteredSizeInfo = response.data.data.filter(item => item.bird_size_id !== 'SZ005');
 
@@ -79,7 +79,7 @@ const Grooming = () => {
 
     const getBirdBreed = async () => {
       try {
-        const response = await api.get(`/bird_breed/`);
+        const response = await api.get(`/bird-breed/`);
         setBirdBreedInfo(response.data.data);
         console.log("setBirdBreedInfo", response.data.data)
       } catch (error) {
@@ -103,7 +103,7 @@ const Grooming = () => {
         }
 
         const responseServiceFormDetail = await api.get(
-          `/service_Form_detail/?veterinarian_id=vet0&booking_id=${bookingId}`
+          `/service-form-detail/?veterinarian_id=vet0&booking_id=${bookingId}`
         );
         console.log("form detail ne nha", responseServiceFormDetail.data.data);
         setSfds(responseServiceFormDetail.data.data);
@@ -115,7 +115,7 @@ const Grooming = () => {
 
     const getServicePackage = async () => {
       try {
-        const response = await api.get(`/servicePackage/`, {
+        const response = await api.get(`/service-package/`, {
           params: {
             bird_size_id: birdSizeId,
             service_type_id: 'ST002',
@@ -129,7 +129,7 @@ const Grooming = () => {
 
     const getServiceFormDetails = async () => {
       try {
-        const response = await api.get(`/service_Form/?booking_id=${bookingId}`);
+        const response = await api.get(`/service-form/?booking_id=${bookingId}`);
         setServiceFormDetails(response.data.data[0].service_form_details);
         setSelectedServices(response.data.data[0].service_form_details.map((packageData) => packageData.service_package_id));
         setSelectedServicesName(response.data.data[0].service_form_details.map((packageData) => packageData.note));
@@ -176,7 +176,7 @@ const Grooming = () => {
   const getPackageDetails = async (packageId) => {
     console.log("packageId", packageId);
     try {
-      const response = await api.get(`/servicePackage/${packageId}`);
+      const response = await api.get(`/service-package/${packageId}`);
       setPackageDetail(response.data.data.bird_size_id);
       console.log("packageDetail", response.data.data.bird_size_id);
     } catch (error) {
@@ -301,7 +301,7 @@ const Grooming = () => {
         return total + (selectedService ? parseFloat(selectedService.price) : 0);
       }, 0);
 
-      const createdResponse = await api.post(`/service_Form/`, {
+      const createdResponse = await api.post(`/service-form/`, {
         bird_id: bookingInfo.bird_id,
         booking_id: bookingInfo.booking_id,
         reason_referral: "any",
@@ -322,7 +322,7 @@ const Grooming = () => {
     } finally {
       const updateServiceFormDetails = async () => {
         try {
-          const response = await api.get(`/service_Form/?booking_id=${bookingId}`);
+          const response = await api.get(`/service-form/?booking_id=${bookingId}`);
           setServiceFormDetails(response.data.data[0].service_form_details);
           setSelectedServices(response.data.data[0].service_form_details.map((packageData) => packageData.service_package_id));
           setSelectedServicesName(response.data.data[0].service_form_details.map((packageData) => packageData.note));
@@ -440,12 +440,12 @@ const Grooming = () => {
             try {
               console.log("serviceFormDetails", sfds)
               for (let i = 0; i < sfds.length; i++) {
-                const responseSFD = await api.put(`/service_Form_detail/${sfds[i].service_form_detail_id}`, {
+                const responseSFD = await api.put(`/service-form-detail/${sfds[i].service_form_detail_id}`, {
                   status: "done",
                 });
               }
               const responseSF = await api.put(
-                `/service_Form/${serviceFormDetails[0].service_form_id}`,
+                `/service-form/${serviceFormDetails[0].service_form_id}`,
                 {
                   status: "done",
                 }

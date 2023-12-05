@@ -21,12 +21,12 @@ const ReTestingToday = () => {
     const fetchData = async () => {
       try {
         // const response = await api.get(
-        //   `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
+        //   `/service-form-detail/?veterinarian_id=${localStorage.getItem(
         //     "account_id"
         //   )}&service_type_id=ST001`
         // );
         const response = await api.get(
-          `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
+          `/service-form-detail/?veterinarian_id=${localStorage.getItem(
             "account_id"
           )}&arrival_date=${formatDate(today)}`
         );
@@ -34,7 +34,8 @@ const ReTestingToday = () => {
         const allRequested = response.data.data;
         const filterList = allRequested.filter(
           (item) =>
-            item.status === "checked_in" &&
+            item.status === "checked_in" ||
+            item.status === "on_going" &&
             item.status !== "wait_result" &&
             item.status !== "done"
         );
@@ -55,7 +56,7 @@ const ReTestingToday = () => {
   const handleChangeStatus = async (item) => {
     try {
       const response = await api.put(
-        `/service_Form_detail/${item.service_form_detail_id}`,
+        `/service-form-detail/${item.service_form_detail_id}`,
         {
           status: "on_going",
         }

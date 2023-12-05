@@ -14,7 +14,7 @@ const ProfileBirdModal = ({ open, onClose, birdProfile, birdProfileBreed, bookin
   useEffect(() => {
     const getServiceFormDetails = async () => {
       try {
-        const response = await api.get(`/service_Form/?booking_id=${bookingID}`);
+        const response = await api.get(`/service-form/?booking_id=${bookingID}`);
         setServiceFormDetails(response.data.data[0].service_form_details);
         setServiceFormDate(response.data.data[0]);
         // setFormDetailId(response.data.data[0].service_form_details.map((id) => id.service_form_detail_id))
@@ -26,7 +26,7 @@ const ProfileBirdModal = ({ open, onClose, birdProfile, birdProfileBreed, bookin
 
     const getPackageDetails = async () => {
       try {
-        const response = await api.get(`/servicePackage`);
+        const response = await api.get(`/service-package`);
         const packageData = response.data.data;
         const details = {};
 

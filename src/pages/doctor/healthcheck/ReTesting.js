@@ -35,7 +35,7 @@ const ReTesting = () => {
     e.preventDefault();
 
     try {
-      const response = await api.post(`/medicalRecord/`, {
+      const response = await api.post(`/medical-record/`, {
         ...testingData,
         service_form_detail_id: serviceFormDetailId,
       }); // Directly use testingData from the state
@@ -61,7 +61,7 @@ const ReTesting = () => {
   // const handleDoneServiceFormDetail = async () => {
   //   try {
   //     const doneResponse = await api.put(
-  //       `/service_Form_detail/${serviceFormDetailId}`,
+  //       `/service-form-detail/${serviceFormDetailId}`,
   //       {
   //         status: "done",
   //         veterinarian_id: localStorage.getItem("account_id"),
@@ -72,7 +72,7 @@ const ReTesting = () => {
   //     //TĂNG SERVICE HAS DONE LÊN 1
   //     const serviceFormId = serviceFormDetailInfo.service_form_id;
   //     // Lấy thông tin hiện tại của service form
-  //     const serviceFormResult = await api.get(`/service_Form/${serviceFormId}`);
+  //     const serviceFormResult = await api.get(`/service-form/${serviceFormId}`);
   //     // Lấy giá trị hiện tại của num_ser_has_done từ response
 
   //     const currentNumSerHasDone =
@@ -97,7 +97,7 @@ const ReTesting = () => {
   //     }
 
   //     // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
-  //     const increaseResponse = await api.put(`/service_Form/${serviceFormId}`, {
+  //     const increaseResponse = await api.put(`/service-form/${serviceFormId}`, {
   //       num_ser_has_done: updatedNumSerHasDone,
   //       status: isDone ? "done" : "paid",
   //     });
@@ -155,7 +155,7 @@ const ReTesting = () => {
           onClick: async () => {
             try {
               const doneResponse = await api.put(
-                `/service_Form_detail/${serviceFormDetailId}`,
+                `/service-form-detail/${serviceFormDetailId}`,
                 {
                   status: "wait_result",
                   veterinarian_id: localStorage.getItem("account_id"),
@@ -187,7 +187,7 @@ const ReTesting = () => {
     const getServiceFormDetail = async () => {
       try {
         const response = await api.get(
-          `/service_Form_detail/${serviceFormDetailId}`
+          `/service-form-detail/${serviceFormDetailId}`
         );
         // serviceFormDetailInfo()
         setServiceFormDetailInfo(response.data.data);
@@ -271,7 +271,7 @@ const ReTesting = () => {
           onClick: async () => {
             try {
               const responseCancel = await api.put(
-                `/service_Form_detail/${serviceFormDetailId}`,
+                `/service-form-detail/${serviceFormDetailId}`,
                 {
                   status: "cancelled",
                 }
@@ -281,7 +281,7 @@ const ReTesting = () => {
                 const serviceFormId = serviceFormDetailInfo.service_form_id;
                 // Lấy thông tin hiện tại của service form
                 const serviceFormResult = await api.get(
-                  `/service_Form/${serviceFormId}`
+                  `/service-form/${serviceFormId}`
                 );
                 // Lấy giá trị hiện tại của num_ser_has_done từ response
 
@@ -309,7 +309,7 @@ const ReTesting = () => {
 
                 // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
                 const increaseResponse = await api.put(
-                  `/service_Form/${serviceFormId}`,
+                  `/service-form/${serviceFormId}`,
                   {
                     num_ser_has_done: updatedNumSerHasDone,
                     status: isDone ? "done" : "paid",
@@ -364,7 +364,7 @@ const ReTesting = () => {
           <div className={styles.content}>
             <div className={styles.retesting}>
               <h2 className={styles.title}>
-                Xét nghiệm {serviceFormDetailInfo?.note}
+                {serviceFormDetailInfo?.note}
               </h2>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Mã số:</span>

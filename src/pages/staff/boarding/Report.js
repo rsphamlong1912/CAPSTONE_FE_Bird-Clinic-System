@@ -87,7 +87,7 @@ const Report = () => {
   const fetchServiceForm = async () => {
     try {
       const responseServiceForm = await api.get(
-        `/service_Form/?booking_id=${boarding_id}`
+        `/service-form/?booking_id=${boarding_id}`
       );
       if (responseServiceForm) {
         console.log("service form list ne: ", responseServiceForm.data.data);
@@ -154,13 +154,13 @@ const Report = () => {
 
       // Thực hiện gọi API sử dụng axios
       try {
-        const response1 = await api.post("/content_chat/img", formData, {
+        const response1 = await api.post("/content-chat/img", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
 
-        const response2 = await api.post("/content_chat/img", formData2, {
+        const response2 = await api.post("/content-chat/img", formData2, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -207,7 +207,7 @@ const Report = () => {
     setServiceFormSelect(item.service_form_id);
     setServiceFormDetailList(item.service_form_details);
     const responseServiceForm = await api.get(
-      `/service_Form/?booking_id=${boarding_id}`
+      `/service-form/?booking_id=${boarding_id}`
     );
     if (responseServiceForm) {
       console.log("service form list ne: ", responseServiceForm.data.data);
@@ -216,7 +216,7 @@ const Report = () => {
   };
 
   const handleDoneService = async (id) => {
-    const responseHandleDone = await api.put(`/service_Form_detail/${id}`, {
+    const responseHandleDone = await api.put(`/service-form-detail/${id}`, {
       status: "done",
     });
     handleFetchServiceDetail(serviceFormSelect);

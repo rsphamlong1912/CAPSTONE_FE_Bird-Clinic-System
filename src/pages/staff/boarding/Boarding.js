@@ -66,7 +66,7 @@ const Boarding = () => {
 
   const fetchBirdBreed = async () => {
     try {
-      const responseBirdBreed = await api.get(`/bird_breed`);
+      const responseBirdBreed = await api.get(`/bird-breed`);
       setBirdBreedList(responseBirdBreed.data.data);
       console.log("fetch bird breed", responseBirdBreed.data.data);
     } catch (error) {
@@ -156,7 +156,7 @@ const Boarding = () => {
           mang1 = response.data.data;
           api
             .get(
-              `/cage/schedule_cage?start_date=${startDate}&end_date=${endDate}`
+              `/cage/schedule-cage?start_date=${startDate}&end_date=${endDate}`
             )
             .then((response) => {
               // Handle the API response data
@@ -195,7 +195,7 @@ const Boarding = () => {
   useEffect(() => {
     const getBirdSizeList = async () => {
       try {
-        const responseBirdSize = await api.get(`/bird_size`);
+        const responseBirdSize = await api.get(`/bird-size`);
         console.log("bird size", responseBirdSize.data.data);
         const filterList = responseBirdSize.data.data.filter(
           (item) => item.bird_size_id !== "SZ005"
@@ -213,7 +213,7 @@ const Boarding = () => {
     const getServiceList = async () => {
       try {
         const responseService = await api.get(
-          `/servicePackage/?size_id=${birdSizeSelected}&service_type_id=ST003`
+          `/service-package/?size_id=${birdSizeSelected}&service_type_id=ST003`
         );
         console.log("responseService", responseService.data.data);
         setServiceList(responseService.data.data);
@@ -273,7 +273,7 @@ const Boarding = () => {
 
       //     //GET SERVICE FORM DETAIL
       //     const responseServiceFormDetail = await api.get(
-      //       `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
+      //       `/service-form-detail/?booking_id=${bookingId}&service_type_id=ST001`
       //     );
       //     console.log("form detail ne", responseServiceFormDetail.data.data[0]);
       //     setServiceFormDetail(responseServiceFormDetail.data.data[0]);
@@ -346,7 +346,7 @@ const Boarding = () => {
                 console.log("update cage", responseUpdateCage);
 
                 const createdResponseServiceForm = await api.post(
-                  `/service_Form/`,
+                  `/service-form/`,
                   {
                     bird_id: birdProfile.bird_id,
                     booking_id: bookingId,

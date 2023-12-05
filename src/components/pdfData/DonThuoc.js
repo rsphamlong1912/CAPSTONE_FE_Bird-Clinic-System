@@ -18,7 +18,7 @@ export const DonThuoc = React.forwardRef(
                         Mã số: {bookingInfo?.booking_id}
                     </div>
                 </div>
-                <h3 className={styles.title}>PHIẾU KẾT QUẢ</h3>
+                <h3 className={styles.title}>ĐƠN THUỐC</h3>
                 <div className={styles.flex}>
                     <div className={styles.left}>
                         <div className={styles.customerInfo}>
@@ -77,13 +77,13 @@ export const DonThuoc = React.forwardRef(
                     <table className={styles.table}>
                         <tr>
                             <th>Tên thuốc</th>
-                            <th>Số liều dùng</th>
+                            <th>Số liều dùng/ngày</th>
                             <th>Đơn vị</th>
                         </tr>
                         {forms.map((item, index) => (
                             <tr>
                                 <td>{item.selectedMedicine}</td>
-                                <td>{item.day * item.unit}</td>
+                                <td>{item.day * item.unit}/{item.day} ngày</td>
                                 <td>{item.type}</td>
                             </tr>
                         ))}
@@ -91,7 +91,7 @@ export const DonThuoc = React.forwardRef(
                 </div>
                 <div className={styles.footer}>
                     <div>{currentDate}</div>
-                    <div>BS CHỈ ĐỊNH DỊCH VỤ</div>
+                    <div>BS KÊ THUỐC</div>
                     <div className={styles.sign}>BS. {localStorage.getItem("name")}</div>
                 </div>
             </div>

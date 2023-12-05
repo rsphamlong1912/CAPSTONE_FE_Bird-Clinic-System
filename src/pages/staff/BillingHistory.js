@@ -24,7 +24,7 @@ const BillingHistory = () => {
 
   const handlePrint = async (item) => {
     try {
-      const response = await api.get(`/service_Form/${item.service_form_id}`);
+      const response = await api.get(`/service-form/${item.service_form_id}`);
 
       //   setServiceFormDetailList(response.data.data[0].service_form_details);
       const matchedServices = serviceList.filter((service) => {
@@ -64,7 +64,7 @@ const BillingHistory = () => {
   useEffect(() => {
     const fetchServiceList = async () => {
       try {
-        const response = await api.get(`/servicePackage/?size_id=SZ005`);
+        const response = await api.get(`/service-package/?size_id=SZ005`);
 
         // const filteredServiceList = response.data.data.filter(
         //   (servicePackage) =>
@@ -120,7 +120,7 @@ const BillingHistory = () => {
               //CHANGE STATUS SERVICE FORM
               try {
                 const response = await api.put(
-                  `/service_Form/${item.service_form_id}`,
+                  `/service-form/${item.service_form_id}`,
                   {
                     status: "paid",
                   }
@@ -132,7 +132,7 @@ const BillingHistory = () => {
               //CHANGE STATUS SERVICE FORM DETAIL
               try {
                 const response = await api.get(
-                  `/service_Form/${item.service_form_id}`
+                  `/service-form/${item.service_form_id}`
                 );
 
                 setServiceFormDetailList(
@@ -140,7 +140,7 @@ const BillingHistory = () => {
                 );
                 for (const item of response.data.data[0].service_form_details) {
                   const detailResponse = await api.put(
-                    `/service_Form_detail/${item.service_form_detail_id}`,
+                    `/service-form-detail/${item.service_form_detail_id}`,
                     {
                       status: "checked_in",
                       veterinarian_id: item.veterinarian_id,

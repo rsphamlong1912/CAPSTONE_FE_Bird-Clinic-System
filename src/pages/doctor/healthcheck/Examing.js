@@ -111,7 +111,7 @@ const Examing = () => {
   useEffect(() => {
     const fetchServiceList = async () => {
       try {
-        const response = await api.get(`/servicePackage/?size_id=SZ005`);
+        const response = await api.get(`/service-package/?size_id=SZ005`);
 
         const filteredServiceList = response.data.data.filter(
           (servicePackage) =>
@@ -211,7 +211,7 @@ const Examing = () => {
         is_re_exam: bookingData.is_re_exam,
       };
 
-      const response = api.post(`/booking/re_exam`, requestData);
+      const response = api.post(`/booking/re-exam`, requestData);
       console.log("Re-exam thanh cong:", response);
       success();
     } catch (error) {
@@ -253,14 +253,14 @@ const Examing = () => {
 
         //GET SERVICE FORM DETAIL
         const responseServiceFormDetail = await api.get(
-          `/service_Form_detail/?booking_id=${bookingId}&service_type_id=ST001`
+          `/service-form-detail/?booking_id=${bookingId}&service_type_id=ST001`
         );
         console.log("form detail ne nha", responseServiceFormDetail.data.data);
         setServiceFormDetail(responseServiceFormDetail.data.data[0]);
 
         //GET SERVICE FORM
         const responseServiceForm = await api.get(
-          `/service_Form/?booking_id=${bookingId}`
+          `/service-form/?booking_id=${bookingId}`
         );
 
         const filterList = responseServiceForm.data.data.slice(0, -1);
@@ -283,7 +283,7 @@ const Examing = () => {
               tempArr.map(async (item) => {
                 if (item.status === "done") {
                   const responseDetail = await api.get(
-                    `/medicalRecord/?service_form_detail_id=${item.service_form_detail_id}`
+                    `/medical-record/?service_form_detail_id=${item.service_form_detail_id}`
                   );
                   return responseDetail.data.data[0];
                 } else {
@@ -347,7 +347,7 @@ const Examing = () => {
   useEffect(() => {
     const sendApiforData = async () => {
       try {
-        const response = await api.get(`/time_slot_clinic/`);
+        const response = await api.get(`/time-slot-clinic/`);
         const timeSlotData = response.data.data;
         setTimeSlotDate(timeSlotData);
         console.log("data:", timeSlotData);
@@ -495,7 +495,7 @@ const Examing = () => {
 
     try {
       const sendProcessToApi = await api.put(
-        `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
+        `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
         {
           status: "on_going",
           veterinarian_id: localStorage.getItem("account_id"),
@@ -518,7 +518,7 @@ const Examing = () => {
 
     try {
       const sendProcessToApi = await api.put(
-        `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
+        `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
         {
           status: "on_going",
           veterinarian_id: localStorage.getItem("account_id"),
@@ -566,7 +566,7 @@ const Examing = () => {
 
     try {
       // Tạo service_Form
-      const createdResponse = await api.post(`/service_Form/`, {
+      const createdResponse = await api.post(`/service-form/`, {
         bird_id: bookingInfo.bird_id,
         booking_id: bookingInfo.booking_id,
         reason_referral: "any",
@@ -698,13 +698,13 @@ const Examing = () => {
           onClick: async () => {
             try {
               const responseSFD = await api.put(
-                `/service_Form_detail/${serviceFormDetail.service_form_detail_id}`,
+                `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
                 {
                   status: "done",
                 }
               );
               const responseSF = await api.put(
-                `/service_Form/${serviceFormDetail.service_form_id}`,
+                `/service-form/${serviceFormDetail.service_form_id}`,
                 {
                   status: "done",
                 }

@@ -46,7 +46,7 @@ const BillingDetail = () => {
   const handlePrint = async () => {
     try {
       const response = await api.get(
-        `/service_Form/${serviceFormInfo.service_form_id}`
+        `/service-form/${serviceFormInfo.service_form_id}`
       );
       console.log("print ne", response.data.data[0].service_form_details);
 
@@ -65,7 +65,7 @@ const BillingDetail = () => {
 
   const fetchServiceForm = async () => {
     try {
-      const responseServiceForm = await api.get(`/service_Form/${id}`);
+      const responseServiceForm = await api.get(`/service-form/${id}`);
       if (responseServiceForm) {
         setServiceFormInfo(responseServiceForm.data.data[0]);
         // console.log(
@@ -178,7 +178,7 @@ const BillingDetail = () => {
                 //CHANGE STATUS SERVICE FORM
                 try {
                   const responseChange = await api.put(
-                    `/service_Form/${item.service_form_id}`,
+                    `/service-form/${item.service_form_id}`,
                     {
                       status: "paid",
                     }
@@ -190,7 +190,7 @@ const BillingDetail = () => {
                 //CHANGE STATUS SERVICE FORM DETAIL
                 try {
                   const response = await api.get(
-                    `/service_Form/${item.service_form_id}`
+                    `/service-form/${item.service_form_id}`
                   );
 
                   setServiceFormDetailList(
@@ -199,7 +199,7 @@ const BillingDetail = () => {
                   for (const item of response.data.data[0]
                     .service_form_details) {
                     const detailResponse = await api.put(
-                      `/service_Form_detail/${item.service_form_detail_id}`,
+                      `/service-form-detail/${item.service_form_detail_id}`,
                       {
                         status: "checked_in",
                         veterinarian_id: item.veterinarian_id,
@@ -272,7 +272,7 @@ const BillingDetail = () => {
                 //CHANGE STATUS SERVICE FORM
                 try {
                   const responseChange = await api.put(
-                    `/service_Form/${item.service_form_id}`,
+                    `/service-form/${item.service_form_id}`,
                     {
                       status: "paid",
                     }
@@ -284,7 +284,7 @@ const BillingDetail = () => {
                 //CHANGE STATUS SERVICE FORM DETAIL
                 try {
                   const response = await api.get(
-                    `/service_Form/${item.service_form_id}`
+                    `/service-form/${item.service_form_id}`
                   );
 
                   setServiceFormDetailList(
@@ -293,7 +293,7 @@ const BillingDetail = () => {
                   for (const item of response.data.data[0]
                     .service_form_details) {
                     const detailResponse = await api.put(
-                      `/service_Form_detail/${item.service_form_detail_id}`,
+                      `/service-form-detail/${item.service_form_detail_id}`,
                       {
                         status: "checked_in",
                         veterinarian_id: item.veterinarian_id,

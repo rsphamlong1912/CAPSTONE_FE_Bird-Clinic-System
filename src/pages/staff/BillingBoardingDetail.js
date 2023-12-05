@@ -62,7 +62,7 @@ const BillingBoardingDetail = () => {
         setCustomerId(responseBookingInfo.data.data.bird.customer.customer_id);
       }
       const responseServiceForm = await api.get(
-        `/service_Form/boarding?booking_id=${id}`
+        `/service-form/boarding?booking_id=${id}`
       );
       if (responseServiceForm) {
         const lastElement = responseServiceForm.data.data.slice(-1)[0];
@@ -178,7 +178,7 @@ const BillingBoardingDetail = () => {
                 //CHANGE STATUS SERVICE FORM
                 try {
                   const responseChange = await api.put(
-                    `/service_Form/${item.service_form_id}`,
+                    `/service-form/${item.service_form_id}`,
                     {
                       status: "paid",
                     }
@@ -190,7 +190,7 @@ const BillingBoardingDetail = () => {
                 //CHANGE STATUS SERVICE FORM DETAIL
                 try {
                   const response = await api.get(
-                    `/service_Form/${item.service_form_id}`
+                    `/service-form/${item.service_form_id}`
                   );
 
                   setServiceFormDetailList(
@@ -199,7 +199,7 @@ const BillingBoardingDetail = () => {
                   for (const item of response.data.data[0]
                     .service_form_details) {
                     const detailResponse = await api.put(
-                      `/service_Form_detail/${item.service_form_detail_id}`,
+                      `/service-form-detail/${item.service_form_detail_id}`,
                       {
                         status: "done",
                         veterinarian_id: item.veterinarian_id,
@@ -262,7 +262,7 @@ const BillingBoardingDetail = () => {
                 //CHANGE STATUS SERVICE FORM
                 try {
                   const responseChange = await api.put(
-                    `/service_Form/${item.service_form_id}`,
+                    `/service-form/${item.service_form_id}`,
                     {
                       status: "paid",
                     }
@@ -274,7 +274,7 @@ const BillingBoardingDetail = () => {
                 //CHANGE STATUS SERVICE FORM DETAIL
                 try {
                   const response = await api.get(
-                    `/service_Form/${item.service_form_id}`
+                    `/service-form/${item.service_form_id}`
                   );
 
                   setServiceFormDetailList(
@@ -283,7 +283,7 @@ const BillingBoardingDetail = () => {
                   for (const item of response.data.data[0]
                     .service_form_details) {
                     const detailResponse = await api.put(
-                      `/service_Form_detail/${item.service_form_detail_id}`,
+                      `/service-form-detail/${item.service_form_detail_id}`,
                       {
                         status: "checked_in",
                         veterinarian_id: item.veterinarian_id,

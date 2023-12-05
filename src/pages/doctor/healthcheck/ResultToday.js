@@ -14,7 +14,7 @@ const ResultToday = () => {
     const fetchData = async () => {
       try {
         const response = await api.get(
-          `/service_Form_detail/?veterinarian_id=${localStorage.getItem(
+          `/service-form-detail/?veterinarian_id=${localStorage.getItem(
             "account_id"
           )}&service_type_id=ST001`
         );

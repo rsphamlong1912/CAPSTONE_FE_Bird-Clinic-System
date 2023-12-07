@@ -32,6 +32,14 @@ const Boarding = () => {
   const [birdBreedList, setBirdBreedList] = useState();
   const [totalDays, setTotalDays] = useState(0);
 
+  // Định dạng tổng tiền theo tiền tệ Việt Nam
+  const formattedPrice = (price) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  };
+
   useEffect(() => {
     if (arrivalDate && departureDate) {
       const oneDay = 24 * 60 * 60 * 1000; // số mili giây trong một ngày
@@ -475,7 +483,7 @@ const Boarding = () => {
                   <h4 className={styles.title}>Thông tin chim</h4>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Mã số:</span>
-                    <span>BCS_5F2YNK</span>
+                    <span>{bookingInfo?.booking_id}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Tên chim:</span>
@@ -487,13 +495,7 @@ const Boarding = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Giới tính:</span>
-                    <span>
-                      {birdProfile?.gender === "male" ? "Đực" : "Cái"}
-                    </span>
-                  </div>
-                  <div className={styles.lineItem}>
-                    <span className={styles.label}>Khối lượng:</span>
-                    <span>{birdProfile?.weight} gam</span>
+                    <span>{birdProfile?.gender}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Giống:</span>
@@ -584,11 +586,11 @@ const Boarding = () => {
                       >
                         <h5>{item.package_name}</h5>
                         <div className={styles.serviceDesc}>
-                          Lorem Ipsum has been the industry's standard
+                          {item.description}
                         </div>
                         <span className={styles.price}>
-                          {item.price}
-                          <sup className={styles.unitPrice}>vnđ</sup>
+                          {formattedPrice(item.price)}
+                          <sup className={styles.unitPrice}></sup>
                           <sub>/ngày</sub>
                         </span>
                         <br></br>
@@ -711,7 +713,7 @@ const Boarding = () => {
                   <h3 className={styles.title}>Xác nhận thông tin</h3>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Mã số:</span>
-                    <span>BCS_5F2YNK</span>
+                    <span>{bookingInfo?.booking_id}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Tên chim:</span>
@@ -719,9 +721,7 @@ const Boarding = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Giới tính:</span>
-                    <span>
-                      {birdProfile?.gender === "male" ? "Đực" : "Cái"}
-                    </span>
+                    <span>{birdProfile?.gender}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Dịch vụ:</span>

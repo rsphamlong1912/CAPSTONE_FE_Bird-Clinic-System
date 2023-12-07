@@ -8,7 +8,7 @@ export const HoaDon = React.forwardRef(
 
     // Tính tổng số tiền từ cột price
     const totalPrice = serviceFormDetailList.reduce((total, service) => {
-      const price = parseFloat(service.service_package.price);
+      const price = parseFloat(service.price);
       return total + price;
     }, 0);
 
@@ -76,7 +76,7 @@ export const HoaDon = React.forwardRef(
               serviceFormDetailList.map((item, index) => (
                 <tr key={index}>
                   <td>{item.service_package.package_name}</td>
-                  <td>{formattedPrice(item.service_package.price)}</td>
+                  <td>{formattedPrice(item.price)}</td>
                 </tr>
               ))}
           </table>

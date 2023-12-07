@@ -363,9 +363,7 @@ const ReTesting = () => {
         <div className={styles.mainContent}>
           <div className={styles.content}>
             <div className={styles.retesting}>
-              <h2 className={styles.title}>
-                {serviceFormDetailInfo?.note}
-              </h2>
+              <h2 className={styles.title}>{serviceFormDetailInfo?.note}</h2>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Mã số:</span>
                 <span>HCO012J6</span>

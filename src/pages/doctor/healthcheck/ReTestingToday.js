@@ -25,19 +25,22 @@ const ReTestingToday = () => {
         //     "account_id"
         //   )}&service_type_id=ST001`
         // );
+        // const response = await api.get(
+        //   `/service-form-detail/?veterinarian_id=${localStorage.getItem(
+        //     "account_id"
+        //   )}&arrival_date=${formatDate(today)}`
+        // );
         const response = await api.get(
           `/service-form-detail/?veterinarian_id=${localStorage.getItem(
             "account_id"
-          )}&arrival_date=${formatDate(today)}`
+          )}`
         );
-
-        const allRequested = response.data.data;
-        const filterList = allRequested.filter(
+        const filterList = response.data.data.filter(
           (item) =>
             item.status === "checked_in" ||
-            item.status === "on_going" &&
-            item.status !== "wait_result" &&
-            item.status !== "done"
+            (item.status === "on_going" &&
+              item.status !== "wait_result" &&
+              item.status !== "done")
         );
         console.log("fetch api", filterList);
         setCustomerList(filterList);
@@ -76,6 +79,8 @@ const ReTestingToday = () => {
         <thead>
           <tr>
             <th> STT</th>
+            <th> Khách hàng</th>
+            <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Bác sĩ phụ trách</th>
@@ -100,7 +105,9 @@ const ReTestingToday = () => {
             customerList.map((item, index) => (
               <tr key={index}>
                 <td> {index + 1}</td>
-                <td> {}</td>
+                <td> {item.customer_name}</td>
+                <td> {item.phone}</td>
+                <td> {item.bird_name}</td>
                 <td>{item.note}</td>
                 <td>
                   <strong>{localStorage.getItem("name")}</strong>

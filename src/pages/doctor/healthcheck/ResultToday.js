@@ -45,6 +45,8 @@ const ResultToday = () => {
         <thead>
           <tr>
             <th> STT</th>
+            <th> Khách hàng</th>
+            <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Bác sĩ phụ trách</th>
@@ -69,7 +71,9 @@ const ResultToday = () => {
             customerList.map((item, index) => (
               <tr key={index}>
                 <td> {index + 1} </td>
-                <td>Sáo nâu</td>
+                <td> {item.customer_name}</td>
+                <td> {item.phone}</td>
+                <td>{item.bird_name}</td>
                 <td>{item.note}</td>
                 <td>
                   <strong>Phạm Ngọc Long</strong>

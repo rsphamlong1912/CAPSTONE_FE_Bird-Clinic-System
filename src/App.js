@@ -94,12 +94,12 @@ const listTabsReTesting = [
   {
     id: 3,
     name: "Lịch hẹn",
-    to: "/schedule",
+    to: "/schedule-retesting",
   },
   {
     id: 4,
     name: "Đã khám",
-    to: "/done",
+    to: "/done-retesting",
   },
 ];
 
@@ -291,6 +291,22 @@ function App() {
         ></Route>
         <Route
           path="/result/:serviceFormDetailId"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <Result></Result>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/schedule-retesting"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <Result></Result>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/done-retesting"
           element={
             <MainLayout listTabs={listTabsReTesting}>
               <Result></Result>

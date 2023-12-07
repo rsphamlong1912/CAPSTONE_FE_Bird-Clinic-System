@@ -328,6 +328,8 @@ const TrackAppoinments = () => {
                         ? styles.booked
                         : item.status === "finish"
                         ? styles.finish
+                        : item.status === "cancelled"
+                        ? styles.cancelled
                         : ""
                     } `}
                   >
@@ -343,6 +345,8 @@ const TrackAppoinments = () => {
                       ? "Có kết quả"
                       : item.status === "finish"
                       ? "Hoàn thành"
+                      : item.status === "cancelled"
+                      ? "Đã huỷ"
                       : ""}
                   </p>
                 </td>

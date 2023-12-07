@@ -142,6 +142,7 @@ const BoardingToday = () => {
           <tr>
             <th> STT</th>
             <th> Khách hàng</th>
+            <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Giờ đặt</th>
@@ -169,12 +170,13 @@ const BoardingToday = () => {
               <tr key={index}>
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
-                <td>Sáo nâu</td>
-                <td>Nội trú</td>
+                <td>{item.bird.customer.phone}</td>
+                <td>{item.bird.name}</td>
+                <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
+                  <strong>{item.veterinarian.name}</strong>
                 </td>
                 <td>
                   <p

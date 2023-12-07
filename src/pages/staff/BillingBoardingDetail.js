@@ -201,7 +201,7 @@ const BillingBoardingDetail = () => {
                     const detailResponse = await api.put(
                       `/service-form-detail/${item.service_form_detail_id}`,
                       {
-                        status: "done",
+                        status: "on_going",
                         veterinarian_id: item.veterinarian_id,
                         process_at: item.process_at,
                       }
@@ -285,7 +285,7 @@ const BillingBoardingDetail = () => {
                     const detailResponse = await api.put(
                       `/service-form-detail/${item.service_form_detail_id}`,
                       {
-                        status: "checked_in",
+                        status: "on_going",
                         veterinarian_id: item.veterinarian_id,
                         process_at: item.process_at,
                       }
@@ -544,13 +544,9 @@ const BillingBoardingDetail = () => {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.note}</td>
-                          <td>{formattedPrice(item.service_package.price)}</td>
+                          <td>{formattedPrice(item.price)}</td>
                           <td>{totalDays}</td>
-                          <td>
-                            {formattedPrice(
-                              item.service_package.price * totalDays
-                            )}
-                          </td>
+                          <td>{formattedPrice(item.price * totalDays)}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -590,9 +586,9 @@ const BillingBoardingDetail = () => {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.note}</td>
-                          <td>{formattedPrice(item.service_package.price)}</td>
+                          <td>{formattedPrice(item.price)}</td>
                           <td>1</td>
-                          <td>{formattedPrice(item.service_package.price)}</td>
+                          <td>{formattedPrice(item.price)}</td>
                         </tr>
                       ))}
                   </tbody>

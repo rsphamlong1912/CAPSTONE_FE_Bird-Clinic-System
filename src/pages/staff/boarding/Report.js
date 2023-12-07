@@ -25,6 +25,7 @@ const Report = () => {
   const [customerId, setCustomerId] = useState();
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
+
   const navigate = useNavigate();
 
   // Hàm này được sử dụng để thêm một bảng mới vào danh sách
@@ -205,7 +206,10 @@ const Report = () => {
 
   const handleFetchServiceDetail = async (item) => {
     setServiceFormSelect(item.service_form_id);
-    setServiceFormDetailList(item.service_form_details);
+    setServiceFormDetailList({
+      flag: item.veterinarian_referral ? true : false,
+      list: item.service_form_details,
+    });
     const responseServiceForm = await api.get(
       `/service-form/?booking_id=${boarding_id}`
     );
@@ -248,8 +252,8 @@ const Report = () => {
       <div className={styles.mainContent}>
         <div className={styles.content}>
           <div className={styles.headerContent}>
-            <div className={styles.roomNumber}>L.013</div>
-            <div className={styles.nestedCode}>BCS_5F2YNK</div>
+            <div className={styles.roomNumber}>L.{boardingInfo?.cage_id}</div>
+            <div className={styles.nestedCode}>{boarding_id}</div>
           </div>
           <div className={styles.bodyContent}>
             <div className={styles.contentReports}>
@@ -338,30 +342,33 @@ const Report = () => {
                           <th>Trạng thái</th>
                         </tr>
                         {serviceFormDetailList &&
-                          serviceFormDetailList.length > 0 &&
-                          serviceFormDetailList.map((item, index) => (
-                            <tr key={index}>
-                              <td>{item.note}</td>
-                              {item.status === "pending" ? (
-                                <td
-                                  className={styles.flexStatus}
-                                  onClick={() =>
-                                    handleDoneService(
-                                      item.service_form_detail_id
-                                    )
-                                  }
-                                >
-                                  <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                  <span>Chưa thực hiện</span>
-                                </td>
-                              ) : (
-                                <td className={styles.flexStatus}>
-                                  <ion-icon name="checkmark-circle"></ion-icon>
-                                  <span>Đã hoàn thành</span>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
+                          serviceFormDetailList.list?.length > 0 &&
+                          serviceFormDetailList.list.map((item, index) => {
+                            return (
+                              <tr key={index}>
+                                <td>{item.note}</td>
+                                {item.status === "done" ? (
+                                  <td className={styles.flexStatus}>
+                                    <ion-icon name="checkmark-circle"></ion-icon>
+                                    <span>Đã hoàn thành</span>
+                                  </td>
+                                ) : (
+                                  <td
+                                    className={styles.flexStatus}
+                                    onClick={() => {
+                                      if (!serviceFormDetailList.flag)
+                                        handleDoneService(
+                                          item.service_form_detail_id
+                                        );
+                                    }}
+                                  >
+                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                    <span>Đang tiến hành</span>
+                                  </td>
+                                )}
+                              </tr>
+                            );
+                          })}
                       </table>
                     </div>
                   </div>

@@ -228,8 +228,9 @@ tbody tr.hide td img {
 }
 
 .status.cancelled {
-  background-color: #d893a3;
-  color: #b30021;
+  color: red;
+  background-color: #fff;
+  border: 1px solid red;
 }
 
 .status.pending {

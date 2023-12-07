@@ -34,16 +34,39 @@ const TrackDetail = () => {
     content: () => printRef.current,
   });
 
-  const fetchVeterinarians = async (vet) => {
+  const fetchVeterinarians = async (vet, date) => {
     try {
-      const responseVeterinarians = await api.get(
-        `/vet/?service_id=${vet.service_id}&service_type_id=${vet.service_type_id}`
-      );
-      setVeterinarians(responseVeterinarians.data.data);
-      console.log("fetch", responseVeterinarians.data.data);
-      console.log("vet.service_id", vet.service_id);
-      console.log("vet.service_type_id", vet.service_type_id);
-      console.log("fetch", responseVeterinarians);
+      // let responseVeterinarians;
+      // if (vet.service_type_id === "ST001") {
+      //   responseVeterinarians = await api.get(
+      //     `/vet/?service_id=${vet.service_id}&service_type_id=${vet.service_type_id}&date=${date}`
+      //   );
+      // } else {
+      //   responseVeterinarians = await api.get(
+      //     `/vet/?service_type_id=${vet.service_type_id}&date=${date}`
+      //   );
+      // }
+
+      const responseVeterinarians = await api.get(`/vet/?date=${date}`);
+      console.log("response", responseVeterinarians.data.data);
+      let filterList;
+      if (vet.service_type_id === "ST001") {
+        filterList = responseVeterinarians.data.data.filter(
+          (item) =>
+            item.veterinarian.is_primary === "1" &&
+            item.veterinarian.service_type_id === "ST001"
+        );
+      } else {
+        filterList = responseVeterinarians.data.data.filter(
+          (item) => item.veterinarian.service_type_id === vet.service_type_id
+        );
+      }
+      console.log("filter list", filterList);
+      setVeterinarians(filterList);
+      console.log("fetch vet", responseVeterinarians.data.data);
+      // console.log("vet.service_id", vet.service_id);
+      // console.log("vet.service_type_id", vet.service_type_id);
+      // console.log("fetch", responseVeterinarians);
     } catch (error) {
       console.error("Error fetching veterinarians:", error);
     }
@@ -55,8 +78,11 @@ const TrackDetail = () => {
       setBookingInfo(responseBooking.data.data);
       setBookingStatus(responseBooking.data.data.status);
       setSelectedVet(responseBooking.data.data.veterinarian_id);
-      fetchVeterinarians(responseBooking.data.data.veterinarian);
-      console.log('responseBooking', responseBooking);
+      fetchVeterinarians(
+        responseBooking.data.data.veterinarian,
+        responseBooking.data.data.arrival_date
+      );
+      console.log("responseBooking", responseBooking);
     } catch (error) {
       console.log(error);
     }
@@ -115,7 +141,7 @@ const TrackDetail = () => {
   const createNewServiceForm = async (item) => {
     console.log("item", item);
     try {
-      const sp1 = await api.get(`/service-package/SP1`)
+      const sp1 = await api.get(`/service-package/SP1`);
       if (sp1) {
         // Tạo service_Form
         const createdResponse = await api.post(`/service-form/`, {
@@ -138,7 +164,6 @@ const TrackDetail = () => {
         });
         console.log("create service form", createdResponse);
       }
-
     } catch (err) {
       console.log(err);
     }
@@ -158,11 +183,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -231,11 +256,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -296,11 +321,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -397,28 +422,33 @@ const TrackDetail = () => {
                         onChange={handleVetSelection}
                         className={styles.selectVet}
                       >
-                        {veterinarians.map((vet) => {
-                          if (vet.name === bookingInfo?.veterinarian.name) {
-                            return (
-                              <option
-                                key={vet.veterinarian_id}
-                                value={vet.veterinarian_id}
-                                selected={true}
-                              >
-                                {vet.name}
-                              </option>
-                            );
-                          } else {
-                            return (
-                              <option
-                                key={vet.veterinarian_id}
-                                value={vet.veterinarian_id}
-                              >
-                                {vet.name}
-                              </option>
-                            );
-                          }
-                        })}
+                        {veterinarians &&
+                          veterinarians.length > 0 &&
+                          veterinarians.map((vet) => {
+                            if (
+                              vet.veterinarian.name ===
+                              bookingInfo?.veterinarian.name
+                            ) {
+                              return (
+                                <option
+                                  key={vet.veterinarian_id}
+                                  value={vet.veterinarian_id}
+                                  selected={true}
+                                >
+                                  {vet.veterinarian.name}
+                                </option>
+                              );
+                            } else {
+                              return (
+                                <option
+                                  key={vet.veterinarian_id}
+                                  value={vet.veterinarian_id}
+                                >
+                                  {vet.veterinarian.name}
+                                </option>
+                              );
+                            }
+                          })}
                       </select>
                     </tr>
                   </tbody>

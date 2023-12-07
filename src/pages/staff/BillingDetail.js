@@ -83,7 +83,7 @@ const BillingDetail = () => {
         setTotalPrice(
           responseServiceForm.data.data[0].service_form_details.reduce(
             (total, service) => {
-              const price = parseFloat(service.service_package.price);
+              const price = parseFloat(service.price);
               return total + price;
             },
             0
@@ -96,7 +96,10 @@ const BillingDetail = () => {
           setBookingInfo(responseBookingInfo.data.data);
           setCustomerName(responseBookingInfo.data.data.customer_name);
           setCustomerPhone(responseBookingInfo.data.data.bird.customer.phone);
-          console.log('setBookingInfo', responseBookingInfo.data.data.bird.customer.phone)
+          console.log(
+            "setBookingInfo",
+            responseBookingInfo.data.data.bird.customer.phone
+          );
           setCustomerId(
             responseBookingInfo.data.data.bird.customer.customer_id
           );
@@ -380,9 +383,9 @@ const BillingDetail = () => {
                         <td>{index + 1}</td>
                         <td>{item.veterinarian.name}</td>
                         <td>{item.service_package.package_name}</td>
-                        <td>{formattedPrice(item.service_package.price)}</td>
+                        <td>{formattedPrice(item.price)}</td>
                         <td>1</td>
-                        <td>{formattedPrice(item.service_package.price)}</td>
+                        <td>{formattedPrice(item.price)}</td>
                       </tr>
                     ))}
                 </tbody>

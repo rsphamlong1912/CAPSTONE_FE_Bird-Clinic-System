@@ -28,9 +28,11 @@ const Checkin = () => {
         const response = await api.get(`/booking?arrival_date=${selectedDate}`);
         const filterBookings = response.data.data.filter(
           (booking) =>
-            booking.status !== "pending" && booking.status !== "booked"
+            booking.status !== "pending" &&
+            booking.status !== "booked" &&
+            booking.status !== "cancelled"
         );
-        console.log('filterBookings', filterBookings)
+        console.log("filterBookings", filterBookings);
         setCustomerList(filterBookings);
       } catch (error) {
         console.log(error);
@@ -80,7 +82,9 @@ const Checkin = () => {
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="9">
                 <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>Không có buổi checkin nào cho ngày hôm nay.</h3>
+                <h3 className={styles.txtNoGrooming}>
+                  Không có buổi checkin nào cho ngày hôm nay.
+                </h3>
               </td>
             </tr>
           )}
@@ -88,7 +92,7 @@ const Checkin = () => {
             customerList.map((item, index) => (
               <tr
                 key={index}
-              // onClick={() => navigate(`/examing/${item.booking_id}`)}
+                // onClick={() => navigate(`/examing/${item.booking_id}`)}
               >
                 <td> {index + 1} </td>
                 <td>{item.customer_name}</td>
@@ -102,29 +106,30 @@ const Checkin = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${item.status === "checked_in"
-                      ? styles.checkin
-                      : item.status === "on_going" ||
-                        item.status === "test_requested"
+                    className={`${styles.status} ${
+                      item.status === "checked_in"
+                        ? styles.checkin
+                        : item.status === "on_going" ||
+                          item.status === "test_requested"
                         ? styles.being
                         : item.status === "booked"
-                          ? styles.booked
-                          : item.status === "finish"
-                            ? styles.finish
-                            : ""
-                      } `}
+                        ? styles.booked
+                        : item.status === "finish"
+                        ? styles.finish
+                        : ""
+                    } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "test_requested"
-                        ? "Chờ xét nghiệm"
-                        : item.status === "on_going"
-                          ? "Đang khám"
-                          : item.status === "booked"
-                            ? "Chưa checkin"
-                            : item.status === "finish"
-                              ? "Hoàn thành"
-                              : ""}
+                      ? "Chờ xét nghiệm"
+                      : item.status === "on_going"
+                      ? "Đang khám"
+                      : item.status === "booked"
+                      ? "Chưa checkin"
+                      : item.status === "finish"
+                      ? "Hoàn thành"
+                      : ""}
                   </p>
                 </td>
               </tr>

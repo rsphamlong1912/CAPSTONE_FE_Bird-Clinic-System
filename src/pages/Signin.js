@@ -23,13 +23,14 @@ const Signin = () => {
         // Xử lý phản hồi từ API khi đăng nhập thành công
         console.log("Đăng nhập thành công:", response.data.data);
         const { accessToken } = response.data.data;
-        const { account_id, name, service_id, service_type_id, is_primary, specialized } =
+        const { account_id, name, service_id, service_type_id, is_primary, specialized, image } =
           response.data.data.data;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("account_id", account_id);
         localStorage.setItem("name", name);
         localStorage.setItem("service_id", service_id);
         localStorage.setItem("specialized", specialized);
+        localStorage.setItem("image", image);
         localStorage.setItem("role", response.data.data.role);
         const role = response.data.data.role;
         console.log(role);

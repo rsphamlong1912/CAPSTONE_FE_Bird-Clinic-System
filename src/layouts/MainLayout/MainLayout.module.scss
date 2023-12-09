@@ -28,43 +28,60 @@
   justify-content: space-between;
   font-weight: 600;
   color: #fff;
+  margin-left: 240px;
+  background-color: white;
   .user > span {
     font-size: 22px;
   }
-  span.logoText {
-    font-size: 36px;
-    margin-left: 2%;
-    font-family: 'Inter',sans-serif;
-    font-weight: 900;
-  }
-  .blackText {
-    color: black;
-  }
+  // .datetime {
+  //   background-color: white;
+  //   color: black;
+  //   padding: 10px 30px;
+  //   border-radius: 5px;
+  //   margin-left: 15%;
+  // }
   .datetime {
-    background-color: white;
-    color: black;
+    display: flex;
+    align-items: center;
     padding: 10px 30px;
-    border-radius: 5px;
-    margin-left: 15%;
+    font-size: 17px; 
+    font-weight: 600; 
+    font-family: "Inter",sans-serif;
+    color: #32B768;
+    border-color: #32B768;
   }
   .user {
     display: flex;
     justify-content: center;
     align-items: center;
-    span {
-      margin-right: 10px;
-    }
     img {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       object-fit: cover;
+      padding: 5px;
+      border: 1px solid #d5d5d5;
     }
     .descUser {
-      font-weight: 300;
-      font-size: 18px;
+      font-weight: 600;
+      margin-right: 10px;
     }
   }
+}
+
+span.logoText {
+  font-size: 36px;
+  margin-left: 10px;
+  font-family: 'Inter',sans-serif;
+  font-weight: 900;
+  text-shadow: 2px 7px 5px #0000004d, 0 -4px 10px #ffffff4d;
+  color: #fff;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+.blackText {
+  color: black;
 }
 
 .child.sidebar {
@@ -83,18 +100,23 @@
     overflow: hidden;
     white-space: nowrap;
     min-width: 200px;
-    text-align: center;
-    padding: 20px 0;
-    font-weight: bolder;
+    // text-align: center;
+    padding: 20px;
+    font-weight: 500;
+    width: 240px;
   }
   .tabService.active {
-    background-color: rgba(0, 255, 178, 0.498);
-    border-radius: 8px;
+    background-color: #fff3;
+    border-radius: 0px;
+  }
+  .tabService:hover {
+    background-color: rgba(0,255,178,.498);
+    border-radius: 0px;
   }
 }
 
 .content {
-  background-color: #d9d9d9;
+  background-color: #f5f5f5;
   color: black;
   padding: 0;
   margin: 0;
@@ -111,4 +133,14 @@ ion-icon {
 
 .bottomSidebar {
   color: white;
+  cursor: pointer;
+  font-weight: 600;
+  .logOutTab {
+    display: flex;
+    align-items: center;
+    .iconLogOut {
+      margin-right: 10px;
+    }
+  }
 }
+

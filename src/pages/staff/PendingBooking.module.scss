@@ -17,6 +17,33 @@
   margin-bottom: 20px;
 }
 
+.headerTitle{
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.NoGroomingDetial {
+  height: 400px;
+
+  .emptyContentCenter {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .iconEmpty {
+    margin-bottom: 20px;
+    color: gray;
+  }
+
+  .txtNoGrooming {
+    text-align: center;
+    font-weight: 500;
+    color: gray;
+  }
+}
+
 .middle span {
   padding: 5px 12px;
   margin: 0 18px;
@@ -39,15 +66,9 @@
 }
 
 .btnSearch {
-  background-color: #fff;
-  font-size: 20px;
-  align-self: center;
-  border: 1px gray solid;
-  padding: 10px;
-  border-radius: 5px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  display: flex;
+  margin-bottom: 40px;
+  align-items: center;
 }
 
 .right input {
@@ -319,9 +340,8 @@ tbody td.active {
   .btnCheckin {
     text-align: center;
     background-color: #32b768;
-    width: 80px;
     color: white;
-    padding: 5px 10px;
+    padding: 10px 15px;
     margin: 0 2px;
     border-radius: 5px;
     cursor: pointer;

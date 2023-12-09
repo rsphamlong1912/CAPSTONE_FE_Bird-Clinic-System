@@ -4,7 +4,7 @@ import useCurrentDate from "../../hooks/useCurrentDate";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/axios";
-import { ImFilesEmpty } from "react-icons/im";
+import { BsCalendar2 } from "react-icons/bs";
 
 const Checkin = () => {
   const today = new Date();
@@ -47,10 +47,12 @@ const Checkin = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>
-          <h3>DANH SÁCH CHECKIN HÔM NAY</h3>
-        </div>
-        <div className={styles.right}>{currentDate}</div>
+           <div style={{ marginRight: 'auto' }}>
+           <h1 className={styles.headerTitle}>CHECK IN HÔM NAY</h1>
+          </div>
+          <div style={{width: "30%"}}>
+          {/* <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton /> */}
+          </div>
       </div>
       <table>
         <thead>
@@ -80,14 +82,16 @@ const Checkin = () => {
           )}
           {!loading && customerList.length === 0 && (
             <tr className={styles.NoGroomingDetial}>
-              <td colSpan="9">
-                <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>
-                  Không có buổi checkin nào cho ngày hôm nay.
-                </h3>
+              <td colSpan="10">
+                <div className={styles.emptyContentCenter}>
+                  <BsCalendar2 size={50} className={styles.iconEmpty} />
+                  <h3 className={styles.txtNoGrooming}>
+                      Không có checkin nào hôm nay.
+                  </h3>
+                </div>
               </td>
             </tr>
-          )}
+          )}           
           {!loading &&
             customerList.map((item, index) => (
               <tr

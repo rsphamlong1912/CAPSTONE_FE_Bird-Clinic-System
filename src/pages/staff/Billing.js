@@ -10,7 +10,8 @@ import { useReactToPrint } from "react-to-print";
 import { HoaDon } from "../../components/pdfData/HoaDonTong";
 import { toast } from "react-toastify";
 
-import { Tabs } from "antd";
+import { Tabs, Input } from "antd";
+const { Search } = Input;
 
 const Billing = () => {
   const navigate = useNavigate();
@@ -276,8 +277,12 @@ const Billing = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>DANH SÁCH HOÁ ĐƠN</div>
-        <div className={styles.right}>{currentDate}</div>
+           <div style={{ marginRight: 'auto' }}>
+           <h1 className={styles.headerTitle}>DANH SÁCH HÓA ĐƠN</h1>
+          </div>
+          <div style={{width: "30%"}}>
+          <Search size="large" placeholder="Tìm kiếm hóa đơn..." enterButton />
+          </div>
       </div>
       <Tabs
         onChange={onChange}
@@ -333,14 +338,14 @@ const Billing = () => {
                     </p>
                   </td>
 
-                  <td className={styles.grAction}>
+                  <td>
                     <div
                       className={styles.btnCheckin}
                       onClick={() =>
                         navigate(`/billing/${item.service_form_id}`)
                       }
                     >
-                      Xem
+                      Chi tiết
                     </div>
                     {/* <div
                     className={styles.btnCheckin}

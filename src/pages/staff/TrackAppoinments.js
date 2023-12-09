@@ -7,10 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import DetailBookingModal from "../../components/modals/DetailBookingModal";
-import { ImFilesEmpty } from "react-icons/im";
-
+import { BsCalendar2 } from "react-icons/bs";
+import { Input } from 'antd';
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn");
+const { Search } = Input;
 
 const TrackAppoinments = () => {
   const today = new Date();
@@ -240,8 +241,15 @@ const TrackAppoinments = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.btnSearch}>
+           <div style={{ marginRight: 'auto' }}>
+           <h1 className={styles.headerTitle}>THEO DÕI LỊCH HẸN</h1>
+          </div>
+          <div style={{width: "30%"}}>
+          <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton />
+          </div>
+      </div>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
         <div className={styles.navigation}>
           <button onClick={handlePrevDates}>&lt;</button>
         </div>
@@ -257,12 +265,6 @@ const TrackAppoinments = () => {
         </div>
         <div className={styles.navigation}>
           <button onClick={handleNextDates}>&gt;</button>
-        </div>
-        <div className={styles.right}>
-          <div className={styles.btnSearch}>
-            <SearchOutlined />
-          </div>
-          <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
         </div>
       </div>
       <table>
@@ -295,10 +297,12 @@ const TrackAppoinments = () => {
           {!loading && customerList.length === 0 && (
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="10">
-                <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>
-                  Không có lịch khám nào cho ngày này.
-                </h3>
+                <div className={styles.emptyContentCenter}>
+                  <BsCalendar2 size={50} className={styles.iconEmpty} />
+                  <h3 className={styles.txtNoGrooming}>
+                      Không có lịch hẹn nào cho ngày này.
+                  </h3>
+                </div>
               </td>
             </tr>
           )}
@@ -355,7 +359,7 @@ const TrackAppoinments = () => {
                     className={styles.btnCheckin}
                     onClick={() => navigate(`/track/${item.booking_id}`)}
                   >
-                    Xem
+                    Chi tiết
                   </div>
 
                   {/* <div

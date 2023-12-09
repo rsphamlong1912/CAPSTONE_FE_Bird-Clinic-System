@@ -30,30 +30,47 @@ import HistoryGrooming from "./pages/staff/grooming/HistoryGrooming";
 import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
 import BillingBoardingDetail from "./pages/staff/BillingBoardingDetail";
 
+import {
+  BsCalendar2RangeFill,
+  BsCalendar2CheckFill,
+  BsCalendar2PlusFill,
+  BsCreditCard2BackFill,
+  BsFillPlusSquareFill,
+
+
+
+} from "react-icons/bs";
+import {ConfigProvider} from 'antd';
+
 const listTabsStaff = [
   {
     id: 1,
-    name: "Theo dõi lịch khám",
+    name: "Theo dõi lịch hẹn",
+    icon: BsCalendar2RangeFill,
     to: "/track",
   },
   {
     id: 2,
     name: "Checkin",
+    icon: BsCalendar2CheckFill,
     to: "/checkin",
   },
   {
     id: 3,
-    name: "Duyệt hẹn",
+    name: "Chờ phê duyệt",
+    icon: BsCalendar2PlusFill,
     to: "/approve",
   },
   {
     id: 4,
     name: "Thanh toán",
+    icon: BsCreditCard2BackFill,
     to: "/billing",
   },
   {
     id: 5,
     name: "Tạo cuộc hẹn",
+    icon: BsFillPlusSquareFill,
     to: "/create",
   },
 ];
@@ -61,21 +78,25 @@ const listTabsHealthCheck = [
   {
     id: 1,
     name: "Khám hôm nay",
+    icon: BsFillPlusSquareFill,
     to: "/examing",
   },
   {
     id: 2,
     name: "Chờ kết quả",
+    icon: BsFillPlusSquareFill,
     to: "/wait-result",
   },
   {
     id: 3,
     name: "Lịch hẹn",
+    icon: BsFillPlusSquareFill,
     to: "/schedule",
   },
   {
     id: 4,
     name: "Đã khám",
+    icon: BsFillPlusSquareFill,
     to: "/done",
   },
 ];
@@ -84,21 +105,25 @@ const listTabsReTesting = [
   {
     id: 1,
     name: "Chờ xét nghiệm",
+    icon: BsFillPlusSquareFill,
     to: "/retesting",
   },
   {
     id: 2,
     name: "Trả kết quả",
+    icon: BsFillPlusSquareFill,
     to: "/result",
   },
   {
     id: 3,
     name: "Lịch hẹn",
+    icon: BsFillPlusSquareFill,
     to: "/schedule-retesting",
   },
   {
     id: 4,
     name: "Đã khám",
+    icon: BsFillPlusSquareFill,
     to: "/done-retesting",
   },
 ];
@@ -107,16 +132,19 @@ const listTabsGrooming = [
   {
     id: 1,
     name: "Khám hôm nay",
+    icon: BsFillPlusSquareFill,
     to: "/grooming",
   },
   {
     id: 2,
     name: "Lịch hẹn",
+    icon: BsFillPlusSquareFill,
     to: "/schedule-grooming",
   },
   {
     id: 3,
     name: "Lịch sử tiếp nhận",
+    icon: BsFillPlusSquareFill,
     to: "/history-grooming",
   },
 ];
@@ -125,27 +153,43 @@ const listTabsBoarding = [
   {
     id: 1,
     name: "Khám hôm nay",
+    icon: BsFillPlusSquareFill,
     to: "/boarding",
   },
   {
     id: 2,
     name: "Lịch hẹn",
+    icon: BsFillPlusSquareFill,
     to: "/schedule",
   },
   {
     id: 3,
     name: "Quản lý và Báo cáo",
+    icon: BsFillPlusSquareFill,
     to: "/manage-report",
   },
   {
     id: 4,
     name: "Lịch sử tiếp nhận",
+    icon: BsFillPlusSquareFill,
     to: "/history-boarding",
   },
 ];
 
 function App() {
   return (
+  <ConfigProvider
+    theme={{
+      token: {
+        // Seed Token
+        colorPrimary: '#32B768',
+        fontFamily: "Inter",
+        fontSize: 15,
+        // Alias Token
+        colorBgContainer: '#ffffff',
+      },
+    }}
+  >
     <Fragment>
       <Routes>
         <Route path="/" element={<Signin></Signin>}></Route>
@@ -381,6 +425,7 @@ function App() {
         ></Route>
       </Routes>
     </Fragment>
+  </ConfigProvider>
   );
 }
 

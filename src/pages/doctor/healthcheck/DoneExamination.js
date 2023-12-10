@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import styles from "./styles/ExamingToday.module.scss";
+import styles from "./DoneExamination.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
@@ -175,7 +175,9 @@ const DoneExamination = () => {
             <tr className={styles.NoGroomingDetial}>
               <td colSpan="9">
                 <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>Không có lịch hẹn nào cho ngày này.</h3>
+                <h3 className={styles.txtNoGrooming}>
+                  Không có lịch hẹn nào cho ngày này.
+                </h3>
               </td>
             </tr>
           )}
@@ -193,14 +195,20 @@ const DoneExamination = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${item.status === "finish" ? styles.finish : styles.booked
-                      } `}
+                    className={`${styles.status} ${
+                      item.status === "finish" ? styles.finish : styles.booked
+                    } `}
                   >
                     {item.status === "finish" ? "Hoàn thành" : ""}
                   </p>
                 </td>
                 <td>
-                  <div className={styles.btnExam}>Xem</div>
+                  <div
+                    className={styles.btnExam}
+                    onClick={() => navigate(`/done/${item.booking_id}`)}
+                  >
+                    Xem kết quả
+                  </div>
                 </td>
               </tr>
             ))}

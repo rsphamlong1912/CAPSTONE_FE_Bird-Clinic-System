@@ -29,6 +29,7 @@ import CreateAppoinment from "./pages/staff/CreateAppoinment";
 import HistoryGrooming from "./pages/staff/grooming/HistoryGrooming";
 import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
 import BillingBoardingDetail from "./pages/staff/BillingBoardingDetail";
+import DoneDetail from "./pages/doctor/healthcheck/DoneDetail";
 
 import {
   BsCalendar2RangeFill,
@@ -305,6 +306,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsHealthCheck}>
               <DoneExamination></DoneExamination>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/done/:bookingId"
+          element={
+            <MainLayout listTabs={listTabsHealthCheck}>
+              <DoneDetail></DoneDetail>
             </MainLayout>
           }
         ></Route>

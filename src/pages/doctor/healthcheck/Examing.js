@@ -615,11 +615,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -681,11 +681,11 @@ const Examing = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -748,7 +748,6 @@ const Examing = () => {
     confirmAlert(updatedOptions);
   };
 
-  
   const [customerPhone, setCustomerPhone] = useState();
   useEffect(() => {
     const sendApiforData = async () => {
@@ -1166,7 +1165,7 @@ const Examing = () => {
                                   >
                                     {form.unit * form.day}
                                   </p>
-                                  { }
+                                  {}
                                 </div>
                               </div>
                               <div className={styles.createThird}>
@@ -1207,7 +1206,7 @@ const Examing = () => {
                         <div
                           className={styles.PrintMedicine}
                           onClick={handlePrintMd}
-                        // onClick={() => setOpenModalPrescription(true)}
+                          // onClick={() => setOpenModalPrescription(true)}
                         >
                           <ion-icon name="thermometer-outline"></ion-icon>
                           <span>In đơn thuốc</span>

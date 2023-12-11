@@ -744,6 +744,11 @@ const Boarding = () => {
                     >
                       In phiếu dịch vụ
                     </button>
+                    <button
+                      className={styles.printService}
+                    >
+                      In mã số
+                    </button>
                   </div>
                   <div style={{ display: "none" }}>
                     <PhieuNoiTru ref={printRef}></PhieuNoiTru>

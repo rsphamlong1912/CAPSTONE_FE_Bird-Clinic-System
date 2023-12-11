@@ -31,6 +31,9 @@ import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
 import BillingBoardingDetail from "./pages/staff/BillingBoardingDetail";
 import DoneDetail from "./pages/doctor/healthcheck/DoneDetail";
 import ResultTesting from "./pages/doctor/healthcheck/ResultTesting";
+import ScheduleBoarding from "./pages/staff/boarding/ScheduleBoarding";
+import HistoryBoarding from "./pages/staff/boarding/HistoryBoarding";
+
 
 import {
   BsCalendar2RangeFill,
@@ -156,7 +159,7 @@ const listTabsBoarding = [
     id: 2,
     name: "Lịch hẹn",
     icon: BsFillPlusSquareFill,
-    to: "/schedule",
+    to: "/schedule-boarding",
   },
   {
     id: 3,
@@ -424,6 +427,22 @@ function App() {
           element={
             <MainLayout listTabs={listTabsBoarding}>
               <Report></Report>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/schedule-boarding"
+          element={
+            <MainLayout listTabs={listTabsBoarding}>
+              <ScheduleBoarding></ScheduleBoarding>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/history-boarding"
+          element={
+            <MainLayout listTabs={listTabsBoarding}>
+              <HistoryBoarding></HistoryBoarding>
             </MainLayout>
           }
         ></Route>

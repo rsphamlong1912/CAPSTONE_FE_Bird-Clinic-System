@@ -10,6 +10,8 @@ import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import io from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
 import { HoaDonTong } from "../../components/pdfData/HoaDonTong";
+import { Select, Modal} from "antd";
+
 const socket = io("https://clinicsystem.io.vn");
 
 const TrackDetail = () => {
@@ -27,6 +29,8 @@ const TrackDetail = () => {
   const [serviceFormDetailList, setServiceFormDetailList] = useState();
   const [showPrintBill, setShowPrintBill] = useState(false);
   const [bookingStatus, setBookingStatus] = useState();
+  const [modalCheckin, setModalCheckin] = useState();
+  const [modalCancel, setModalCancel] = useState();
 
   //Print
   const printRef = useRef();
@@ -123,8 +127,8 @@ const TrackDetail = () => {
     }, 500);
   }, []);
 
-  const handleVetSelection = (event) => {
-    setSelectedVet(event.target.value);
+  const handleVetSelection = (value) => {
+    setSelectedVet(value);
   };
 
   const currentDate = new Date();
@@ -177,7 +181,7 @@ const TrackDetail = () => {
         label: "Xác nhận",
       },
       {
-        label: "Huỷ",
+        label: "Hủy",
       },
     ],
     closeOnEscape: true,
@@ -191,55 +195,88 @@ const TrackDetail = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleConfirmAlert = (item) => {
-    const updatedOptions = {
-      ...options,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
-            console.log("selected vet", selectedVet);
-            try {
-              const response = await api.put(`/booking/${item.booking_id}`, {
-                veterinarian_id: selectedVet,
-                status: "checked_in",
-                checkin_time: currentTime,
-              });
-              if (response) {
-                socket.emit("confirm-check-in", {
-                  customer_id: item.account_id,
-                  veterinarian_id: item.veterinarian_id,
-                });
-                toast.success("Check-in thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                console.log("response doi status ne", response.data);
-                if (item.service_type_id === "ST001") {
-                  createNewServiceForm(item);
-                }
-                navigate("/track");
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
+  // const handleConfirmAlert = (item) => {
+  //   const updatedOptions = {
+  //     ...options,
+  //     buttons: [
+  //       {
+  //         label: "Xác nhận",
+  //         onClick: async () => {
+  //           console.log("selected vet", selectedVet);
+  //           try {
+  //             const response = await api.put(`/booking/${item.booking_id}`, {
+  //               veterinarian_id: selectedVet,
+  //               status: "checked_in",
+  //               checkin_time: currentTime,
+  //             });
+  //             if (response) {
+  //               socket.emit("confirm-check-in", {
+  //                 customer_id: item.account_id,
+  //                 veterinarian_id: item.veterinarian_id,
+  //               });
+  //               toast.success("Check-in thành công!", {
+  //                 position: "top-right",
+  //                 autoClose: 5000,
+  //                 hideProgressBar: false,
+  //                 closeOnClick: true,
+  //                 pauseOnHover: true,
+  //                 draggable: true,
+  //                 progress: undefined,
+  //                 theme: "light",
+  //               });
+  //               console.log("response doi status ne", response.data);
+  //               if (item.service_type_id === "ST001") {
+  //                 createNewServiceForm(item);
+  //               }
+  //               navigate("/track");
+  //             }
+  //           } catch (error) {
+  //             console.log(error);
+  //           }
+  //         },
+  //       },
+  //       {
+  //         label: "Huỷ",
+  //         onClick: () => {
+  //           console.log("click no");
+  //         },
+  //       },
+  //     ],
+  //   };
+  //   confirmAlert(updatedOptions);
+  // };
+
+  const handleConfirmAlert = async (item) => {
+    try {
+      const response = await api.put(`/booking/${item.booking_id}`, {
+        veterinarian_id: selectedVet,
+        status: "checked_in",
+        checkin_time: currentTime,
+      });
+      if (response) {
+        socket.emit("confirm-check-in", {
+          customer_id: item.account_id,
+          veterinarian_id: item.veterinarian_id,
+        });
+        toast.success("Check-in thành công!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        console.log("response doi status ne", response.data);
+        if (item.service_type_id === "ST001") {
+          createNewServiceForm(item);
+        }
+        navigate("/track");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const optionsCancel = {
@@ -264,49 +301,74 @@ const TrackDetail = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleConfirmCancel = (item) => {
-    const updatedOptions = {
-      ...optionsCancel,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
-            try {
-              const responseCancel = await api.put(
-                `/booking/${item.booking_id}`,
-                {
-                  status: "cancelled",
-                }
-              );
-              if (responseCancel) {
-                console.log("đã huỷ cuộc hẹn");
-                toast.success("Đã huỷ thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                navigate("/track");
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
+  // const handleConfirmCancel = (item) => {
+  //   const updatedOptions = {
+  //     ...optionsCancel,
+  //     buttons: [
+  //       {
+  //         label: "Xác nhận",
+  //         onClick: async () => {
+  //           try {
+  //             const responseCancel = await api.put(
+  //               `/booking/${item.booking_id}`,
+  //               {
+  //                 status: "cancelled",
+  //               }
+  //             );
+  //             if (responseCancel) {
+  //               console.log("đã huỷ cuộc hẹn");
+  //               toast.success("Đã huỷ thành công!", {
+  //                 position: "top-right",
+  //                 autoClose: 5000,
+  //                 hideProgressBar: false,
+  //                 closeOnClick: true,
+  //                 pauseOnHover: true,
+  //                 draggable: true,
+  //                 progress: undefined,
+  //                 theme: "light",
+  //               });
+  //               navigate("/track");
+  //             }
+  //           } catch (error) {
+  //             console.log(error);
+  //           }
+  //         },
+  //       },
+  //       {
+  //         label: "Huỷ",
+  //         onClick: () => {
+  //           console.log("click no");
+  //         },
+  //       },
+  //     ],
+  //   };
+  //   confirmAlert(updatedOptions);
+  // };
+
+    const handleConfirmCancel = async (item) => {
+      try {
+        const responseCancel = await api.put(`/booking/${item.booking_id}`, {
+          status: "cancelled",
+        });
+        if (responseCancel) {
+          console.log("Đã huỷ cuộc hẹn");
+          toast.success("Đã huỷ thành công!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          navigate("/track");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
-    confirmAlert(updatedOptions);
-  };
+
   const optionsCheckinAfter = {
     title: "Xác nhận",
     message: "Tiến hành checkin sau xét nghiệm?",
@@ -374,12 +436,12 @@ const TrackDetail = () => {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div>
       <div className={styles.container}>
         <div className={styles.headerContent}>
           <div className={styles.left} onClick={() => navigate(`/track`)}>
             <ion-icon name="chevron-back-outline"></ion-icon>
-            <span>Trở về</span>
+            <h4>THOÁT</h4>
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>
@@ -391,112 +453,217 @@ const TrackDetail = () => {
         {!loading && (
           <div className={styles.mainContent}>
             <div className={styles.content}>
-              <div className={styles.InfText}>Thông tin cuộc hẹn</div>
-              <div className={styles.element}>
-                <h5>THÔNG TIN CHUNG</h5>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>Tên dịch vụ</th>
-                      <td>{bookingInfo?.service_type}</td>
-                    </tr>
-                    <tr>
-                      <th>Tên khách hàng</th>
-                      <td>{bookingInfo?.customer_name}</td>
-                    </tr>
-                    <tr>
-                      <th>Số điện thoại</th>
-                      <td>{bookingInfo?.bird.customer.phone}</td>
-                    </tr>
-                    <tr>
-                      <th>Tên chim</th>
-                      <td>{bookingInfo?.bird.name}</td>
-                    </tr>
-                    <tr>
-                      <th>Giờ checkin</th>
-                      <td>{bookingInfo?.checkin_time}</td>
-                    </tr>
-                    <tr>
-                      <th>Bác sĩ phụ trách</th>
-                      <select
-                        onChange={handleVetSelection}
-                        className={styles.selectVet}
-                      >
-                        {veterinarians &&
-                          veterinarians.length > 0 &&
-                          veterinarians.map((vet) => {
-                            if (
-                              vet.veterinarian.name ===
-                              bookingInfo?.veterinarian.name
-                            ) {
-                              return (
-                                <option
-                                  key={vet.veterinarian_id}
-                                  value={vet.veterinarian_id}
-                                  selected={true}
-                                >
-                                  {vet.veterinarian.name}
-                                </option>
-                              );
-                            } else {
-                              return (
-                                <option
-                                  key={vet.veterinarian_id}
-                                  value={vet.veterinarian_id}
-                                >
-                                  {vet.veterinarian.name}
-                                </option>
-                              );
-                            }
-                          })}
-                      </select>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className={styles.history}>
-                <img
-                  src={bookingInfo.bird.image}
-                  className={styles.image}
-                  alt=""
-                />
-                {/* <div className={styles.historyText}>Lịch sử</div>
-      <div className={styles.infHS}>
-        <p>1. Khám tổng quát</p>
-        <p>15/08/2023</p>
-        <button className={styles.button}>Xem kết quả</button>
-      </div>
-      <div className={styles.infHS}>
-        <p>2. Chụp X-ray</p>
-        <p>20/08/2023</p>
-        <button className={styles.button}>Xem kết quả</button>
-      </div> */}
+              {/* <div className={styles.InfText}>THÔNG TIN CUỘC HẸN</div> */}
+              <h1 className={styles.InfText}>THÔNG TIN CUỘC HẸN</h1>
+              <div className={styles.containerInfo}>
+                <div className={styles.element}>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Dịch vụ</th>
+                        <td>{bookingInfo?.service_type}</td>
+                      </tr>
+                      <tr>
+                        <th>Mã số</th>
+                        <td>{bookingInfo?.booking_id}</td>
+                      </tr>
+                      <tr>
+                        <th>Khách hàng</th>
+                        <td>{bookingInfo?.customer_name}</td>
+                      </tr>
+                      <tr>
+                        <th>Số điện thoại</th>
+                        <td>{bookingInfo?.bird.customer.phone}</td>
+                      </tr>
+                      <tr>
+                        <th>Chim</th>
+                        <td>{bookingInfo?.bird.name}</td>
+                      </tr>
+                      <tr>
+                        <th>Ngày đặt</th>
+                        <td>{bookingInfo?.arrival_date}</td>
+                      </tr>
+                      <tr>
+                        <th>Giờ dự kiến</th>
+                        <td>{bookingInfo?.estimate_time}</td>
+                      </tr>
+                      <tr>
+                        <th>Giờ checkin</th>
+                        <td>
+                          {bookingInfo?.checkin_time
+                            ? bookingInfo?.checkin_time
+                            : "Chưa checkin"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Bác sĩ phụ trách</th>
+                        {/* <select
+                          onChange={handleVetSelection}
+                          className={styles.selectVet}
+                        >
+                          {veterinarians &&
+                            veterinarians.length > 0 &&
+                            veterinarians.map((vet) => {
+                              if (
+                                vet.veterinarian.name ===
+                                bookingInfo?.veterinarian.name
+                              ) {
+                                return (
+                                  <option
+                                    key={vet.veterinarian_id}
+                                    value={vet.veterinarian_id}
+                                    selected={true}
+                                  >
+                                    {vet.veterinarian.name}
+                                  </option>
+                                );
+                              } else {
+                                return (
+                                  <option
+                                    key={vet.veterinarian_id}
+                                    value={vet.veterinarian_id}
+                                  >
+                                    {vet.veterinarian.name}
+                                  </option>
+                                );
+                              }
+                            })}
+                        </select> */}
+                        {bookingInfo?.status === "booked" ? (
+                          <Select
+                            onChange={handleVetSelection}
+                            name="veterinarian"
+                            className={styles.selectVet}
+                            defaultValue={bookingInfo?.veterinarian_id}
+                          >
+                            {veterinarians &&
+                              veterinarians.length > 0 &&
+                              veterinarians.map((vet) => {
+                                if (
+                                  vet.veterinarian.name ===
+                                  bookingInfo?.veterinarian.name
+                                ) {
+                                  return (
+                                    <Select.Option
+                                      key={vet.veterinarian_id}
+                                      value={vet.veterinarian_id}
+                                      selected={true}
+                                    >
+                                      {vet.veterinarian.name}
+                                    </Select.Option>
+                                  );
+                                } else {
+                                  return (
+                                    <Select.Option
+                                      key={vet.veterinarian_id}
+                                      value={vet.veterinarian_id}
+                                    >
+                                      {vet.veterinarian.name}
+                                    </Select.Option>
+                                  );
+                                }
+                              })}
+                          </Select>
+                        ) : (
+                          <td>{bookingInfo?.veterinarian.name}</td>
+                        )}
+                      </tr>
+                      <tr>
+                        <th>Trạng thái</th>
+                        <td>
+                          <p
+                            className={`${styles.status} ${
+                              bookingInfo?.status === "checked_in" ||
+                              bookingInfo?.status === "checked_in_after_test"
+                                ? styles.checkin
+                                : bookingInfo?.status === "on_going" ||
+                                  bookingInfo?.status === "test_requested"
+                                ? styles.being
+                                : bookingInfo?.status === "booked"
+                                ? styles.booked
+                                : bookingInfo?.status === "finish"
+                                ? styles.finish
+                                : bookingInfo?.status === "cancelled"
+                                ? styles.cancelled
+                                : ""
+                            } `}
+                          >
+                            {bookingInfo?.status === "checked_in"
+                              ? "Đã checkin"
+                              : bookingInfo?.status === "test_requested"
+                              ? "Chờ xét nghiệm"
+                              : bookingInfo?.status === "on_going"
+                              ? "Đang khám"
+                              : bookingInfo?.status === "booked"
+                              ? "Chưa checkin"
+                              : bookingInfo?.status === "checked_in_after_test"
+                              ? "Có kết quả"
+                              : bookingInfo?.status === "finish"
+                              ? "Hoàn thành"
+                              : bookingInfo?.status === "cancelled"
+                              ? "Đã huỷ"
+                              : ""}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className={styles.history}>
+                  <div>
+                    <img
+                      src={bookingInfo.bird.image}
+                      className={styles.image}
+                      alt=""
+                    />
+                  </div>
+                  <div className={styles.containerName}>
+                    {bookingInfo?.bird.name}
+                  </div>
+                </div>
               </div>
             </div>
             <div className={styles.metaContent}>
               <div className={styles.boxData}>
-                <div
-                  className={styles.boxDataItem}
-                  onClick={() => setOpenModalProfile(true)}
-                >
-                  <ion-icon name="calendar-clear-outline"></ion-icon>
-                  <span>Hồ sơ chim khám</span>
-                </div>
-                <div
-                  className={styles.boxDataItem}
-                  onClick={() => setOpenModalProfile(true)}
-                >
-                  <ion-icon name="print-outline"></ion-icon>
-                  <span>In phiếu khám bệnh</span>
+                <div>
+                  <div
+                    className={styles.boxDataItem}
+                    onClick={() => setOpenModalProfile(true)}
+                  >
+                    <ion-icon name="calendar-clear-outline"></ion-icon>
+                    <span>Hồ sơ chim</span>
+                  </div>
+                  <div
+                    className={styles.boxDataItem}
+                    onClick={() => setOpenModalProfile(true)}
+                  >
+                    <ion-icon name="print-outline"></ion-icon>
+                    <span>In phiếu khám bệnh</span>
+                  </div>
                 </div>
               </div>
               {bookingStatus === "booked" ? (
-                <button
-                  className={styles.btnComplete}
-                  onClick={() => handleConfirmAlert(bookingInfo)}
-                >
-                  Check-in
-                </button>
+                <>
+                  <button
+                    className={styles.btnComplete}
+                    onClick={() => setModalCheckin(true)}
+                  >
+                    Check-in
+                  </button>
+                  <Modal
+                    title="Xác nhận"
+                    centered
+                    open={modalCheckin}
+                    onOk={() => handleConfirmAlert(bookingInfo)}
+                    onCancel={() => setModalCheckin(false)}
+                    cancelText="Đóng"
+                  >
+                    <span>
+                      Checkin lịch hẹn cho khách hàng{" "}
+                      {bookingInfo?.customer_name} ?
+                    </span>
+                  </Modal>
+                </>
               ) : bookingStatus === "test_requested" ? (
                 <button
                   className={styles.btnComplete}
@@ -512,12 +679,28 @@ const TrackDetail = () => {
                   In hoá đơn
                 </button>
               )}
-              <button
-                className={styles.btnComplete}
-                onClick={() => handleConfirmCancel(bookingInfo)}
-              >
-                Huỷ cuộc hẹn
-              </button>
+              {bookingInfo?.status !== "cancelled" && (
+                <>
+                  <button
+                    className={styles.btnCancel}
+                    onClick={() => setModalCancel(true)}
+                  >
+                    Hủy cuộc hẹn
+                  </button>
+                  <Modal
+                    title="Xác nhận"
+                    centered
+                    open={modalCancel}
+                    onOk={() => handleConfirmCancel(bookingInfo)}
+                    onCancel={() => setModalCancel(false)}
+                    cancelText="Đóng"
+                  >
+                    <span>
+                      Hủy lịch hẹn của khách hàng {bookingInfo?.customer_name} ?
+                    </span>
+                  </Modal>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -537,18 +720,18 @@ const TrackDetail = () => {
         </div>
       )}
 
-      <div className={styles.footerContent}>
+      {/* <div className={styles.footerContent}>
         <button className={styles.btnBack} onClick={() => navigate(`/track`)}>
           Quay lại
         </button>
 
-        {/* <button
+        <button
           className={styles.btnCont}
           onClick={() => setTab((tab) => tab + 1)}
         >
           Tiếp tục
-        </button> */}
-      </div>
+        </button>
+      </div> */}
     </div>
   );
 };
@@ -557,7 +740,8 @@ const Loading = () => {
   return (
     <div className={styles.mainContent}>
       <div className={styles.content}>
-        <div className={styles.InfText}>Thông tin cuộc hẹn</div>
+        <h1 className={styles.InfText}>THÔNG TIN CUỘC HẸN</h1>
+        <div className={styles.containerInfo}>
         <div className={styles.element}>
           <h5>
             <LoadingSkeleton></LoadingSkeleton>
@@ -608,27 +792,33 @@ const Loading = () => {
                 <th>
                   <LoadingSkeleton></LoadingSkeleton>
                 </th>
-                <select className={styles.selectVet}>
+                <td>
                   <LoadingSkeleton></LoadingSkeleton>
-                </select>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         <div className={styles.history}>
           <div className={styles.image}>
-            <LoadingSkeleton height={"100%"}></LoadingSkeleton>
+            <LoadingSkeleton height={112}></LoadingSkeleton>
           </div>
+        </div>
         </div>
       </div>
       <div className={styles.metaContent}>
         <div className={styles.boxData}>
-          <div className={styles.boxDataItem}>
-            <ion-icon name="calendar-clear-outline"></ion-icon>
-            <span>Hồ sơ chim khám</span>
+          <div>
+            <div className={styles.boxDataItem}>
+              <ion-icon name="calendar-clear-outline"></ion-icon>
+              <span>Hồ sơ chim</span>
+            </div>
+            <div className={styles.boxDataItem}>
+              <ion-icon name="print-outline"></ion-icon>
+              <span>In phiếu khám bệnh</span>
+            </div>
           </div>
         </div>
-        <button className={styles.btnComplete}>Check-in</button>
       </div>
     </div>
   );

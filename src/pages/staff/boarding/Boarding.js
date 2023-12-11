@@ -9,8 +9,34 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import { useReactToPrint } from "react-to-print";
 import { PhieuNoiTru } from "../../../components/pdfData/PhieuNoiTru";
+import {
+  Table,
+  Modal,
+  Tabs,
+  Checkbox,
+  Form,
+  Input,
+  Radio,
+  Upload,
+  message,
+  Row,
+  Button
+} from "antd";
+import { EditOutlined, PlusOutlined, LoadingOutlined } from "@ant-design/icons";
+import { BsPersonFillAdd } from "react-icons/bs";
 
-const cageApi = Array(20).fill(null);
+const normFile = (e) => {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
+};
+
+const getBase64 = (img, callback) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+};
 const Boarding = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
@@ -31,6 +57,55 @@ const Boarding = () => {
   const [birdBreedSelected, setBirdBreedSelected] = useState();
   const [birdBreedList, setBirdBreedList] = useState();
   const [totalDays, setTotalDays] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState();
+  const [imageBirdBoarding, setImageBirdBoarding] = useState();
+
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Tải lên
+      </div>
+    </div>
+  );
+
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("You can only upload JPG/PNG file!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error("Image must smaller than 2MB!");
+    }
+    if (isJpgOrPng && isLt2M) setImageBirdBoarding([file]);
+
+    return isJpgOrPng && isLt2M;
+  };
+
+
+  const handleChange = (info) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      // Get this url from response in real world.
+      message.success("Tải lên file ảnh thành công!");
+      getBase64(info.file.originFileObj, (url) => {
+        setLoading(false);
+        setImageUrl(url);
+      });
+    }
+  };
+
+
+
 
   // Định dạng tổng tiền theo tiền tệ Việt Nam
   const formattedPrice = (price) => {
@@ -259,32 +334,9 @@ const Boarding = () => {
       );
       console.log(
         "thong tin bird ne:",
-        responseBird.data.data.bird_breed.bird_size
+        responseBird.data.data
       );
 
-      //     //cong them
-      //     setAccountId(response.data.data[0].account_id);
-      //     setBirdId(response.data.data[0].bird_id);
-      //     setVeterinarianId(response.data.data[0].veterinarian_id);
-      //     setCustomerName(response.data.data[0].customer_name);
-      //     setServiceType(response.data.data[0].service_type);
-      //     setServiceTypeId(response.data.data[0].service_type_id);
-
-      //     // Only call getBirdProfile if bookingInfo is available
-      //     if (response.data.data[0] && response.data.data[0].bird_id) {
-      //       getBirdProfile(response.data.data[0].bird_id);
-      //     }
-      //     if (response.data.data[0] && response.data.data[0].process_at) {
-      //       setTab(response.data.data[0].process_at);
-      //       console.log("Set tab r nha", response.data.data[0].process_at);
-      //     }
-
-      //     //GET SERVICE FORM DETAIL
-      //     const responseServiceFormDetail = await api.get(
-      //       `/service-form-detail/?booking_id=${bookingId}&service_type_id=ST001`
-      //     );
-      //     console.log("form detail ne", responseServiceFormDetail.data.data[0]);
-      //     setServiceFormDetail(responseServiceFormDetail.data.data[0]);
     } catch (error) {
       console.log(error);
     }
@@ -702,12 +754,34 @@ const Boarding = () => {
               <div className={styles.confirm}>
                 <div className={styles.confirmLeft}>
                   <h3 className={styles.title}>Hình ảnh tiếp nhận</h3>
-                  <img
-                    src="https://allbirdclinic.net/uploads/3/5/0/0/35002604/7700720.jpg"
-                    alt=""
-                    className={styles.image}
-                  />
-                  <button className={styles.btnUpload}>Tải ảnh lên</button>
+                  <Form.Item
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+        >
+          <Upload
+            name="avatar"
+            listType="picture-card"
+            className="avatar-uploader"
+            showUploadList={false}
+            action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+            beforeUpload={beforeUpload}
+            imageBirdBoarding={imageBirdBoarding}
+            onChange={handleChange}
+          >
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="avatar"
+                style={{
+                  width: "100%",
+                }}
+              />
+            ) : (
+              uploadButton
+            )}
+          </Upload>
+        </Form.Item>
+                  
                 </div>
                 <div className={styles.confirmRight}>
                   <h3 className={styles.title}>Xác nhận thông tin</h3>
@@ -734,7 +808,7 @@ const Boarding = () => {
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Ngày trả:</span>
                     <span>
-                      {departureDate} ({dateRange.length} ngày lưu trú)
+                      {departureDate} ({totalDays} ngày lưu trú)
                     </span>
                   </div>
                   <div>
@@ -751,7 +825,7 @@ const Boarding = () => {
                     </button>
                   </div>
                   <div style={{ display: "none" }}>
-                    <PhieuNoiTru ref={printRef}></PhieuNoiTru>
+                    <PhieuNoiTru birdProfile={birdProfile} bookingInfo={bookingInfo} boardingData={{ service: serviceSelected?.package_name, arrivalDate, departureDate, totalDays  }} ref={printRef}></PhieuNoiTru>
                   </div>
                 </div>
               </div>
@@ -772,7 +846,7 @@ const Boarding = () => {
             {tab === 4 && (
               <button
                 className={styles.btnComplete}
-                onClick={() => navigate("/boarding")}
+                onClick={handleConfirmAlert}
               >
                 Hoàn thành
               </button>
@@ -785,7 +859,7 @@ const Boarding = () => {
         onClose={() => setOpenModalProfile(false)}
       />
       <div className={styles.footerContent}>
-        {tab !== 1 && tab !== 4 && (
+        {tab !== 1  && (
           <button
             className={styles.btnBack}
             onClick={() => setTab((tab) => tab - 1)}
@@ -793,12 +867,7 @@ const Boarding = () => {
             Quay lại
           </button>
         )}
-        {tab === 3 && (
-          <button className={styles.btnCont} onClick={handleConfirmAlert}>
-            Tiếp tục
-          </button>
-        )}
-        {tab !== 3 && tab !== 4 && (
+        { tab !== 4 && (
           <button
             className={styles.btnCont}
             onClick={() => setTab((tab) => tab + 1)}

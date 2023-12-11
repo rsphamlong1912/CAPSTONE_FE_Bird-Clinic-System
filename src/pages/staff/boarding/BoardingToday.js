@@ -120,15 +120,6 @@ const BoardingToday = () => {
       <div className={styles.headerContent}>
         <div className={styles.left}></div>
         <div className={styles.middle}>
-          {dates.map((item, index) => (
-            <span
-              key={index}
-              className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
-            >
-              {formatDateForDisplay(item)}
-            </span>
-          ))}
         </div>
         <div className={styles.right}>
           <div className={styles.btnSearch}>

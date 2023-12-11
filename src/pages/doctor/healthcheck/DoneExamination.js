@@ -65,7 +65,8 @@ const DoneExamination = () => {
       let vetCustomers = response.data.data.filter(
         (booking) =>
           booking.veterinarian_id === accountId &&
-          booking.status === "finish" &&
+          booking.status !== "pending" &&
+          booking.status !== "booked" &&
           booking.service_type_id === "ST001"
       );
       console.log("vet customer ne", vetCustomers);
@@ -155,7 +156,6 @@ const DoneExamination = () => {
             <th> Giờ đặt</th>
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
-            <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
         </thead>
@@ -193,15 +193,7 @@ const DoneExamination = () => {
                 <td>
                   <strong>{item.veterinarian.name}</strong>
                 </td>
-                <td>
-                  <p
-                    className={`${styles.status} ${
-                      item.status === "finish" ? styles.finish : styles.booked
-                    } `}
-                  >
-                    {item.status === "finish" ? "Hoàn thành" : ""}
-                  </p>
-                </td>
+
                 <td>
                   <div
                     className={styles.btnExam}

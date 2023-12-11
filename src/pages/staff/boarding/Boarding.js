@@ -24,6 +24,7 @@ import {
 } from "antd";
 import { EditOutlined, PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { BsPersonFillAdd } from "react-icons/bs";
+import { MaSo } from "../../../components/pdfData/MaSo";
 
 const normFile = (e) => {
   if (Array.isArray(e)) {
@@ -128,6 +129,10 @@ const Boarding = () => {
   const printRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
+  });
+  const printRef2 = useRef();
+  const handlePrint2 = useReactToPrint({
+    content: () => printRef2.current,
   });
 
   const handleBirdBreedSelection = async (event) => {
@@ -491,9 +496,9 @@ const Boarding = () => {
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
-          <div className={styles.left}>
+          <div className={styles.left} onClick={()=> navigate("/boarding")}>
             <ion-icon name="chevron-back-outline"></ion-icon>
-            <span>Thoát</span>
+            <span>Trở về</span>
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>KH: Nguyễn Trí Công</div>
@@ -820,12 +825,16 @@ const Boarding = () => {
                     </button>
                     <button
                       className={styles.printService}
+                      onClick={handlePrint2}
                     >
                       In mã số
                     </button>
                   </div>
                   <div style={{ display: "none" }}>
                     <PhieuNoiTru birdProfile={birdProfile} bookingInfo={bookingInfo} boardingData={{ service: serviceSelected?.package_name, arrivalDate, departureDate, totalDays  }} ref={printRef}></PhieuNoiTru>
+                  </div>
+                  <div style={{ display: "none" }}>
+                    <MaSo birdProfile={birdProfile} bookingInfo={bookingInfo} boardingData={{ service: serviceSelected?.package_name, arrivalDate, departureDate, totalDays  }} ref={printRef2}></MaSo>
                   </div>
                 </div>
               </div>

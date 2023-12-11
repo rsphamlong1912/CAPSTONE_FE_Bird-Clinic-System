@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import styles from "./HistoryGrooming.module.scss";
+import styles from "./HistoryBoarding.module.scss";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 import { api } from "../../../services/axios";
 import { ImFilesEmpty } from "react-icons/im";
-import ProfileBirdModal from "../../../components/modals/ProfileBirdModal";
+import ProfileBirdBoardingModal from "../../../components/modals/ProfileBirdBoardingModal";
 
-const HistoryGrooming = () => {
+const HistoryBoarding = () => {
     const today = new Date();
     const [customerList, setCustomerList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -15,6 +15,8 @@ const HistoryGrooming = () => {
     const [birdProfileSize, setBirdProfileSize] = useState([]);
     const [birdProfileBreed, setBirdProfileBreed] = useState([]);
     const [bookingID, setBookingID] = useState("");
+    const [dates, setDates] = useState([]);
+    const [visibleDates, setVisibleDates] = useState([]);
 
     const formatDate = (date) => {
         const year = date.getFullYear();
@@ -23,15 +25,35 @@ const HistoryGrooming = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const [dates, setDates] = useState(formatDate(today));
+    const formatDateForDisplay = (date) => {
+        const [yyyy, mm, dd] = date.split("-");
+        return `${dd}/${mm}`;
+    };
+    const [selectedDate, setSelectedDate] = useState(formatDate(today));
+
+    useEffect(() => {
+        const dateList = [];
+        const daysToShow = 30;
+
+        for (let i = -daysToShow; i <= daysToShow; i++) {
+            const currentDate = new Date();
+            currentDate.setDate(today.getDate() + i);
+            dateList.push(formatDate(currentDate));
+        }
+
+        setDates(dateList);
+        const visibleIndex = dateList.indexOf(formatDate(today));
+        setVisibleDates(dateList.slice(visibleIndex - 3, visibleIndex + 4));
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get(`/booking?arrival_date=${dates}`);
+                const response = await api.get(`/booking?arrival_date=${selectedDate}`);
                 const filterBookings = response.data.data.filter(
                     (booking) =>
-                        booking.service_type_id == "ST002" &&
+                        booking.service_type_id == "ST003" &&
+                        booking.status == "on_going" ||
                         booking.status == "finish"
                 );
                 setCustomerList(filterBookings);
@@ -43,7 +65,21 @@ const HistoryGrooming = () => {
             setLoading(false);
         }, 850);
         fetchData();
-    }, [dates]);
+    }, [selectedDate]);
+
+    const handlePrevDates = () => {
+        const currentIndex = dates.indexOf(visibleDates[0]);
+        const prevDates = dates.slice(currentIndex - 1, currentIndex + 6);
+        setVisibleDates(prevDates);
+        setSelectedDate(prevDates[3]);
+    };
+
+    const handleNextDates = () => {
+        const currentIndex = dates.indexOf(visibleDates[0]);
+        const nextDates = dates.slice(currentIndex + 1, currentIndex + 8);
+        setVisibleDates(nextDates);
+        setSelectedDate(nextDates[3]);
+    };
 
     const handleButtonClick = (item) => {
         handleViewButtonClick(item.bird_id);
@@ -69,8 +105,22 @@ const HistoryGrooming = () => {
     return (
         <div className={styles.container}>
             <div className={styles.headerContent}>
-                <div className={styles.left}>
-                    <h3>LỊCH SỬ CHĂM SÓC HÔM NAY</h3>
+                <div className={styles.left}></div>
+                <div className={styles.navigation}>
+                    <button onClick={handlePrevDates}>&lt;</button>
+                </div>
+                <div className={styles.middle}>
+                    {visibleDates.map((item, index) => (
+                        <span
+                            key={index}
+                            className={item === selectedDate ? styles.active : ""}
+                        >
+                            {formatDateForDisplay(item)}
+                        </span>
+                    ))}
+                </div>
+                <div className={styles.navigation}>
+                    <button onClick={handleNextDates}>&gt;</button>
                 </div>
                 <div className={styles.right}>
                     <div className={styles.btnSearch}>
@@ -108,7 +158,7 @@ const HistoryGrooming = () => {
                         <tr className={styles.NoGroomingDetial}>
                             <td colSpan="9">
                                 <ImFilesEmpty className={styles.iconEmpty} />
-                                <h3 className={styles.txtNoGrooming}>Không có lịch sử tiếp nhận nào.</h3>
+                                <h3 className={styles.txtNoGrooming}>Không có lịch sử nội trú nào.</h3>
                             </td>
                         </tr>
                     )}
@@ -125,12 +175,12 @@ const HistoryGrooming = () => {
                                     <p
                                         className={`${styles.status} ${item.status === "finish"
                                             ? styles.finish
-                                            : ""
+                                            : styles.being
                                             } `}
                                     >
                                         {item.status === "finish"
                                             ? "Hoàn tất"
-                                            : ""}
+                                            : "Đang nội trú"}
                                     </p>
                                 </td>
                                 <td>
@@ -144,7 +194,7 @@ const HistoryGrooming = () => {
             <div className={styles.footerContent}>
                 <div className={styles.numberResult}>{!loading && customerList.length} kết quả</div>
             </div>
-            <ProfileBirdModal
+            <ProfileBirdBoardingModal
                 open={openModalProfile}
                 birdProfile={birdProfile}
                 birdProfileBreed={birdProfileBreed}
@@ -177,7 +227,9 @@ const Loading = () => {
                 <LoadingSkeleton></LoadingSkeleton>
             </td>
             <td>
-                <LoadingSkeleton></LoadingSkeleton>
+                <strong>
+                    <LoadingSkeleton></LoadingSkeleton>
+                </strong>
             </td>
             <td>
                 <div className="status being">
@@ -188,4 +240,4 @@ const Loading = () => {
     );
 };
 
-export default HistoryGrooming;
+export default HistoryBoarding;

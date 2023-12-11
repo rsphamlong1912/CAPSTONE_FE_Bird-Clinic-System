@@ -94,7 +94,7 @@ export const PhieuKetQua = React.forwardRef(
         </div>
         <div className={styles.lineItem}>
           <span className={`${styles.label} ${styles.label2}`}>
-            Bác sĩ chỉ định:
+            Bác sĩ phụ trách:
           </span>
           <span>{localStorage.getItem("name")}</span>
         </div>

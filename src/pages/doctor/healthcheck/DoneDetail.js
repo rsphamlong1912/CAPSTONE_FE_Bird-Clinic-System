@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./DoneDetail.module.scss";
 import "reactjs-popup/dist/index.css";
@@ -8,34 +8,27 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 import io from "socket.io-client";
-import { useReactToPrint } from "react-to-print";
-import { HoaDonTong } from "../../../components/pdfData/HoaDonTong";
 import Popup from "reactjs-popup";
+import { Modal } from "antd";
 const socket = io("https://clinicsystem.io.vn");
 
 const DoneDetail = () => {
   const [serviceFormList, setServiceFormList] = useState();
-  const [serviceList, setServiceList] = useState([]);
   const [medicalRecordData, setMedicalRecordData] = useState([]);
   const [imgUrl, setImgUrl] = useState();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedServices, setSelectedServices] = useState([]);
   const [serviceFormDetailSideArr, setServiceFormDetailSideArr] = useState();
-  const [birdProfile, setBirdProfile] = useState();
+  // const [birdProfile, setBirdProfile] = useState();
   // const location = useLocation();
   // const { socket } = location.state || {};
   const { bookingId } = useParams();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [openModalProfile, setOpenModalProfile] = useState(false);
-
-  const [veterinarians, setVeterinarians] = useState([]);
-  const [selectedVet, setSelectedVet] = useState("");
   const [bookingInfo, setBookingInfo] = useState();
-  const [billDetailList, setBillDetailList] = useState();
-  const [serviceFormDetailList, setServiceFormDetailList] = useState();
-  const [showPrintBill, setShowPrintBill] = useState(false);
-  const [bookingStatus, setBookingStatus] = useState();
+  const [openMedicine, setOpenMedicine] = useState(false);
+  const [prescription, setPrescription ] = useState();
+
 
   const openPopup = async (id) => {
     const responseImgUrl = await api.get(
@@ -55,16 +48,8 @@ const DoneDetail = () => {
     setIsOpen(false);
   };
 
-  // const handleOpenConfirm = () => {
-  //   setOpenModalConfirmService(true);
-  //   createNewServiceForm(bookingInfo);
-  // };
 
-  //Print
-  const printRef = useRef();
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-  });
+
 
   //LẤY THÔNG TIN BOOKING
   useEffect(() => {
@@ -127,7 +112,21 @@ const DoneDetail = () => {
       }
     };
 
+    const fetchPrescription = async () => {
+      try {
+        const responsePrescription = await api.get(
+          `/prescription/?booking_id=${bookingId}`
+        );
+        console.log("thuoc ne", responsePrescription.data.data.prescription_details)
+        setPrescription(responsePrescription.data.data.prescription_details)
+        
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     getBooking();
+    fetchPrescription();
   }, [bookingId]);
 
   const currentDate = new Date();
@@ -141,36 +140,7 @@ const DoneDetail = () => {
   // Tạo chuỗi thời gian ở định dạng giờ:phút
   const currentTime = `${formattedHours}:${formattedMinutes}`;
 
-  const createNewServiceForm = async (item) => {
-    console.log("item", item);
-    try {
-      const sp1 = await api.get(`/service-package/SP1`);
-      if (sp1) {
-        // Tạo service_Form
-        const createdResponse = await api.post(`/service-form/`, {
-          bird_id: item.bird_id,
-          booking_id: item.booking_id,
-          reason_referral: "any",
-          status: "pending",
-          date: item.arrival_date,
-          veterinarian_referral: item.veterinarian_id,
-          total_price: sp1.data.data.price,
-          qr_code: "any",
-          num_ser_must_do: 1,
-          num_ser_has_done: 0,
-          arr_service_pack: [
-            {
-              service_package_id: "SP1",
-              note: "Khám tổng quát",
-            },
-          ],
-        });
-        console.log("create service form", createdResponse);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
 
   const options = {
     title: "Xác nhận check-in",
@@ -194,56 +164,7 @@ const DoneDetail = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleConfirmAlert = (item) => {
-    const updatedOptions = {
-      ...options,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
-            console.log("selected vet", selectedVet);
-            try {
-              const response = await api.put(`/booking/${item.booking_id}`, {
-                veterinarian_id: selectedVet,
-                status: "checked_in",
-                checkin_time: currentTime,
-              });
-              if (response) {
-                socket.emit("confirm-check-in", {
-                  customer_id: item.account_id,
-                  veterinarian_id: item.veterinarian_id,
-                });
-                toast.success("Check-in thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                console.log("response doi status ne", response.data);
-                if (item.service_type_id === "ST001") {
-                  createNewServiceForm(item);
-                }
-                navigate("/track");
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
-  };
+
 
   const optionsCancel = {
     title: "Xác nhận",
@@ -332,49 +253,6 @@ const DoneDetail = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleCheckinAfter = (item) => {
-    const updatedOptions = {
-      ...optionsCheckinAfter,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
-            try {
-              const responseCancel = await api.put(
-                `/booking/${item.booking_id}`,
-                {
-                  status: "checked_in_after_test",
-                }
-              );
-              if (responseCancel) {
-                console.log("đã huỷ cuộc hẹn");
-                toast.success("Đã huỷ thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                navigate("/track");
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
-  };
 
   return (
     <div className={styles.wrapper}>
@@ -394,6 +272,23 @@ const DoneDetail = () => {
         {!loading && (
           <div className={styles.mainContent}>
             <div className={styles.content}>
+            <table>
+                  <tbody>
+                    <tr>
+                      <th>Triệu chứng</th>
+                      <td>{bookingInfo?.symptom}</td>
+                    </tr>
+                    <tr>
+                      <th>Chẩn đoán</th>
+                      <td>{bookingInfo?.diagnosis}</td>
+                    </tr>
+                    <tr>
+                      <th>Lời khuyên</th>
+                      <td>{bookingInfo?.recommendations}</td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
               <div className={styles.examingService}>
                 {serviceFormList &&
                   serviceFormList.length > 0 &&
@@ -491,40 +386,12 @@ const DoneDetail = () => {
                 </div>
                 <div
                   className={styles.boxDataItem}
-                  onClick={() => setOpenModalProfile(true)}
+                  onClick={() => setOpenMedicine(true)}
                 >
                   <ion-icon name="print-outline"></ion-icon>
-                  <span>In phiếu khám bệnh</span>
+                  <span>Xem đơn thuốc</span>
                 </div>
               </div>
-              {bookingStatus === "booked" ? (
-                <button
-                  className={styles.btnComplete}
-                  onClick={() => handleConfirmAlert(bookingInfo)}
-                >
-                  Check-in
-                </button>
-              ) : bookingStatus === "test_requested" ? (
-                <button
-                  className={styles.btnComplete}
-                  onClick={() => handleCheckinAfter(bookingInfo)}
-                >
-                  Check-in sau xét nghiệm
-                </button>
-              ) : (
-                ""
-              )}
-              {showPrintBill && (
-                <button className={styles.btnComplete} onClick={handlePrint}>
-                  In hoá đơn
-                </button>
-              )}
-              <button
-                className={styles.btnComplete}
-                onClick={() => handleConfirmCancel(bookingInfo)}
-              >
-                Huỷ cuộc hẹn
-              </button>
             </div>
           </div>
         )}
@@ -533,28 +400,41 @@ const DoneDetail = () => {
         open={openModalProfile}
         onClose={() => setOpenModalProfile(false)}
       />
-      {showPrintBill && (
-        <div style={{ display: "none" }}>
-          <HoaDonTong
-            ref={printRef}
-            billDetailList={billDetailList}
-            serviceFormDetailList={serviceFormDetailList}
-            bookingInfo={bookingInfo}
-          ></HoaDonTong>
-        </div>
-      )}
+      <Modal
+        title="Đơn thuốc đã kê"
+        centered
+        open={openMedicine}
+        onOk={() => setOpenMedicine(false)}
+        onCancel={() => setOpenMedicine(false)}
+        width={1000}
+      >
+        <table className={styles.table}>
+                        <tr>
+                            <th>Tên thuốc</th>
+                            <th>Đơn vị</th>
+                            <th>Số liều dùng/ số ngày</th>
+                            <th>Tổng số liều</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                        {prescription && prescription.length > 0 && prescription.map((item, index) => (
+                            <tr>
+                                <td>{item.medicine.name}</td>
+                                <td>{item.medicine.unit}</td>
+                                <td>{item.dose}/{item.day}</td>
+                                <td>{item.total_dose}</td>
+                                <td>{item.note}</td>
+                            </tr>
+                        ))}
+                        
+                    </table>
+      </Modal>
+
 
       <div className={styles.footerContent}>
         <button className={styles.btnBack} onClick={() => navigate(`/track`)}>
           Quay lại
         </button>
 
-        {/* <button
-          className={styles.btnCont}
-          onClick={() => setTab((tab) => tab + 1)}
-        >
-          Tiếp tục
-        </button> */}
       </div>
     </div>
   );

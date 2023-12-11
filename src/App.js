@@ -30,6 +30,7 @@ import HistoryGrooming from "./pages/staff/grooming/HistoryGrooming";
 import ScheduleGrooming from "./pages/staff/grooming/ScheduleGrooming";
 import BillingBoardingDetail from "./pages/staff/BillingBoardingDetail";
 import DoneDetail from "./pages/doctor/healthcheck/DoneDetail";
+import ResultTesting from "./pages/doctor/healthcheck/ResultTesting";
 
 import {
   BsCalendar2RangeFill,
@@ -114,12 +115,6 @@ const listTabsReTesting = [
     name: "Trả kết quả",
     icon: BsFillPlusSquareFill,
     to: "/result",
-  },
-  {
-    id: 3,
-    name: "Lịch hẹn",
-    icon: BsFillPlusSquareFill,
-    to: "/schedule-retesting",
   },
   {
     id: 4,
@@ -354,7 +349,7 @@ function App() {
           path="/schedule-retesting"
           element={
             <MainLayout listTabs={listTabsReTesting}>
-              <Result></Result>
+              <ResultTesting></ResultTesting>
             </MainLayout>
           }
         ></Route>
@@ -362,7 +357,7 @@ function App() {
           path="/done-retesting"
           element={
             <MainLayout listTabs={listTabsReTesting}>
-              <Result></Result>
+              <ResultTesting></ResultTesting>
             </MainLayout>
           }
         ></Route>

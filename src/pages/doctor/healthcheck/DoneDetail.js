@@ -10,13 +10,22 @@ import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 import io from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
 import { HoaDonTong } from "../../../components/pdfData/HoaDonTong";
+import Popup from "reactjs-popup";
 const socket = io("https://clinicsystem.io.vn");
 
 const DoneDetail = () => {
+  const [serviceFormList, setServiceFormList] = useState();
+  const [serviceList, setServiceList] = useState([]);
+  const [medicalRecordData, setMedicalRecordData] = useState([]);
+  const [imgUrl, setImgUrl] = useState();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [serviceFormDetailSideArr, setServiceFormDetailSideArr] = useState();
+  const [birdProfile, setBirdProfile] = useState();
   // const location = useLocation();
   // const { socket } = location.state || {};
   const { bookingId } = useParams();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [openModalProfile, setOpenModalProfile] = useState(false);
 
@@ -28,104 +37,98 @@ const DoneDetail = () => {
   const [showPrintBill, setShowPrintBill] = useState(false);
   const [bookingStatus, setBookingStatus] = useState();
 
+  const openPopup = async (id) => {
+    const responseImgUrl = await api.get(
+      `/media/?type=service_form_details&type_id=${id}`
+    );
+    if (responseImgUrl.data.data[0]?.link) {
+      setImgUrl(responseImgUrl.data.data[0]?.link);
+    } else {
+      setImgUrl(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Flag_of_None.svg/1024px-Flag_of_None.svg.png"
+      );
+    }
+    setIsOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsOpen(false);
+  };
+
+  // const handleOpenConfirm = () => {
+  //   setOpenModalConfirmService(true);
+  //   createNewServiceForm(bookingInfo);
+  // };
+
   //Print
   const printRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
   });
 
-  const fetchVeterinarians = async (vet, date) => {
-    try {
-      // let responseVeterinarians;
-      // if (vet.service_type_id === "ST001") {
-      //   responseVeterinarians = await api.get(
-      //     `/vet/?service_id=${vet.service_id}&service_type_id=${vet.service_type_id}&date=${date}`
-      //   );
-      // } else {
-      //   responseVeterinarians = await api.get(
-      //     `/vet/?service_type_id=${vet.service_type_id}&date=${date}`
-      //   );
-      // }
-
-      const responseVeterinarians = await api.get(`/vet/?date=${date}`);
-      console.log("response", responseVeterinarians.data.data);
-      let filterList;
-      if (vet.service_type_id === "ST001") {
-        filterList = responseVeterinarians.data.data.filter(
-          (item) =>
-            item.veterinarian.is_primary === "1" &&
-            item.veterinarian.service_type_id === "ST001"
-        );
-      } else {
-        filterList = responseVeterinarians.data.data.filter(
-          (item) => item.veterinarian.service_type_id === vet.service_type_id
-        );
-      }
-      console.log("filter list", filterList);
-      setVeterinarians(filterList);
-      console.log("fetch vet", responseVeterinarians.data.data);
-      // console.log("vet.service_id", vet.service_id);
-      // console.log("vet.service_type_id", vet.service_type_id);
-      // console.log("fetch", responseVeterinarians);
-    } catch (error) {
-      console.error("Error fetching veterinarians:", error);
-    }
-  };
-
-  const fetchBookingInfo = async () => {
-    try {
-      const responseBooking = await api.get(`/booking/${bookingId}`);
-      setBookingInfo(responseBooking.data.data);
-      setBookingStatus(responseBooking.data.data.status);
-      setSelectedVet(responseBooking.data.data.veterinarian_id);
-      fetchVeterinarians(
-        responseBooking.data.data.veterinarian,
-        responseBooking.data.data.arrival_date
-      );
-      console.log("responseBooking", responseBooking);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchServiceForm = async () => {
-    try {
-      const responseServiceForm = await api.get(
-        `/service-form/?booking_id=${bookingId}`
-      );
-      if (responseServiceForm.data.data.length !== 0) {
-        setShowPrintBill(true);
-        const serviceFormDetailArr = [];
-        responseServiceForm.data.data.forEach((item) => {
-          serviceFormDetailArr.push(...item.service_form_details);
-        });
-        setServiceFormDetailList(serviceFormDetailArr);
-      }
-    } catch (error) {
-      console.log(error);
-      setLoading(false); // Handle error and set loading to false
-    }
-  };
-
+  //LẤY THÔNG TIN BOOKING
   useEffect(() => {
-    fetchBookingInfo();
-    fetchServiceForm();
-    setTimeout(() => {
-      setLoading(false);
-    }, 850);
-  }, []);
+    const getBooking = async () => {
+      try {
+        const response = await api.get(
+          `/booking/${bookingId}?service_type_id=ST001`
+        );
+        setBookingInfo(response.data.data[0]);
+        console.log("thong tin booking ne:", response.data.data[0]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      console.log("socket id detail: ", socket.id);
-      socket.emit("login", { account_id: localStorage.getItem("account_id") });
-      console.log("Login sucess");
-    }, 500);
-  }, []);
+        //GET SERVICE FORM
+        const responseServiceForm = await api.get(
+          `/service-form/?booking_id=${bookingId}`
+        );
 
-  const handleVetSelection = (event) => {
-    setSelectedVet(event.target.value);
-  };
+        const filterList = responseServiceForm.data.data.slice(0, -1);
+
+        if (filterList.length > 0) {
+          const tempArr = [];
+
+          // Lặp qua dữ liệu response và thêm các phần tử vào mảng tạm thời
+          filterList.forEach((item) => {
+            item.service_form_details.forEach((item2) => {
+              tempArr.push(item2);
+            });
+            console.log("temp arr", tempArr);
+          });
+
+          setServiceFormDetailSideArr(tempArr);
+
+          try {
+            const responsesMedicalMedia = await Promise.all(
+              tempArr.map(async (item) => {
+                if (item.status === "done") {
+                  const responseDetail = await api.get(
+                    `/medical-record/?service_form_detail_id=${item.service_form_detail_id}`
+                  );
+                  return responseDetail.data.data[0];
+                } else {
+                  return {
+                    note: item.note,
+                    service_form_detail_id: item.service_form_detail_id,
+                  };
+                }
+              })
+            );
+            // Thêm dữ liệu vào medicalRecordData
+            setMedicalRecordData(responsesMedicalMedia);
+            console.log("upda", responsesMedicalMedia);
+          } catch (error) {
+            console.error("Lỗi khi gọi API:", error);
+          }
+        }
+
+        setServiceFormList(filterList);
+        console.log("service form list", filterList);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getBooking();
+  }, [bookingId]);
 
   const currentDate = new Date();
   const hours = currentDate.getHours();
@@ -391,86 +394,90 @@ const DoneDetail = () => {
         {!loading && (
           <div className={styles.mainContent}>
             <div className={styles.content}>
-              <div className={styles.InfText}>Thông tin cuộc hẹn</div>
-              <div className={styles.element}>
-                <h5>THÔNG TIN CHUNG</h5>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>Tên dịch vụ</th>
-                      <td>{bookingInfo?.service_type}</td>
-                    </tr>
-                    <tr>
-                      <th>Tên khách hàng</th>
-                      <td>{bookingInfo?.customer_name}</td>
-                    </tr>
-                    <tr>
-                      <th>Số điện thoại</th>
-                      <td>{bookingInfo?.bird.customer.phone}</td>
-                    </tr>
-                    <tr>
-                      <th>Tên chim</th>
-                      <td>{bookingInfo?.bird.name}</td>
-                    </tr>
-                    <tr>
-                      <th>Giờ checkin</th>
-                      <td>{bookingInfo?.checkin_time}</td>
-                    </tr>
-                    <tr>
-                      <th>Bác sĩ phụ trách</th>
-                      <select
-                        onChange={handleVetSelection}
-                        className={styles.selectVet}
-                      >
-                        {veterinarians &&
-                          veterinarians.length > 0 &&
-                          veterinarians.map((vet) => {
-                            if (
-                              vet.veterinarian.name ===
-                              bookingInfo?.veterinarian.name
-                            ) {
-                              return (
-                                <option
-                                  key={vet.veterinarian_id}
-                                  value={vet.veterinarian_id}
-                                  selected={true}
+              <div className={styles.examingService}>
+                {serviceFormList &&
+                  serviceFormList.length > 0 &&
+                  serviceFormList.map((item, index) => (
+                    <div>
+                      <h3 className={styles.requireText}>
+                        <ion-icon name="documents-outline"></ion-icon>Kết quả
+                        xét nghiệm {index + 1}:
+                      </h3>
+                      {item.service_form_details.map((item, index) => {
+                        const matchingMedicalRecord = medicalRecordData.find(
+                          (record) =>
+                            record.service_form_detail_id ===
+                            item.service_form_detail_id
+                        );
+                        console.log("record ne huu", matchingMedicalRecord);
+
+                        if (matchingMedicalRecord) {
+                          return (
+                            <div key={index} className={styles.resultDetail}>
+                              <div className={styles.titleService}>
+                                <h4>
+                                  {item.note}
+                                  {matchingMedicalRecord.hasOwnProperty(
+                                    "symptom"
+                                  ) ? (
+                                    <span></span>
+                                  ) : (
+                                    <span className={styles.cancelled}>
+                                      Đã huỷ
+                                    </span>
+                                  )}
+                                </h4>
+
+                                <span
+                                  onClick={() =>
+                                    openPopup(item.service_form_detail_id)
+                                  }
+                                  className={styles.viewFile}
                                 >
-                                  {vet.veterinarian.name}
-                                </option>
-                              );
-                            } else {
-                              return (
-                                <option
-                                  key={vet.veterinarian_id}
-                                  value={vet.veterinarian_id}
+                                  <ion-icon name="document-outline"></ion-icon>
+                                  Xem file
+                                </span>
+                                <Popup
+                                  open={isOpen}
+                                  closeOnDocumentClick
+                                  onClose={closePopup}
                                 >
-                                  {vet.veterinarian.name}
-                                </option>
-                              );
-                            }
-                          })}
-                      </select>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className={styles.history}>
-                <img
-                  src={bookingInfo.bird.image}
-                  className={styles.image}
-                  alt=""
-                />
-                {/* <div className={styles.historyText}>Lịch sử</div>
-      <div className={styles.infHS}>
-        <p>1. Khám tổng quát</p>
-        <p>15/08/2023</p>
-        <button className={styles.button}>Xem kết quả</button>
-      </div>
-      <div className={styles.infHS}>
-        <p>2. Chụp X-ray</p>
-        <p>20/08/2023</p>
-        <button className={styles.button}>Xem kết quả</button>
-      </div> */}
+                                  <div className={styles.popup}>
+                                    <br></br>
+                                    <img
+                                      src={imgUrl}
+                                      alt=""
+                                      className={styles.imgPopup}
+                                    />
+                                  </div>
+                                </Popup>
+                              </div>
+                              <div className={styles.lineItem}>
+                                <span className={styles.label}>
+                                  Triệu chứng:
+                                </span>
+                                <span>{matchingMedicalRecord.symptom}</span>
+                              </div>
+                              <div className={styles.lineItem}>
+                                <span className={styles.label}>Chẩn đoán:</span>
+                                <span>{matchingMedicalRecord.diagnose}</span>
+                              </div>
+                              <div className={styles.lineItem}>
+                                <span className={styles.label}>
+                                  Khuyến nghị:
+                                </span>
+                                <span>
+                                  {matchingMedicalRecord.recommendations}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                      <div key={index}>{item.note}</div>
+                    </div>
+                  ))}
               </div>
             </div>
             <div className={styles.metaContent}>

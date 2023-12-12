@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { BsCalendar2 } from "react-icons/bs";
 import styles from "./styles/ExamingToday.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 import { ImFilesEmpty } from "react-icons/im";
 import io from "socket.io-client";
+import { Modal } from 'antd';
+
 const socket = io("https://clinicsystem.io.vn");
 
 const ExamingToday = () => {
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [dates, setDates] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [modalOngoing, setModalOngoing] = useState("");
 
   useEffect(() => {
     console.log("socket id khi mới vào bên booking: ", socket.id);
@@ -26,39 +27,20 @@ const ExamingToday = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const today = new Date();
-    const nextFourDays = [];
+  const today = new Date();
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
-    for (let i = 0; i < 5; i++) {
-      const nextDay = new Date();
-      nextDay.setDate(today.getDate() + i);
-      const year = nextDay.getFullYear();
-      const month = String(nextDay.getMonth() + 1).padStart(2, "0");
-      const day = String(nextDay.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-      nextFourDays.push(formattedDate);
-    }
-    // Set selectedDate to the first date in the array when component mounts
-    if (nextFourDays.length > 0) {
-      setSelectedDate(nextFourDays[0]);
-    }
-    setDates(nextFourDays);
+  const [dates, setDates] = useState(formatDate(today));
+
+  useEffect(() => {
+  
   }, []);
 
-  const handleDateClick = (date) => {
-    const clickedDate = new Date(date);
-    const year = clickedDate.getFullYear();
-    const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(clickedDate.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-    setSelectedDate(formattedDate);
-  };
-
-  const formatDateForDisplay = (date) => {
-    const [yyyy, mm, dd] = date.split("-");
-    return `${dd}/${mm}`;
-  };
 
   const handleChangeStatusBooking = async (item) => {
     try {
@@ -79,7 +61,7 @@ const ExamingToday = () => {
 
   const fetchData = async () => {
     try {
-      const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+      const response = await api.get(`/booking?arrival_date=${dates}`);
       console.log("api ne:", response.data.data);
 
       const accountId = localStorage.getItem("account_id");
@@ -125,31 +107,16 @@ const ExamingToday = () => {
     setTimeout(() => {
       setLoading(false);
     }, 850);
-    console.log(selectedDate);
     fetchData();
-  }, [selectedDate]);
+  }, [dates]);
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>
-          <h3>DANH SÁCH KHÁM HÔM NAY</h3>
+        <div style={{ marginRight: "auto" }}>
+          <h1 className={styles.headerTitle}>DANH SÁCH KHÁM HÔM NAY</h1>
         </div>
-        {/* <div className={styles.middle}>
-          {dates.map((item, index) => (
-            <span
-              key={index}
-              className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
-            >
-              {formatDateForDisplay(item)}
-            </span>
-          ))}
-        </div> */}
-        <div className={styles.right}>
-          <div className={styles.btnSearch}>
-            <SearchOutlined />
-          </div>
-          <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
+        <div style={{ width: "30%" }}>
+          {/* <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton /> */}
         </div>
       </div>
       <table>
@@ -161,7 +128,7 @@ const ExamingToday = () => {
             <th> Số điện thoại</th>
             <th> Giờ đặt</th>
             <th> Giờ checkin</th>
-            <th> Bác sĩ phụ trách</th>
+            {/* <th> Bác sĩ phụ trách</th> */}
             <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
@@ -180,9 +147,13 @@ const ExamingToday = () => {
           )}
           {!loading && customerList.length === 0 && (
             <tr className={styles.NoGroomingDetial}>
-              <td colSpan="9">
-                <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>Không có cuộc hẹn khám nào cho ngày hôm nay.</h3>
+              <td colSpan="10">
+                <div className={styles.emptyContentCenter}>
+                  <BsCalendar2 size={50} className={styles.iconEmpty} />
+                  <h3 className={styles.txtNoGrooming}>
+                    Không có lịch khám nào cho hôm nay.
+                  </h3>
+                </div>
               </td>
             </tr>
           )}
@@ -195,38 +166,61 @@ const ExamingToday = () => {
                 <td>{item.bird.customer.phone}</td>
                 <td>{item.estimate_time}</td>
                 <td>{item.checkin_time}</td>
-                <td>
+                {/* <td>
                   <strong>{item.veterinarian.name}</strong>
-                </td>
+                </td> */}
                 <td>
                   <p
-                    className={`${styles.status} ${item.status === "checked_in" ||
-                        item.status === "checked_in_after_test"
+                    className={`${styles.status} ${
+                      item.status === "checked_in" ||
+                      item.status === "checked_in_after_test"
                         ? styles.checkin
                         : item.status === "on_going" ||
                           item.status === "test_requested"
-                          ? styles.being
-                          : styles.booked
-                      } `}
+                        ? styles.being
+                        : styles.booked
+                    } `}
                   >
                     {item.status === "checked_in"
                       ? "Đã checkin"
                       : item.status === "on_going"
-                        ? "Đang khám"
-                        : item.status === "test_requested"
-                          ? "Chờ xét nghiệm"
-                          : item.status === "checked_in_after_test"
-                            ? "Có kết quả"
-                            : "Chưa checkin"}
+                      ? "Đang khám"
+                      : item.status === "test_requested"
+                      ? "Chờ xét nghiệm"
+                      : item.status === "checked_in_after_test"
+                      ? "Có kết quả"
+                      : "Chưa checkin"}
                   </p>
                 </td>
                 <td>
-                  <div
-                    className={styles.btnExam}
-                    onClick={() => handleChangeStatusBooking(item)}
+                  {item.status !== "on_going" ? (
+                    <div
+                      className={styles.btnExam}
+                      onClick={() => setModalOngoing(true)}
+                    >
+                      Khám
+                    </div>
+                  ) : (
+                    <div
+                      className={styles.btnExam}
+                      style={{backgroundColor: 'rgba(0, 178, 255, 1)'}}
+                      onClick={() => navigate(`/examing/${item.booking_id}`)}
+                    >
+                      Tiếp tục
+                    </div>
+                  )}
+                  <Modal
+                    title="Xác nhận"
+                    centered
+                    open={modalOngoing}
+                    onOk={() => handleChangeStatusBooking(item)}
+                    onCancel={() => setModalOngoing(false)}
                   >
-                    Khám
-                  </div>
+                    <span>
+                      Khám cho chim {item.bird.name} của khách hàng{" "}
+                      {item.customer_name} ?
+                    </span>
+                  </Modal>
                 </td>
               </tr>
             ))}
@@ -244,9 +238,6 @@ const ExamingToday = () => {
 const Loading = () => {
   return (
     <tr>
-      <td>
-        <LoadingSkeleton></LoadingSkeleton>
-      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

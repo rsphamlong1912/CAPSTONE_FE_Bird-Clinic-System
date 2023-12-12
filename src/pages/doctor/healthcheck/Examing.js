@@ -16,7 +16,7 @@ import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 import { DonThuoc } from "../../../components/pdfData/DonThuoc";
 
-import { message } from "antd";
+import { message, Modal } from "antd";
 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -48,6 +48,8 @@ const Examing = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [serviceFormList, setServiceFormList] = useState();
+  const [modalComplete, setModalComplete] = useState(false);
+  const [modalCancel, setModalCancel] = useState(false);
 
   const openPopup = async (id) => {
     const responseImgUrl = await api.get(
@@ -623,48 +625,72 @@ const Examing = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleConfirmCancel = (item) => {
-    const updatedOptions = {
-      ...optionsCancel,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
-            try {
-              const responseCancel = await api.put(
-                `/booking/${item.booking_id}`,
-                {
-                  status: "cancel",
-                }
-              );
-              if (responseCancel) {
-                console.log("đã huỷ cuộc hẹn");
-                toast.success("Đã huỷ thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                navigate("/examing");
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
+  // const handleConfirmCancel = (item) => {
+  //   const updatedOptions = {
+  //     ...optionsCancel,
+  //     buttons: [
+  //       {
+  //         label: "Xác nhận",
+  //         onClick: async () => {
+  //           try {
+  //             const responseCancel = await api.put(
+  //               `/booking/${item.booking_id}`,
+  //               {
+  //                 status: "cancel",
+  //               }
+  //             );
+  //             if (responseCancel) {
+  //               console.log("đã huỷ cuộc hẹn");
+  //               toast.success("Đã huỷ thành công!", {
+  //                 position: "top-right",
+  //                 autoClose: 5000,
+  //                 hideProgressBar: false,
+  //                 closeOnClick: true,
+  //                 pauseOnHover: true,
+  //                 draggable: true,
+  //                 progress: undefined,
+  //                 theme: "light",
+  //               });
+  //               navigate("/examing");
+  //             }
+  //           } catch (error) {
+  //             console.log(error);
+  //           }
+  //         },
+  //       },
+  //       {
+  //         label: "Huỷ",
+  //         onClick: () => {
+  //           console.log("click no");
+  //         },
+  //       },
+  //     ],
+  //   };
+  //   confirmAlert(updatedOptions);
+  // };
+
+  const handleConfirmCancel = async (item) => {
+    try {
+      const responseCancel = await api.put(`/booking/${item.booking_id}`, {
+        status: "cancel",
+      });
+      if (responseCancel) {
+        console.log("đã huỷ cuộc hẹn");
+        toast.success("Đã huỷ thành công!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/examing");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const optionsFinish = {
@@ -689,63 +715,102 @@ const Examing = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleConfirmFinish = (item) => {
-    const updatedOptions = {
-      ...optionsFinish,
-      buttons: [
+  // const handleConfirmFinish = (item) => {
+  //   const updatedOptions = {
+  //     ...optionsFinish,
+  //     buttons: [
+  //       {
+  //         label: "Xác nhận",
+  //         onClick: async () => {
+  //           try {
+  //             const responseSFD = await api.put(
+  //               `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
+  //               {
+  //                 status: "done",
+  //               }
+  //             );
+  //             const responseSF = await api.put(
+  //               `/service-form/${serviceFormDetail.service_form_id}`,
+  //               {
+  //                 status: "done",
+  //               }
+  //             );
+  //             const responseBooking = await api.put(
+  //               `/booking/${item.booking_id}`,
+  //               {
+  //                 status: "finish",
+  //                 diagnosis: examData.diagnosis,
+  //                 recommendations: examData.additionalNotes,
+  //               }
+  //             );
+  //             addPrescriptionData();
+  //             if (responseSFD && responseSF && responseBooking) {
+  //               console.log("đã hoàn thành cuộc hẹn");
+  //               toast.success("Xác nhận thành công!", {
+  //                 position: "top-right",
+  //                 autoClose: 5000,
+  //                 hideProgressBar: false,
+  //                 closeOnClick: true,
+  //                 pauseOnHover: true,
+  //                 draggable: true,
+  //                 progress: undefined,
+  //                 theme: "light",
+  //               });
+  //               navigate("/examing");
+  //             }
+  //           } catch (error) {
+  //             console.log(error);
+  //           }
+  //         },
+  //       },
+  //       {
+  //         label: "Huỷ",
+  //         onClick: () => {
+  //           console.log("click no");
+  //         },
+  //       },
+  //     ],
+  //   };
+  //   confirmAlert(updatedOptions);
+  // };
+
+  const handleConfirmFinish = async (item) => {
+    try {
+      const responseSFD = await api.put(
+        `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
         {
-          label: "Xác nhận",
-          onClick: async () => {
-            try {
-              const responseSFD = await api.put(
-                `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
-                {
-                  status: "done",
-                }
-              );
-              const responseSF = await api.put(
-                `/service-form/${serviceFormDetail.service_form_id}`,
-                {
-                  status: "done",
-                }
-              );
-              const responseBooking = await api.put(
-                `/booking/${item.booking_id}`,
-                {
-                  status: "finish",
-                  diagnosis: examData.diagnosis,
-                  recommendations: examData.additionalNotes,
-                }
-              );
-              addPrescriptionData();
-              if (responseSFD && responseSF && responseBooking) {
-                console.log("đã hoàn thành cuộc hẹn");
-                toast.success("Xác nhận thành công!", {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "light",
-                });
-                navigate("/examing");
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
+          status: "done",
+        }
+      );
+      const responseSF = await api.put(
+        `/service-form/${serviceFormDetail.service_form_id}`,
         {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
+          status: "done",
+        }
+      );
+      const responseBooking = await api.put(`/booking/${item.booking_id}`, {
+        status: "finish",
+        diagnosis: examData.diagnosis,
+        recommendations: examData.additionalNotes,
+      });
+      addPrescriptionData();
+      if (responseSFD && responseSF && responseBooking) {
+        console.log("đã hoàn thành cuộc hẹn");
+        toast.success("Xác nhận thành công!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/examing");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [customerPhone, setCustomerPhone] = useState();
@@ -764,11 +829,11 @@ const Examing = () => {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.container}>
+      <div className={styles.container} style={{ padding: 40 }}>
         <div className={styles.headerContent}>
-          <div className={styles.left} onClick={() => navigate("/examing")}>
+          <div className={styles.left} onClick={() => navigate(`/examing`)}>
             <ion-icon name="chevron-back-outline"></ion-icon>
-            <span>Trở về</span>
+            <h4>THOÁT</h4>
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>KH: {customerName}</div>
@@ -780,15 +845,18 @@ const Examing = () => {
               <span className={`${tab === 1 ? styles.active : ""}`}>
                 Khám tổng thể
               </span>
-              <ion-icon name="chevron-forward-outline"></ion-icon>
+              {/* <ion-icon name="chevron-forward-outline"></ion-icon> */}
+              <div className={styles.lineProgress}></div>
               <span className={`${tab === 2 ? styles.active : ""}`}>
                 Yêu cầu dịch vụ
               </span>
-              <ion-icon name="chevron-forward-outline"></ion-icon>
+              {/* <ion-icon name="chevron-forward-outline"></ion-icon> */}
+              <div className={styles.lineProgress}></div>
               <span className={`${tab === 3 ? styles.active : ""}`}>
                 Kê thuốc
               </span>
-              <ion-icon name="chevron-forward-outline"></ion-icon>
+              {/* <ion-icon name="chevron-forward-outline"></ion-icon> */}
+              <div className={styles.lineProgress}></div>
               <span className={`${tab === 4 ? styles.active : ""}`}>
                 Hẹn tái khám
               </span>
@@ -796,7 +864,7 @@ const Examing = () => {
             {tab == 1 && (
               <div className={styles.examing}>
                 <div className={styles.inputItem}>
-                  <label htmlFor="temperature">Triệu chứng</label>
+                  <label htmlFor="temperature">Triệu chứng:</label>
                   <input
                     type="text"
                     name="symptoms"
@@ -809,24 +877,26 @@ const Examing = () => {
                   </span>
                 </div>
                 <div className={styles.inputItem}>
-                  <label htmlFor="temperature">Chẩn đoán</label>
+                  <label htmlFor="temperature">Chẩn đoán:</label>
                   <input
                     type="text"
                     name="diagnosis"
                     value={examData.diagnosis}
                     onChange={handleInputChange}
+                    placeholder="VD: Nhiễm trùng đường hô hấp, bệnh tiêu hóa..."
                   />
                   <span className={styles.inputLabelDesc}>
                     *Chẩn đoán của bác sĩ về tình trạng bệnh của chim
                   </span>
                 </div>
                 <div className={styles.inputItem}>
-                  <label htmlFor="temperature">Lời khuyên</label>
+                  <label htmlFor="temperature">Lời khuyên:</label>
                   <textarea
                     name="additionalNotes"
                     value={examData.additionalNotes}
                     onChange={handleInputChange}
-                    rows={3}
+                    rows={5}
+                    placeholder="VD: Để ý chim thường xuyên, đưa chim đi khám định kỳ..."
                   />
                   <span className={styles.inputLabelDesc}>
                     *Lời khuyên của bác sĩ cho chim bệnh
@@ -1035,37 +1105,36 @@ const Examing = () => {
               </div>
             )}
             {tab == 3 && (
-              <div className={styles.examing}>
-                <div className={styles.create}>
+              <div className={styles.examingMedicine}>              
                   {showButton && (
                     <button className={styles.btnCreate} onClick={toggleInfo}>
-                      + Thêm thuốc
+                    <ion-icon name="add-outline"></ion-icon>
+                      Kê đơn thuốc
                     </button>
                   )}
                   {showInfo && (
-                    <div className={styles.createAll}>
-                      <div className={styles.scrollableblock}>
+                    <>
                         <div>
                           {forms.map((form, index) => (
                             <div key={index} className={styles.contentAll}>
                               <div className={styles.headerDelete}>
                                 <div className={styles.numberMedicine}>
-                                  {index + 1}. {form.selectedMedicine}
+                                  {index + 1}. {form.selectedMedicine || "____________"}
                                 </div>
                                 <RiDeleteBinLine
                                   className={styles.deleteMedicine}
                                   onClick={() => removeForm(index)}
                                 />
                               </div>
-                              <div className={styles.hsdMedicine}>
-                                {medicineNames
+                              <div className={styles.hsdMedicine}>HDSD:                     
+                               {medicineNames
                                   .filter(
                                     (timeSlot) =>
                                       timeSlot.name === form.selectedMedicine
                                   )
                                   .map((filteredSlot, index) => (
                                     <div key={index}>
-                                      HDSD: {filteredSlot.usage}
+                                      {filteredSlot.usage}
                                     </div>
                                   ))}
                               </div>
@@ -1111,7 +1180,7 @@ const Examing = () => {
                               </div>
                               <div className={styles.createSecond}>
                                 <div className={styles.Second}>
-                                  <p>Liều</p>
+                                  <p>Liều *</p>
                                   <select
                                     className={styles.UnitList}
                                     name="unit"
@@ -1134,7 +1203,7 @@ const Examing = () => {
                                   </select>
                                 </div>
                                 <div className={styles.Second}>
-                                  <p>Ngày</p>
+                                  <p>Ngày *</p>
                                   <select
                                     className={styles.DayList}
                                     name="day"
@@ -1180,32 +1249,32 @@ const Examing = () => {
                                   onChange={(e) =>
                                     handleInputMedicineFirst(index, e)
                                   }
-                                  placeholder="Vd: Uống sau khi ăn no"
+                                  placeholder="VD: Uống sau khi ăn..."
                                 />
                               </div>
                             </div>
                           ))}
                         </div>
-                      </div>
                       <div className={styles.boxMedicine}>
                         <button
                           onClick={addForm}
                           className={styles.AddMedicine}
                         >
-                          + Thêm thuốc
+                          <ion-icon name="add-circle-outline"></ion-icon>                          
+                          Thêm thuốc
                         </button>
                         <div
                           className={styles.PrintMedicine}
                           onClick={handlePrintMd}
                           // onClick={() => setOpenModalPrescription(true)}
                         >
-                          <ion-icon name="thermometer-outline"></ion-icon>
+                          <ion-icon name="print-outline"></ion-icon>
                           <span>In đơn thuốc</span>
                         </div>
                       </div>
-                    </div>
+                    </>
                   )}
-                </div>
+               
               </div>
             )}
             {tab == 4 && (
@@ -1255,38 +1324,61 @@ const Examing = () => {
           </div>
           <div className={styles.metaContent}>
             <div className={styles.boxData}>
-              <div
-                className={styles.boxDataItem}
-                onClick={() => setOpenModal(true)}
-              >
-                <ion-icon name="thermometer-outline"></ion-icon>
-                <span>Nội dung khám</span>
-              </div>
-              <div
-                className={styles.boxDataItem}
-                onClick={() => setOpenModalProfile(true)}
-              >
-                <ion-icon name="calendar-clear-outline"></ion-icon>
-                <span>Hồ sơ chim khám</span>
+              <div>
+                <div
+                  className={styles.boxDataItem}
+                  onClick={() => setOpenModalProfile(true)}
+                >
+                  <ion-icon name="calendar-clear-outline"></ion-icon>
+                  <span>Hồ sơ chim khám</span>
+                </div>
+                <div
+                  className={styles.boxDataItem}
+                  onClick={() => setOpenModal(true)}
+                >
+                  <ion-icon name="thermometer-outline"></ion-icon>
+                  <span>Nội dung khám</span>
+                </div>
               </div>
             </div>
             <button
               className={styles.btnComplete}
               onClick={() => {
-                handleConfirmFinish(bookingInfo);
+                setModalComplete(true)
               }}
             >
               Hoàn thành khám
             </button>
+            <Modal
+              title="Hoàn thành khám"
+              centered
+              open={modalComplete}
+              onOk={() => handleConfirmFinish(bookingInfo)}
+              onCancel={() => setModalComplete(false)}
+              cancelText="Đóng"
+            >
+              <span>Xác nhận hoàn thành khám ?</span>
+            </Modal>
             <button
-              className={styles.btnComplete}
+              className={styles.btnCancel}
               onClick={() => {
-                handleConfirmCancel(bookingInfo);
+                setModalCancel(true);
               }}
             >
-              Huỷ khám
+              Hủy khám
             </button>
-            <button className={styles.btnHospitalize} onClick={handlePrint}>
+            <Modal
+              title="Hủy khám"
+              centered
+              open={modalCancel}
+              onOk={() => handleConfirmCancel(bookingInfo)}
+              onCancel={() => setModalCancel(false)}
+              cancelText="Đóng"
+            >
+              <span>Xác nhận hủy khám ?</span>
+            </Modal>
+            <button className={styles.btnHospitalize} style={{padding: '15px 35px', display: 'flex', justifyContent: 'center', alignItems: 'center'}} onClick={handlePrint}>
+              <ion-icon name="print-outline"></ion-icon>
               In phiếu kết quả
             </button>
           </div>

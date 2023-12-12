@@ -4,7 +4,7 @@ import styles from "./WaitingResult.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
-import { ImFilesEmpty } from "react-icons/im";
+import { BsCalendar2 } from "react-icons/bs";
 
 const WaitingResult = () => {
   const [customerList, setCustomerList] = useState([]);
@@ -78,26 +78,12 @@ const WaitingResult = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.headerContent}>
-        <div className={styles.left}>
-          <h3>DANH SÁCH CHỜ KẾT QUẢ</h3>
+       <div className={styles.headerContent}>
+        <div style={{ marginRight: "auto" }}>
+          <h1 className={styles.headerTitle}>DANH SÁCH CHỜ KẾT QUẢ</h1>
         </div>
-        {/* <div className={styles.middle}>
-          {dates.map((item, index) => (
-            <span
-              key={index}
-              className={item === selectedDate ? styles.active : ""}
-              onClick={() => handleDateClick(item)}
-            >
-              {formatDateForDisplay(item)}
-            </span>
-          ))}
-        </div> */}
-        <div className={styles.right}>
-          <div className={styles.btnSearch}>
-            <SearchOutlined />
-          </div>
-          <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
+        <div style={{ width: "30%" }}>
+          {/* <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton /> */}
         </div>
       </div>
       <table>
@@ -128,11 +114,15 @@ const WaitingResult = () => {
           )}
           {!loading && customerList.length === 0 && (
             <tr className={styles.NoGroomingDetial}>
-              <td colSpan="9">
-                <ImFilesEmpty className={styles.iconEmpty} />
-                <h3 className={styles.txtNoGrooming}>Hiện tại không có hàng chờ kết quả nào.</h3>
-              </td>
-            </tr>
+            <td colSpan="10">
+              <div className={styles.emptyContentCenter}>
+                <BsCalendar2 size={50} className={styles.iconEmpty} />
+                <h3 className={styles.txtNoGrooming}>
+                  Không có danh sách chờ kết quả.
+                </h3>
+              </div>
+            </td>
+          </tr>
           )}
           {!loading &&
             customerList.map((item, index) => (

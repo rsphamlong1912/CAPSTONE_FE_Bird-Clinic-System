@@ -19,6 +19,7 @@ const ResultTestingDetail = () => {
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [medicalRecord, setMedicalRecord] = useState();
   const [imgUrl, setImgUrl] = useState();
+  const [serviceFormDetailInfo, setServiceFormDetailInfo] = useState()
 
   const fetchMedicalRecord = async () => {
     try {
@@ -48,9 +49,23 @@ const ResultTestingDetail = () => {
     }
   };
 
+  const fetchServiceFormDetail = async () => {
+    try {
+      const responseServiceFormDetail = await api.get(
+        `/service-form-detail/${serviceFormDetailId}`
+      );
+      setServiceFormDetailInfo(responseServiceFormDetail.data.data[0])
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   useEffect(() => {
     fetchMedicalRecord();
     fetchFileImg();
+    fetchServiceFormDetail()
   }, []);
 
   return (
@@ -66,7 +81,7 @@ const ResultTestingDetail = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>
-              {/* KH: {bookingInfo?.customer_name} */}KH: Set cứng nè
+               KH: {serviceFormDetailInfo?.customer_name} 
             </div>
           </div>
         </div>

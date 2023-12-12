@@ -34,7 +34,7 @@ import ResultTesting from "./pages/doctor/healthcheck/ResultTesting";
 import ScheduleBoarding from "./pages/staff/boarding/ScheduleBoarding";
 import HistoryBoarding from "./pages/staff/boarding/HistoryBoarding";
 import ResultTestingDetail from "./pages/doctor/healthcheck/ResultTestingDetail";
-
+import WarningRole from "./pages/WarningRole";
 
 import {
   BsCalendar2RangeFill,
@@ -42,11 +42,18 @@ import {
   BsCalendar2PlusFill,
   BsCreditCard2BackFill,
   BsFillPlusSquareFill,
-
-
-
 } from "react-icons/bs";
-import {ConfigProvider} from 'antd';
+import { ConfigProvider } from "antd";
+
+// Hàm kiểm tra vai trò từ localStorage
+const getRoleFromLocalStorage = () => {
+  return localStorage.getItem("role"); // Giả sử 'role' chứa vai trò khi đăng nhập
+};
+
+// Kiểm tra xem người dùng có quyền truy cập vào route không
+const isAuthorized = (allowedRoles, userRole) => {
+  return allowedRoles.includes(userRole);
+};
 
 const listTabsStaff = [
   {
@@ -178,286 +185,415 @@ const listTabsBoarding = [
 
 function App() {
   return (
-  <ConfigProvider
-    theme={{
-      token: {
-        // Seed Token
-        colorPrimary: '#32B768',
-        fontFamily: "Inter",
-        fontSize: 15,
-        // Alias Token
-        colorBgContainer: '#ffffff',
-      },
-    }}
-  >
-    <Fragment>
-      <Routes>
-        <Route path="/" element={<Signin></Signin>}></Route>
-        {/* STAFF  */}
-        <Route
-          path="/track"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <TrackAppoinments></TrackAppoinments>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/track/:bookingId"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <TrackDetail></TrackDetail>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/checkin"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <Checkin></Checkin>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/approve"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <PendingBooking></PendingBooking>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/billing"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <Billing></Billing>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/billing/:id"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <BillingDetail></BillingDetail>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/billing-boarding/:id"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <BillingBoardingDetail></BillingBoardingDetail>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/billing-history"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <BillingHistory></BillingHistory>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/create"
-          element={
-            <MainLayout listTabs={listTabsStaff}>
-              <CreateAppoinment></CreateAppoinment>
-            </MainLayout>
-          }
-        ></Route>
-        {/* HEALTH CHECK  */}
-        {/* MAIN DOCTOR */}
-        <Route
-          path="/examing"
-          element={
-            <MainLayout listTabs={listTabsHealthCheck}>
-              <ExamingToday></ExamingToday>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/examing/:bookingId"
-          element={
-            <MainLayout listTabs={listTabsHealthCheck}>
-              <Examing></Examing>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/wait-result"
-          element={
-            <MainLayout listTabs={listTabsHealthCheck}>
-              <WaitingResult></WaitingResult>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/schedule"
-          element={
-            <MainLayout listTabs={listTabsHealthCheck}>
-              <AppointmentSchedule></AppointmentSchedule>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/done"
-          element={
-            <MainLayout listTabs={listTabsHealthCheck}>
-              <DoneExamination></DoneExamination>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/done/:bookingId"
-          element={
-            <MainLayout listTabs={listTabsHealthCheck}>
-              <DoneDetail></DoneDetail>
-            </MainLayout>
-          }
-        ></Route>
-        {/* SIDE DOCTOR  */}
-        <Route
-          path="/retesting"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <ReTestingToday></ReTestingToday>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/retesting/:serviceFormDetailId"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <ReTesting></ReTesting>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/result/"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <ResultToday></ResultToday>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/result/:serviceFormDetailId"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <Result></Result>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/schedule-retesting"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <ResultTesting></ResultTesting>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/done-retesting"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <ResultTesting></ResultTesting>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/done-retesting/:serviceFormDetailId"
-          element={
-            <MainLayout listTabs={listTabsReTesting}>
-              <ResultTestingDetail></ResultTestingDetail>
-            </MainLayout>
-          }
-        ></Route>
-        {/* GROOMING  */}
-        <Route
-          path="/grooming"
-          element={
-            <MainLayout listTabs={listTabsGrooming}>
-              <GroomingToday></GroomingToday>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/grooming/:bookingId"
-          element={
-            <MainLayout listTabs={listTabsGrooming}>
-              <Grooming></Grooming>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/schedule-grooming"
-          element={
-            <MainLayout listTabs={listTabsGrooming}>
-              <ScheduleGrooming></ScheduleGrooming>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/history-grooming"
-          element={
-            <MainLayout listTabs={listTabsGrooming}>
-              <HistoryGrooming></HistoryGrooming>
-            </MainLayout>
-          }
-        ></Route>
-        {/* BOARDING  */}
-        <Route
-          path="/boarding"
-          element={
-            <MainLayout listTabs={listTabsBoarding}>
-              <BoardingToday></BoardingToday>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/boarding/:bookingId"
-          element={
-            <MainLayout listTabs={listTabsBoarding}>
-              <Boarding></Boarding>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/manage-report"
-          element={
-            <MainLayout listTabs={listTabsBoarding}>
-              <ManageAndReport></ManageAndReport>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/manage-report/:boarding_id"
-          element={
-            <MainLayout listTabs={listTabsBoarding}>
-              <Report></Report>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/schedule-boarding"
-          element={
-            <MainLayout listTabs={listTabsBoarding}>
-              <ScheduleBoarding></ScheduleBoarding>
-            </MainLayout>
-          }
-        ></Route>
-        <Route
-          path="/history-boarding"
-          element={
-            <MainLayout listTabs={listTabsBoarding}>
-              <HistoryBoarding></HistoryBoarding>
-            </MainLayout>
-          }
-        ></Route>
-      </Routes>
-    </Fragment>
-  </ConfigProvider>
+    <ConfigProvider
+      theme={{
+        token: {
+          // Seed Token
+          colorPrimary: "#32B768",
+          fontFamily: "Inter",
+          fontSize: 15,
+          // Alias Token
+          colorBgContainer: "#ffffff",
+        },
+      }}
+    >
+      <Fragment>
+        <Routes>
+          <Route path="/" element={<Signin></Signin>}></Route>
+          {/* STAFF  */}
+          <Route
+            path="/track"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <TrackAppoinments></TrackAppoinments>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/track/:bookingId"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <TrackDetail></TrackDetail>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/checkin"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <Checkin></Checkin>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/approve"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <PendingBooking></PendingBooking>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/billing"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <Billing></Billing>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/billing/:id"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <BillingDetail></BillingDetail>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/billing-boarding/:id"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <BillingBoardingDetail></BillingBoardingDetail>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/billing-history"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <BillingHistory></BillingHistory>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/create"
+            element={
+              isAuthorized(["staff"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsStaff}>
+                  <CreateAppoinment></CreateAppoinment>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          {/* HEALTH CHECK  */}
+          {/* MAIN DOCTOR */}
+          <Route
+            path="/examing"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsHealthCheck}>
+                  <ExamingToday></ExamingToday>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/examing/:bookingId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsHealthCheck}>
+                  <Examing></Examing>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/wait-result"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsHealthCheck}>
+                  <WaitingResult></WaitingResult>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/schedule"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsHealthCheck}>
+                  <AppointmentSchedule></AppointmentSchedule>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/done"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsHealthCheck}>
+                  <DoneExamination></DoneExamination>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/done/:bookingId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsHealthCheck}>
+                  <DoneDetail></DoneDetail>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          {/* SIDE DOCTOR  */}
+          <Route
+            path="/retesting"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <ReTestingToday></ReTestingToday>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/retesting/:serviceFormDetailId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <ReTesting></ReTesting>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/result/"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <ResultToday></ResultToday>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/result/:serviceFormDetailId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <Result></Result>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/schedule-retesting"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <ResultTesting></ResultTesting>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/done-retesting"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <ResultTesting></ResultTesting>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/done-retesting/:serviceFormDetailId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsReTesting}>
+                  <ResultTestingDetail></ResultTestingDetail>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          {/* GROOMING  */}
+          <Route
+            path="/grooming"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsGrooming}>
+                  <GroomingToday></GroomingToday>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/grooming/:bookingId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsGrooming}>
+                  <Grooming></Grooming>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/schedule-grooming"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsGrooming}>
+                  <ScheduleGrooming></ScheduleGrooming>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/history-grooming"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsGrooming}>
+                  <HistoryGrooming></HistoryGrooming>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          {/* BOARDING  */}
+          <Route
+            path="/boarding"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsBoarding}>
+                  <BoardingToday></BoardingToday>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/boarding/:bookingId"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsBoarding}>
+                  <Boarding></Boarding>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/manage-report"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsBoarding}>
+                  <ManageAndReport></ManageAndReport>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/manage-report/:boarding_id"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsBoarding}>
+                  <Report></Report>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/schedule-boarding"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsBoarding}>
+                  <ScheduleBoarding></ScheduleBoarding>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route
+            path="/history-boarding"
+            element={
+              isAuthorized(["vet"], getRoleFromLocalStorage()) ? (
+                <MainLayout listTabs={listTabsBoarding}>
+                  <HistoryBoarding></HistoryBoarding>
+                </MainLayout>
+              ) : (
+                <WarningRole></WarningRole>
+              )
+            }
+          ></Route>
+          <Route path="*" element={<WarningRole />} />
+        </Routes>
+      </Fragment>
+    </ConfigProvider>
   );
 }
 

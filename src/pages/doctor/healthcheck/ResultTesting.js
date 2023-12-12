@@ -37,10 +37,7 @@ const ResultTesting = () => {
         );
         const filterList = response.data.data.filter(
           (item) =>
-            item.status === "checked_in" ||
-            (item.status === "on_going" &&
-              item.status !== "wait_result" &&
-              item.status !== "done")
+            item.status === "done" 
         );
         console.log("fetch api", filterList);
         setCustomerList(filterList);
@@ -83,8 +80,6 @@ const ResultTesting = () => {
             <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
-            <th> Bác sĩ phụ trách</th>
-            <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
         </thead>
@@ -109,33 +104,13 @@ const ResultTesting = () => {
                 <td> {item.phone}</td>
                 <td> {item.bird_name}</td>
                 <td>{item.note}</td>
-                <td>
-                  <strong>{localStorage.getItem("name")}</strong>
-                </td>
-                <td>
-                  <p
-                    className={`${styles.status} ${
-                      item.status === "pending"
-                        ? styles.pending
-                        : item.status === "on_going"
-                        ? styles.being
-                        : styles.hasResult
-                    } `}
-                  >
-                    {item.status === "checked_in" || item.status === "pending"
-                      ? "Chưa xét nghiệm"
-                      : item.status === "on_going"
-                      ? "Đang xét nghiệm"
-                      : "Đã xét nghiệm"}
-                  </p>
-                </td>
 
                 <td>
                   <div
                     className={styles.btnTesting}
-                    onClick={() => handleChangeStatus(item)}
+                    onClick={() => navigate(`/done-retesting/${item.service_form_detail_id}`)}
                   >
-                    Tiếp nhận
+                    Xem
                   </div>
                 </td>
               </tr>

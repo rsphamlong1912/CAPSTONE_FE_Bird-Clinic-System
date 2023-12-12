@@ -361,23 +361,6 @@ const TrackAppoinments = () => {
                   >
                     Chi tiết
                   </div>
-
-                  {/* <div
-                    className={styles.btnCheckin}
-                    onClick={() => handleModal(item)}
-                  >
-                    Xem
-                  </div> */}
-                  {/* {item.status === "booked" ? (
-                    <div
-                      className={styles.btnCheckin}
-                      onClick={() => handleConfirmAlert(item)}
-                    >
-                      Check in
-                    </div>
-                  ) : (
-                    <div></div>
-                  )} */}
                 </td>
               </tr>
             ))}

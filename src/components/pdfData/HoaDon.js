@@ -62,6 +62,12 @@ export const HoaDon = React.forwardRef(
                 <span>{bookingInfo?.bird.name}</span>
               </div>
             </div>
+            <div className={styles.birdInfo}>
+              <div className={styles.lineItem}>
+                <span className={styles.label}>Bác sĩ phụ trách:</span>
+                <span>{bookingInfo?.veterinarian.name}</span>
+              </div>
+            </div>
           </div>
           <div className={styles.right}>
             <img

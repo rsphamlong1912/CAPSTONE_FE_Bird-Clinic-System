@@ -1188,15 +1188,6 @@ const Examing = () => {
                         </div>
                       </div>
                       <div className={styles.boxMedicine}>
-                        {/* <div>
-                          <button
-                            className={styles.AddMedicine}
-                            onClick={addPrescriptionData}
-                          >
-                            Xác nhận
-                          </button>
-                          {contextHolder}
-                        </div> */}
                         <button
                           onClick={addForm}
                           className={styles.AddMedicine}

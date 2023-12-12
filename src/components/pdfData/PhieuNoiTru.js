@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./PhieuNoiTru.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
 
-export const PhieuNoiTru = React.forwardRef(({}, ref) => {
+export const PhieuNoiTru = React.forwardRef(({bookingInfo, birdProfile, boardingData}, ref) => {
   const { currentDate } = useCurrentDate();
 
   // Tính tổng số tiền từ cột price
@@ -26,8 +26,8 @@ export const PhieuNoiTru = React.forwardRef(({}, ref) => {
           BIRD CLINIC SYSTEM
         </div>
         <div>
-          Ngày 21/09/2023<br></br>
-          Mã số: BCS_0FUBFEN
+        {currentDate}<br></br>
+        {bookingInfo?.booking_id}
         </div>
       </div>
       <h3 className={styles.title}>PHIẾU NỘI TRÚ</h3>
@@ -37,34 +37,34 @@ export const PhieuNoiTru = React.forwardRef(({}, ref) => {
             <h4 className={styles.subTitle}>Thông tin khách hàng</h4>
             <div className={styles.lineItem}>
               <span className={styles.label}>Tên khách hàng:</span>
-              <span>Nguyễn Trí Công</span>
+              <span>{bookingInfo?.customer_name}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Số điện thoại:</span>
-              <span>0333198224</span>
+              <span>{bookingInfo?.bird?.customer?.phone}</span>
             </div>
           </div>
           <div className={styles.birdInfo}>
             <h4 className={styles.subTitle}>Thông tin chim</h4>
             <div className={styles.lineItem}>
               <span className={styles.label}>Tên chim:</span>
-              <span>Con vẹt xanh</span>
+              <span>{bookingInfo?.bird?.name}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Ngày nở:</span>
-              <span>23/09/2022</span>
+              <span>{birdProfile?.hatching_date}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Giới tính:</span>
-              <span>Đực</span>
+              <span>{birdProfile?.gender}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Size:</span>
-              <span>Vừa</span>
+              <span>{birdProfile?.bird_breed?.bird_size?.size}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Giống:</span>
-              <span>Không</span>
+              <span>{birdProfile?.bird_breed?.breed}</span>
             </div>
           </div>
         </div>
@@ -78,43 +78,36 @@ export const PhieuNoiTru = React.forwardRef(({}, ref) => {
       </div>
       <div className={styles.lineItem}>
         <span className={`${styles.label} ${styles.label2}`}>
-          Bác sĩ chỉ định:
+          Bác sĩ phụ trách:
         </span>
-        <span>Trịnh Ngọc Bảo</span>
+        <span>{bookingInfo?.veterinarian?.name}</span>
       </div>
       <div className={styles.lineItem}>
         <span className={`${styles.label} ${styles.label2}`}>
-          Lý do chỉ định:
+          Thông tin nội trú:
         </span>
-        <span>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. A doloremque
-          quod neque saepe nemo animi.
-        </span>
-      </div>
-      <div className={styles.lineItem}>
-        <span className={`${styles.label} ${styles.label2}`}>
-          Loại dịch vụ:
-        </span>
-        <table className={styles.table}>
-          <tr>
-            <th>Tên dịch vụ</th>
-            <th>Giá</th>
-          </tr>
-
-          <tr>
-            <td>1</td>
-            <td>2</td>
-          </tr>
-        </table>
         <div className={styles.lineItem}>
-          <span className={styles.total}>Tổng cộng:</span>
-          <span>{formattedPrice(2)}</span>
-        </div>
+              <span className={styles.label}>Mã số:</span>
+              <span>{bookingInfo?.booking_id}</span>
+            </div>
+        <div className={styles.lineItem}>
+              <span className={styles.label}>Dịch vụ:</span>
+              <span>{boardingData?.service}</span>
+            </div>
+        <div className={styles.lineItem}>
+              <span className={styles.label}>Ngày đến:</span>
+              <span>{boardingData?.arrivalDate}</span>
+            </div>
+        <div className={styles.lineItem}>
+              <span className={styles.label}>Ngày trả:</span>
+              <span>{boardingData?.departureDate} ({boardingData?.totalDays} ngày lưu trú)</span>
+            </div>
+      
       </div>
       <div className={styles.footer}>
         <div>{currentDate}</div>
-        <div>BS CHỈ ĐỊNH DỊCH VỤ</div>
-        <div className={styles.sign}>BS. Trịnh Ngọc Bảo</div>
+        <div>BS PHỤ TRÁCH</div>
+        <div className={styles.sign}>BS. {bookingInfo?.veterinarian?.name}</div>
       </div>
     </div>
   );

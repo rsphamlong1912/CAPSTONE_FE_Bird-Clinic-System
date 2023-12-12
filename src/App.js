@@ -33,6 +33,7 @@ import DoneDetail from "./pages/doctor/healthcheck/DoneDetail";
 import ResultTesting from "./pages/doctor/healthcheck/ResultTesting";
 import ScheduleBoarding from "./pages/staff/boarding/ScheduleBoarding";
 import HistoryBoarding from "./pages/staff/boarding/HistoryBoarding";
+import ResultTestingDetail from "./pages/doctor/healthcheck/ResultTestingDetail";
 
 
 import {
@@ -361,6 +362,14 @@ function App() {
           element={
             <MainLayout listTabs={listTabsReTesting}>
               <ResultTesting></ResultTesting>
+            </MainLayout>
+          }
+        ></Route>
+        <Route
+          path="/done-retesting/:serviceFormDetailId"
+          element={
+            <MainLayout listTabs={listTabsReTesting}>
+              <ResultTestingDetail></ResultTestingDetail>
             </MainLayout>
           }
         ></Route>

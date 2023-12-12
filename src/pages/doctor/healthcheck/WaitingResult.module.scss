@@ -6,7 +6,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+}
+
+.headerTitle{
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
 }
 
 .middle span {
@@ -160,7 +166,7 @@ thead th {
   position: sticky;
   top: 0;
   left: 0;
-  background-color: #d5d1defe;
+  background-color: #E9E9E9;
   cursor: pointer;
   text-transform: capitalize;
 }
@@ -301,16 +307,22 @@ tbody td.active {
 }
 
 .NoGroomingDetial {
-  height: 500px;
+  height: 400px;
+
+  .emptyContentCenter {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
 
   .iconEmpty {
-    width: auto;
-    height: 40px;
-    margin-left: 750px;
     margin-bottom: 20px;
+    color: gray;
   }
 
   .txtNoGrooming {
     text-align: center;
+    font-weight: 500;
+    color: gray;
   }
 }

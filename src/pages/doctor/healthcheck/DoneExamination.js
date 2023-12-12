@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { BsCalendar2 } from "react-icons/bs";
 import styles from "./DoneExamination.module.scss";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
-import { ImFilesEmpty } from "react-icons/im";
-import io from "socket.io-client";
-const socket = io("https://clinicsystem.io.vn");
+import { Input } from 'antd';
+// import io from "socket.io-client";
+// const socket = io("https://clinicsystem.io.vn");
+const { Search } = Input;
 
 const DoneExamination = () => {
   const today = new Date();
@@ -15,16 +16,16 @@ const DoneExamination = () => {
   const navigate = useNavigate();
   const [dates, setDates] = useState([]);
 
-  useEffect(() => {
-    console.log("socket id khi mới vào bên booking: ", socket.id);
-    socket.emit("login", { account_id: localStorage.getItem("account_id") });
-    console.log("Login sucess");
+  // useEffect(() => {
+  //   console.log("socket id khi mới vào bên booking: ", socket.id);
+  //   socket.emit("login", { account_id: localStorage.getItem("account_id") });
+  //   console.log("Login sucess");
 
-    socket.on("server-confirm-check-in", (data) => {
-      console.log("Data trả về: ", data);
-      fetchData();
-    });
-  }, []);
+  //   socket.on("server-confirm-check-in", (data) => {
+  //     console.log("Data trả về: ", data);
+  //     fetchData();
+  //   });
+  // }, []);
 
   const [visibleDates, setVisibleDates] = useState([]);
 
@@ -121,8 +122,16 @@ const DoneExamination = () => {
 
   return (
     <div className={styles.container}>
+            <div className={styles.btnSearch}>
+           <div style={{ marginRight: 'auto' }}>
+           <h1 className={styles.headerTitle}>LỊCH SỬ KHÁM BỆNH</h1>
+          </div>
+          <div style={{width: "30%"}}>
+          <Search size="large" placeholder="Tìm kiếm lịch sử..." enterButton />
+          </div>
+      </div>
+
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
         <div className={styles.navigation}>
           <button onClick={handlePrevDates}>&lt;</button>
         </div>
@@ -139,13 +148,10 @@ const DoneExamination = () => {
         <div className={styles.navigation}>
           <button onClick={handleNextDates}>&gt;</button>
         </div>
-        <div className={styles.right}>
-          <div className={styles.btnSearch}>
-            <SearchOutlined />
-          </div>
-          <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
-        </div>
       </div>
+
+
+
       <table>
         <thead>
           <tr>
@@ -173,13 +179,15 @@ const DoneExamination = () => {
           )}
           {!loading && customerList.length === 0 && (
             <tr className={styles.NoGroomingDetial}>
-              <td colSpan="9">
-                <ImFilesEmpty className={styles.iconEmpty} />
+            <td colSpan="10">
+              <div className={styles.emptyContentCenter}>
+                <BsCalendar2 size={50} className={styles.iconEmpty} />
                 <h3 className={styles.txtNoGrooming}>
-                  Không có lịch hẹn nào cho ngày này.
+                  Không có lịch sử khám hôm nay.
                 </h3>
-              </td>
-            </tr>
+              </div>
+            </td>
+          </tr>
           )}
           {!loading &&
             customerList.map((item, index) => (

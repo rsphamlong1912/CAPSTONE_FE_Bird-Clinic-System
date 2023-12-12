@@ -6,32 +6,35 @@
 }
 .headerContent {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  margin: 25px 0;
+  margin-bottom: 25px;
   .left {
-    transform: translateX(-200px);
     display: flex;
     align-items: center;
     cursor: pointer;
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
     ion-icon {
       color: black;
     }
   }
-  .right {
-    transform: translateX(176px);
-  }
+  // .right {
+  //   transform: translateX(176px);
+  // }
 }
 .nameCustomer {
-  width: 280px;
   text-align: center;
-  background-color: #32b768;
-  color: white;
-  padding: 10px 30px;
+  background-color: white;
+  color: #32b768;
+  padding: 20px 40px;
   border-radius: 5px;
-  margin-left: 15%;
   font-weight: 600;
+  min-width: 260px;
+  font-size: 18px;
 }
+
 
 .mainContent {
   display: flex;
@@ -39,30 +42,28 @@
 }
 
 .mainContent .content {
-  width: 68%;
+  width: 75%;
   background-color: #fff;
   padding: 20px;
-  height: 600px;
-  border-radius: 5px;
-  margin-left: 3.5rem;
+  min-height: 615px;
+  border-radius: 8px;
 }
 
 .mainContent .metaContent {
   width: 25%;
-  margin: 0 auto;
+  margin-left: 40px;
   .boxData {
-    width: 80%;
-    margin-left: 2.5rem;
-    display: inline-block;
-    padding: 15px 45px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
     background-color: #32b768;
     text-align: center;
     border-radius: 5px;
     .boxDataItem {
       display: flex;
       align-items: center;
-      margin: 15px 0;
-      padding-left: 25px;
+      margin: 20px 0;
       color: white;
       cursor: pointer;
       font-weight: bold;
@@ -73,19 +74,25 @@
   }
   button {
     display: block;
-    width: 80%;
     height: auto;
     padding: 15px 45px;
     margin: 15px 0;
-    margin-left: 2.5rem;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     border-radius: 5px;
+    font-family: Inter, sans-serif;
+    width: 100%;
   }
   button.btnComplete {
     background-color: #32b768;
     color: white;
     border: none;
+  }
+  button.btnCancel {
+    background-color: #fff;
+    color: red;
+    border: 1px solid red;
+    
   }
   button.btnHospitalize {
     background-color: white;
@@ -98,30 +105,39 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 80%;
-  margin: 0 auto;
+  // width: 80%;
+  margin: 20px 20px;
   margin-bottom: 50px;
 }
 
 .procedureTab span {
-  width: 160px;
+  // width: 160px;
   text-align: center;
   background-color: white;
-  border: 1px solid #32b768;
+  // border: 1px solid #32b768;
   color: #32b768;
   font-weight: bold;
-  padding: 15px;
-  border-radius: 50px;
+  // padding: 15px;
+  border-radius: 8px;
 }
 
 span.active {
   background-color: #32b768;
   color: white;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .examing {
-  width: 75%;
-  margin: 0 auto;
+  padding: 0px 20px;
+}
+.examingMedicine {
+  padding: 0px 0px;
+  display: flex;
+  align-items: center;
+  min-height: 400px;
+  justify-content: center;
 }
 
 .examingService {
@@ -168,7 +184,7 @@ span.active {
     padding: 10px;
     margin: 10px 0;
     border-radius: 5px;
-
+    font-family: Inter, sans-serif;
     &:focus {
       outline: none;
       border-color: #32b768;
@@ -192,6 +208,12 @@ textarea {
   margin: 15px 0;
   border-radius: 5px;
   resize: none;
+  font-family: Inter, sans-serif;
+}
+
+textarea:focus{
+  outline: none;
+  border-color: #32b768;
 }
 
 ion-icon {
@@ -199,15 +221,14 @@ ion-icon {
 }
 
 .footerContent {
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   display: flex;
   justify-content: end;
-  padding: 20px;
+  padding: 20px 40px;
 }
 
 .footerContent button {
   padding: 15px 30px;
-  margin: 0 15px;
   border: none;
   border-radius: 5px;
   font-size: 18px;
@@ -215,11 +236,35 @@ ion-icon {
 }
 
 .btnBack {
-  background-color: rgba(108, 108, 108, 0.5);
+  background-color: white;
+  color: #000;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+  margin-right: 20px;
 }
 
 .btnCont {
-  background-color: rgba(50, 183, 104, 0.5);
+  background-color: #32b768;
+  color: #fff;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+}
+
+.lineProgress {
+  width: 100px; 
+  height: 3px; 
+  background-color: #32b768; 
+  border-radius: 10x; 
+  margin: 0px 10px;
+}
+@media (max-width: 1400px) {
+  .lineProgress {
+    width: 50px; 
+    height: 2px; 
+    background-color: #32b768; 
+    border-radius: 10px; 
+    margin: 0px 10px;
+  }
 }
 
 .serviceItem > input {
@@ -254,10 +299,11 @@ ion-icon {
   border: none;
   border-radius: 5px;
   text-align: center;
-  margin-left: 300px;
-  margin-top: 5px;
+  margin-top: 15px;
   cursor: pointer;
   font-size: 18px;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
 }
 
 //rvjwbnwbVWH
@@ -267,11 +313,16 @@ ion-icon {
   border: #32b768;
   border-radius: 10px;
   color: white;
-  font-size: 20px;
-  width: 200px;
-  height: 50px;
-  margin-left: 300px;
-  margin-top: 150px;
+  font-size: 18px;
+  font-family: Inter, sans-serif;
+  padding: 10px 15px;
+  align-self: center;
+  display: flex;
+  font-weight: 400;
+  ion-icon {
+    color: white;
+    font-size: 21px;
+  }
 }
 
 .create {
@@ -297,7 +348,9 @@ option {
 
 .contentAll {
   padding: 20px;
-  border: 1px solid #bdbdbd;
+  border: 1px solid #f5f5f5;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 
 .createFirst {
@@ -307,6 +360,7 @@ option {
 
 .First {
   padding-right: 20px;
+  font-weight: 600;
 }
 
 .DrugNameList {
@@ -317,6 +371,7 @@ option {
   padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
+  font-family: Inter, sans-serif;
 }
 
 .TypeList {
@@ -346,6 +401,7 @@ option {
 
 .Second {
   padding-right: 53px;
+  font-weight: 600;
 }
 
 .UnitList {
@@ -369,13 +425,12 @@ option {
 }
 
 .Instruct {
-  width: 770px;
   height: 80px;
   border-radius: 5px;
   border: 1px solid #dddddd;
-  padding-left: 20px;
   background-color: #f9f9f9;
   color: #737373;
+  font-family: Inter, sans-serif;
 }
 
 .btnDelete {
@@ -384,14 +439,26 @@ option {
 }
 
 .AddMedicine {
-  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  background-color: #32b768;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 18px;
   margin-top: 10px;
-  width: 170px;
-  height: 40px;
-  background: #32b768;
-  border-radius: 8px;
-  color: #ffff;
-  font-size: 20px;
+  cursor: pointer;
+  padding: 10px 15px;
+  font-weight: 500;
+  font-family: Inter, sans-serif;
+  margin-right: 10px;
+  ion-icon {
+    color: #fff;
+  }
+}
+.numberMedicine {
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .ViewMedicine {
@@ -406,20 +473,21 @@ option {
 
 .boxMedicine {
   display: flex;
-  margin-left: 220px;
+  justify-content: center;
+  align-items: center;
 }
 
 .PrintMedicine {
   display: flex;
   align-items: center;
-  width: 170px;
-  height: 40px;
-  border: 2px solid #32b768;
-  border-radius: 8px;
+  border: 1px solid #32b768;
+  border-radius: 5px;
   color: #32b768;
-  font-size: 20px;
+  font-size: 18px;
   margin-top: 10px;
   cursor: pointer;
+  padding: 10px 15px;
+  font-weight: 500;
 }
 
 .popup {
@@ -494,6 +562,7 @@ h2 {
 
 .txtThird {
   width: 200px;
+  font-weight: 600;
 }
 
 .ChooseDay {
@@ -533,14 +602,16 @@ h2 {
 
 .headerDelete {
   display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-.numberMedicine {
-  width: 750px;
-}
+
 
 .hsdMedicine {
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  color: #6c6c6c;
+  font-size: 14px;
 }
 
 .expectedDate {

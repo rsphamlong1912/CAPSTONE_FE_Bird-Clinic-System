@@ -148,11 +148,11 @@ const BillingBoardingDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -323,8 +323,8 @@ const BillingBoardingDetail = () => {
     const formattedTime = `${day.toString().padStart(2, "0")}/${month
       .toString()
       .padStart(2, "0")} ${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}`;
+        .toString()
+        .padStart(2, "0")}`;
 
     return formattedTime;
   }
@@ -386,15 +386,14 @@ const BillingBoardingDetail = () => {
                       </td>
                       <td>
                         <p
-                          className={`${styles.status} ${
-                            serviceFormBoardingInfo.status === "paid" ||
+                          className={`${styles.status} ${serviceFormBoardingInfo.status === "paid" ||
                             serviceFormBoardingInfo.status === "done"
-                              ? styles.paid
-                              : styles.pending
-                          } `}
+                            ? styles.paid
+                            : styles.pending
+                            } `}
                         >
                           {serviceFormBoardingInfo.status === "paid" ||
-                          serviceFormBoardingInfo.status === "done"
+                            serviceFormBoardingInfo.status === "done"
                             ? "Đã thanh toán"
                             : "Chưa thanh toán"}
                         </p>
@@ -407,14 +406,20 @@ const BillingBoardingDetail = () => {
                             handleOpenBoardingInfo(serviceFormBoardingInfo)
                           }
                         ></ion-icon>
-                        <div
-                          className={styles.btnCheckin}
-                          onClick={() =>
-                            handleConfirmAlert(serviceFormBoardingInfo)
-                          }
-                        >
-                          Thanh toán
-                        </div>
+                        {serviceFormBoardingInfo.status !== 'paid' && serviceFormBoardingInfo.status !== 'done' ? (
+                          <div
+                            className={styles.btnCheckin}
+                            onClick={() => handleConfirmAlert(serviceFormBoardingInfo)}
+                          >
+                            Thanh toán
+                          </div>
+                        ) : (
+                          <div
+                            className={styles.disabled}
+                          >
+                            Thanh toán
+                          </div>
+                        )}
                         {/* <div
                     className={styles.btnCheckin}
                     onClick={() => handleConfirmAlert(item)}
@@ -468,11 +473,10 @@ const BillingBoardingDetail = () => {
                         <td>{formattedPrice(item.total_price)}</td>
                         <td>
                           <p
-                            className={`${styles.status} ${
-                              item.status === "paid" || item.status === "done"
-                                ? styles.paid
-                                : styles.pending
-                            } `}
+                            className={`${styles.status} ${item.status === "paid" || item.status === "done"
+                              ? styles.paid
+                              : styles.pending
+                              } `}
                           >
                             {item.status === "paid" || item.status === "done"
                               ? "Đã thanh toán"
@@ -485,12 +489,20 @@ const BillingBoardingDetail = () => {
                             name="eye-outline"
                             onClick={() => handleOpenDetail(item)}
                           ></ion-icon>
-                          <div
-                            className={styles.btnCheckin}
-                            onClick={() => handleConfirmAlert(item)}
-                          >
-                            Thanh toán
-                          </div>
+                          {item.status !== 'paid' && item.status !== 'done' ? (
+                            <div
+                              className={styles.btnCheckin}
+                              onClick={() => handleConfirmAlert(item)}
+                            >
+                              Thanh toán
+                            </div>
+                          ) : (
+                            <div
+                              className={styles.disabled}
+                            >
+                              Thanh toán
+                            </div>
+                          )}
                           {/* <div
                     className={styles.btnCheckin}
                     onClick={() => handleConfirmAlert(item)}
@@ -609,7 +621,7 @@ const BillingBoardingDetail = () => {
             <div className={styles.boxData}>
               <div
                 className={styles.boxDataItem}
-                // onClick={() => setOpenModalProfile(true)}
+              // onClick={() => setOpenModalProfile(true)}
               >
                 <ion-icon name="calendar-clear-outline"></ion-icon>
                 <span>Hồ sơ chim khám</span>
@@ -617,7 +629,7 @@ const BillingBoardingDetail = () => {
             </div>
             <button
               className={styles.btnComplete}
-              //   onClick={() => handleConfirmAlert(serviceFormInfo)}
+            //   onClick={() => handleConfirmAlert(serviceFormInfo)}
             >
               Thanh toán tất cả
             </button>

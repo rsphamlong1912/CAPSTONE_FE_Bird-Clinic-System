@@ -58,7 +58,7 @@ const ProfileBirdBoardingModal = ({ open, onClose, birdProfile, birdProfileBreed
           X
         </p>
         <div className={styles.container}>
-          <div className={styles.InfText}>Hồ sơ chim khám</div>
+          <div className={styles.InfText}>Lịch sử nội trú</div>
           <div className={styles.element}>
             <h5>THÔNG TIN CHIM</h5>
             <table>
@@ -97,29 +97,31 @@ const ProfileBirdBoardingModal = ({ open, onClose, birdProfile, birdProfileBreed
               alt={birdProfile?.name}
             />
             <div className={styles.historyText}>Danh sách dịch vụ đã làm</div>
-            {serviceFormData.length > 0 && serviceFormData.map((service, index) => (
-              <>
-                <div key={index} className={styles.infSF}>
-                  <p className={styles.infSFId}>{`${index + 1}. ${service.service_form_id}`}</p>
-                  <p className={styles.infSFDate}>{service.date}</p>
-                </div>
-                {service.service_form_details.map((service, index) => (
-                  <div key={index} className={styles.infSFD}>
-                    <p className={styles.infSFDName}>{`${packageDetails[service.service_package_id] || 'Unknown Package'}`}</p>
-                    <p
-                      className={`${styles.infSFDDate} ${service.status === "done"
-                        ? styles.finish
-                        : styles.being
-                        } `}
-                    >
-                      {service.status === "done"
-                        ? "Hoàn tất"
-                        : "Đang thực hiện"}
-                    </p>
+            <div className={styles.scrollableblock}>
+              {serviceFormData.length > 0 && serviceFormData.map((service, index) => (
+                <>
+                  <div key={index} className={styles.infSF}>
+                    <p className={styles.infSFId}>{`${index + 1}. ${service.service_form_id}`}</p>
+                    <p className={styles.infSFDate}>{service.date}</p>
                   </div>
-                ))}
-              </>
-            ))}
+                  {service.service_form_details.map((service, index) => (
+                    <div key={index} className={styles.infSFD}>
+                      <p className={styles.infSFDName}>{`${packageDetails[service.service_package_id] || 'Unknown Package'}`}</p>
+                      <p
+                        className={`${styles.infSFDDate} ${service.status === "done"
+                          ? styles.finish
+                          : styles.being
+                          } `}
+                      >
+                        {service.status === "done"
+                          ? "Hoàn tất"
+                          : "Đang thực hiện"}
+                      </p>
+                    </div>
+                  ))}
+                </>
+              ))}
+            </div>
           </div>
         </div>
       </div>

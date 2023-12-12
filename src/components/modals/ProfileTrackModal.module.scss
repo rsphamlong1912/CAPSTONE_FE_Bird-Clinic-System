@@ -238,24 +238,6 @@ p {
   align-items: center
 }
 
-.status {
-  padding: 0.4rem 0;
-  border-radius: 20px;
-  text-align: center;
-}
-
-.status.being {
-  color: rgba(36, 219, 149, 1);
-  background-color: #fff;
-  border: 1px solid rgba(36, 219, 149, 1);
-}
-
-.status.finish {
-  color: rgb(255, 229, 59);
-  background-color: #fff;
-  border: 1px solid rgb(255, 229, 59);
-}
-
 .scrollableblock {
   width: 450px; /* Độ rộng của khối */
   height: 200px; /* Độ cao của khối */

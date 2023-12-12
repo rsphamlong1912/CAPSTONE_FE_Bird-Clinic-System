@@ -272,7 +272,7 @@ const TrackAppoinments = () => {
           <tr>
             <th> STT</th>
             <th> Khách hàng</th>
-            <th>Số điện thoại</th>
+            <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Giờ đặt</th>

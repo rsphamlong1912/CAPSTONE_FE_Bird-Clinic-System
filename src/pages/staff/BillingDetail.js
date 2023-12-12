@@ -140,11 +140,11 @@ const BillingDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -405,15 +405,24 @@ const BillingDetail = () => {
             <div className={styles.boxData}>
               <div
                 className={styles.boxDataItem}
-                // onClick={() => setOpenModalProfile(true)}
+              // onClick={() => setOpenModalProfile(true)}
               >
                 <ion-icon name="calendar-clear-outline"></ion-icon>
                 <span>Hồ sơ chim khám</span>
               </div>
             </div>
             <button
-              className={styles.btnComplete}
-              onClick={() => handleConfirmAlert(serviceFormInfo)}
+              className={`${styles.btnComplete} ${serviceFormInfo && (serviceFormInfo.status === "paid" || serviceFormInfo.status === "done")
+                  ? styles.btnCompleteDisabled
+                  : ""
+                }`}
+              onClick={() =>
+                serviceFormInfo &&
+                  (serviceFormInfo.status !== "paid" && serviceFormInfo.status !== "done")
+                  ? handleConfirmAlert(serviceFormInfo)
+                  : null
+              }
+              disabled={serviceFormInfo && (serviceFormInfo.status === "paid" || serviceFormInfo.status === "done")}
             >
               Xác nhận thanh toán
             </button>

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./TrackDetail.module.scss";
 import "reactjs-popup/dist/index.css";
-import ProfileBirdModal from "../../components/modals/ProfileBirdModal";
+import ProfileTrackModal from "../../components/modals/ProfileTrackModal";
 import { api } from "../../services/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
@@ -10,7 +10,8 @@ import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
 import io from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
 import { HoaDonTong } from "../../components/pdfData/HoaDonTong";
-import { Select, Modal} from "antd";
+import { Select, Modal } from "antd";
+import { PhieuKhamBenh } from "../../components/pdfData/PhieuKhamBenh";
 
 const socket = io("https://clinicsystem.io.vn");
 
@@ -31,11 +32,18 @@ const TrackDetail = () => {
   const [bookingStatus, setBookingStatus] = useState();
   const [modalCheckin, setModalCheckin] = useState();
   const [modalCancel, setModalCancel] = useState();
+  const [birdProfile, setBirdProfile] = useState([]);
+  const [birdProfileBreed, setBirdProfileBreed] = useState([]);
 
   //Print
   const printRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
+  });
+
+  const printRefPKB = useRef();
+  const handlePrintPKB = useReactToPrint({
+    content: () => printRefPKB.current,
   });
 
   const fetchVeterinarians = async (vet, date) => {
@@ -86,7 +94,22 @@ const TrackDetail = () => {
         responseBooking.data.data.veterinarian,
         responseBooking.data.data.arrival_date
       );
+
+      if (responseBooking.data.data && responseBooking.data.data.bird_id) {
+        getBirdProfile(responseBooking.data.data.bird_id);
+      }
+
       console.log("responseBooking", responseBooking);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getBirdProfile = async (birdId) => {
+    try {
+      const response = await api.get(`/bird/${birdId}`);
+      setBirdProfile(response.data.data);
+      setBirdProfileBreed(response.data.data.bird_breed.breed)
     } catch (error) {
       console.log(error);
     }
@@ -187,11 +210,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -293,11 +316,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -345,29 +368,29 @@ const TrackDetail = () => {
   //   confirmAlert(updatedOptions);
   // };
 
-    const handleConfirmCancel = async (item) => {
-      try {
-        const responseCancel = await api.put(`/booking/${item.booking_id}`, {
-          status: "cancelled",
+  const handleConfirmCancel = async (item) => {
+    try {
+      const responseCancel = await api.put(`/booking/${item.booking_id}`, {
+        status: "cancelled",
+      });
+      if (responseCancel) {
+        console.log("Đã huỷ cuộc hẹn");
+        toast.success("Đã huỷ thành công!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
         });
-        if (responseCancel) {
-          console.log("Đã huỷ cuộc hẹn");
-          toast.success("Đã huỷ thành công!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-          navigate("/track");
-        }
-      } catch (error) {
-        console.log(error);
+        navigate("/track");
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const optionsCheckinAfter = {
     title: "Xác nhận",
@@ -383,11 +406,11 @@ const TrackDetail = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => {},
-    afterClose: () => {},
-    onClickOutside: () => {},
-    onKeypress: () => {},
-    onKeypressEscape: () => {},
+    willUnmount: () => { },
+    afterClose: () => { },
+    onClickOutside: () => { },
+    onKeypress: () => { },
+    onKeypressEscape: () => { },
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -572,37 +595,36 @@ const TrackDetail = () => {
                         <th>Trạng thái</th>
                         <td>
                           <p
-                            className={`${styles.status} ${
-                              bookingInfo?.status === "checked_in" ||
+                            className={`${styles.status} ${bookingInfo?.status === "checked_in" ||
                               bookingInfo?.status === "checked_in_after_test"
-                                ? styles.checkin
-                                : bookingInfo?.status === "on_going" ||
-                                  bookingInfo?.status === "test_requested"
+                              ? styles.checkin
+                              : bookingInfo?.status === "on_going" ||
+                                bookingInfo?.status === "test_requested"
                                 ? styles.being
                                 : bookingInfo?.status === "booked"
-                                ? styles.booked
-                                : bookingInfo?.status === "finish"
-                                ? styles.finish
-                                : bookingInfo?.status === "cancelled"
-                                ? styles.cancelled
-                                : ""
-                            } `}
+                                  ? styles.booked
+                                  : bookingInfo?.status === "finish"
+                                    ? styles.finish
+                                    : bookingInfo?.status === "cancelled"
+                                      ? styles.cancelled
+                                      : ""
+                              } `}
                           >
                             {bookingInfo?.status === "checked_in"
                               ? "Đã checkin"
                               : bookingInfo?.status === "test_requested"
-                              ? "Chờ xét nghiệm"
-                              : bookingInfo?.status === "on_going"
-                              ? "Đang khám"
-                              : bookingInfo?.status === "booked"
-                              ? "Chưa checkin"
-                              : bookingInfo?.status === "checked_in_after_test"
-                              ? "Có kết quả"
-                              : bookingInfo?.status === "finish"
-                              ? "Hoàn thành"
-                              : bookingInfo?.status === "cancelled"
-                              ? "Đã huỷ"
-                              : ""}
+                                ? "Chờ xét nghiệm"
+                                : bookingInfo?.status === "on_going"
+                                  ? "Đang khám"
+                                  : bookingInfo?.status === "booked"
+                                    ? "Chưa checkin"
+                                    : bookingInfo?.status === "checked_in_after_test"
+                                      ? "Có kết quả"
+                                      : bookingInfo?.status === "finish"
+                                        ? "Hoàn thành"
+                                        : bookingInfo?.status === "cancelled"
+                                          ? "Đã huỷ"
+                                          : ""}
                           </p>
                         </td>
                       </tr>
@@ -635,7 +657,7 @@ const TrackDetail = () => {
                   </div>
                   <div
                     className={styles.boxDataItem}
-                    onClick={() => setOpenModalProfile(true)}
+                    onClick={handlePrintPKB}
                   >
                     <ion-icon name="print-outline"></ion-icon>
                     <span>In phiếu khám bệnh</span>
@@ -705,8 +727,11 @@ const TrackDetail = () => {
           </div>
         )}
       </div>
-      <ProfileBirdModal
+      <ProfileTrackModal
         open={openModalProfile}
+        birdProfile={birdProfile}
+        birdProfileBreed={birdProfileBreed}
+        bookingID={bookingId}
         onClose={() => setOpenModalProfile(false)}
       />
       {showPrintBill && (
@@ -719,7 +744,17 @@ const TrackDetail = () => {
           ></HoaDonTong>
         </div>
       )}
-
+      {showPrintBill && (
+        <div style={{ display: "none" }}>
+          <PhieuKhamBenh
+            ref={printRefPKB}
+            billDetailList={billDetailList}
+            serviceFormDetailList={serviceFormDetailList}
+            birdProfile={birdProfile}
+            bookingInfo={bookingInfo}
+          ></PhieuKhamBenh>
+        </div>
+      )}
       {/* <div className={styles.footerContent}>
         <button className={styles.btnBack} onClick={() => navigate(`/track`)}>
           Quay lại
@@ -742,68 +777,68 @@ const Loading = () => {
       <div className={styles.content}>
         <h1 className={styles.InfText}>THÔNG TIN CUỘC HẸN</h1>
         <div className={styles.containerInfo}>
-        <div className={styles.element}>
-          <h5>
-            <LoadingSkeleton></LoadingSkeleton>
-          </h5>
-          <table>
-            <tbody>
-              <tr>
-                <th>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </th>
-                <td>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </th>
-                <td>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </th>
-                <td>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </th>
-                <td>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </th>
-                <td>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </th>
-                <td>
-                  <LoadingSkeleton></LoadingSkeleton>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className={styles.history}>
-          <div className={styles.image}>
-            <LoadingSkeleton height={112}></LoadingSkeleton>
+          <div className={styles.element}>
+            <h5>
+              <LoadingSkeleton></LoadingSkeleton>
+            </h5>
+            <table>
+              <tbody>
+                <tr>
+                  <th>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </th>
+                  <td>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </th>
+                  <td>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </th>
+                  <td>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </th>
+                  <td>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </th>
+                  <td>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </th>
+                  <td>
+                    <LoadingSkeleton></LoadingSkeleton>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
+          <div className={styles.history}>
+            <div className={styles.image}>
+              <LoadingSkeleton height={112}></LoadingSkeleton>
+            </div>
+          </div>
         </div>
       </div>
       <div className={styles.metaContent}>

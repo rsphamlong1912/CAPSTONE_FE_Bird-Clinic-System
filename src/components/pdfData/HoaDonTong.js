@@ -19,6 +19,15 @@ export const HoaDonTong = React.forwardRef(
         currency: "VND",
       }).format(price);
     };
+    const today = new Date();
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${day}/${month}/${year}`;
+    };
+    const [dates, setDates] = useState(formatDate(today));
+
     return (
       <div ref={ref} className={styles.container}>
         <div className={styles.flex}>
@@ -27,8 +36,8 @@ export const HoaDonTong = React.forwardRef(
             BIRD CLINIC SYSTEM
           </div>
           <div>
-            Ngày 21/09/2023<br></br>
-            Mã số: BCS_0FUBFEN
+            Ngày {dates}<br></br>
+            Mã số: {bookingInfo?.booking_id}
           </div>
         </div>
         <h3 className={styles.title}>HOÁ ĐƠN TỔNG</h3>
@@ -87,8 +96,8 @@ export const HoaDonTong = React.forwardRef(
         </div>
         <div className={styles.footer}>
           <div>{currentDate}</div>
-          <div>BS CHỈ ĐỊNH DỊCH VỤ</div>
-          <div className={styles.sign}>BS. Trịnh Ngọc Bảo</div>
+          <div>BS PHỤ TRÁCH</div>
+          <div className={styles.sign}>BS. {bookingInfo?.veterinarian.name}</div>
         </div>
       </div>
     );

@@ -300,8 +300,11 @@ const Billing = () => {
             <tr>
               <th> STT</th>
               <th> Khách hàng</th>
+              <th> Tên chim</th>
+              <th> Số điện thoại</th>
               <th> Số lượng dịch vụ</th>
               <th> Tổng tiền</th>
+              <th> Ngày tạo đơn</th>
               <th> Trạng thái</th>
               <th> Hành động</th>
             </tr>
@@ -322,8 +325,11 @@ const Billing = () => {
                 <tr key={index}>
                   <td> {index + 1} </td>
                   <td>{item.booking.customer_name}</td>
+                  <td>{item.booking.bird.name}</td>
+                  <td>{item.booking.bird.customer.phone}</td>
                   <td>{item.num_ser_must_do}</td>
                   <td>{item.total_price}</td>
+                  <td>{new Date(item.time_create).toLocaleDateString('en-US')}</td>
                   <td>
                     <p
                       className={`${styles.status} ${
@@ -374,7 +380,8 @@ const Billing = () => {
               <th> STT</th>
               <th> Khách hàng</th>
               <th> Chim </th>
-              <th>Ngày bắt đầu</th>
+              <th> Số điện thoại </th>
+              <th> Ngày bắt đầu</th>
               {/* <th> Trạng thái</th> */}
               <th> Hành động</th>
             </tr>
@@ -396,6 +403,7 @@ const Billing = () => {
                   <td> {index + 1} </td>
                   <td>{item.customer_name}</td>
                   <td>{item.bird.name}</td>
+                  <td>{item.bird.customer.phone}</td>
                   <td>{item.arrival_date}</td>
                   {/* <td>
                     <p
@@ -456,6 +464,9 @@ const Billing = () => {
 const Loading = () => {
   return (
     <tr>
+      <td>
+        <LoadingSkeleton></LoadingSkeleton>
+      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

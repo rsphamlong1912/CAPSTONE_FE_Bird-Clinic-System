@@ -209,3 +209,12 @@ ion-icon {
     background-color: rgba(36, 219, 149, 1);
   }
 }
+
+.disabled {
+  text-align: center;
+  background-color: rgba(50, 183, 104, 0.51);
+  width: 120px;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}

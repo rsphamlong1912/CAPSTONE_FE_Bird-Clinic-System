@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from "react";
-import styles from "./DonThuoc.module.scss";
+import styles from "./PhieuKhamBenh.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
-import { api } from "../../services/axios";
 
-export const DonThuoc = React.forwardRef(
-    ({ bookingInfo, birdProfile, forms, customerPhone }, ref) => {
+export const PhieuKhamBenh = React.forwardRef(
+    ({ bookingInfo, serviceFormDetailList, birdProfile }, ref) => {
         const { currentDate } = useCurrentDate();
+
+        // Tính tổng số tiền từ cột price
+        const totalPrice = serviceFormDetailList.reduce((total, service) => {
+            const price = parseFloat(service.price);
+            return total + price;
+        }, 0);
+
+        // Định dạng tổng tiền theo tiền tệ Việt Nam
+        const formattedPrice = (price) => {
+            return new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+            }).format(price);
+        };
+
         const today = new Date();
+
         const formatDate = (date) => {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, "0");
             const day = String(date.getDate()).padStart(2, "0");
             return `${day}/${month}/${year}`;
         };
+
         const [dates, setDates] = useState(formatDate(today));
         return (
             <div ref={ref} className={styles.container}>
@@ -26,7 +42,7 @@ export const DonThuoc = React.forwardRef(
                         Mã số: {bookingInfo?.booking_id}
                     </div>
                 </div>
-                <h3 className={styles.title}>ĐƠN THUỐC</h3>
+                <h3 className={styles.title}>PHIẾU KHÁM BỆNH</h3>
                 <div className={styles.flex}>
                     <div className={styles.left}>
                         <div className={styles.customerInfo}>
@@ -37,7 +53,7 @@ export const DonThuoc = React.forwardRef(
                             </div>
                             <div className={styles.lineItem}>
                                 <span className={styles.label}>Số điện thoại:</span>
-                                <span>{customerPhone}</span>
+                                <span>{bookingInfo?.bird.customer.phone}</span>
                             </div>
                         </div>
                         <div className={styles.birdInfo}>
@@ -64,43 +80,35 @@ export const DonThuoc = React.forwardRef(
                             </div>
                         </div>
                     </div>
-                    <div className={styles.right}>
-                        <img
-                            src="https://vinacheck.vn/media/2019/05/ma-qr-code_vinacheck.vm_001.jpg"
-                            alt=""
-                            className={styles.qr}
-                        />
-                    </div>
                 </div>
+
                 <div className={styles.lineItem}>
                     <span className={`${styles.label} ${styles.label2}`}>
-                        Bác sĩ chỉ định:
-                    </span>
-                    <span>{localStorage.getItem("name")}</span>
-                </div>
-                <div className={styles.lineItem}>
-                    <span className={`${styles.label} ${styles.label2}`}>
-                        Thông tin đơn thuốc:
+                        Loại dịch vụ:
                     </span>
                     <table className={styles.table}>
                         <tr>
-                            <th>Tên thuốc</th>
-                            <th>Số liều dùng/ngày</th>
-                            <th>Đơn vị</th>
+                            <th>Tên dịch vụ</th>
+                            <th>Giá</th>
                         </tr>
-                        {forms.map((item, index) => (
-                            <tr>
-                                <td>{item.selectedMedicine}</td>
-                                <td>{item.day * item.unit}/{item.day} ngày</td>
-                                <td>{item.type}</td>
-                            </tr>
-                        ))}
+                        {serviceFormDetailList &&
+                            serviceFormDetailList.length > 0 &&
+                            serviceFormDetailList.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.service_package.package_name}</td>
+                                    <td>{formattedPrice(item.price)}</td>
+                                </tr>
+                            ))}
                     </table>
+                    <div className={styles.lineItem}>
+                        <span className={styles.total}>Tổng cộng:</span>
+                        <span>{formattedPrice(totalPrice)}</span>
+                    </div>
                 </div>
                 <div className={styles.footer}>
                     <div>{currentDate}</div>
-                    <div>BS KÊ THUỐC</div>
-                    <div className={styles.sign}>BS. {localStorage.getItem("name")}</div>
+                    <div>BS PHỤ TRÁCH</div>
+                    <div className={styles.sign}>BS. {bookingInfo?.veterinarian.name}</div>
                 </div>
             </div>
         );

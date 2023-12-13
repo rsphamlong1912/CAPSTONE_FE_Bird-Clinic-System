@@ -227,6 +227,7 @@ const BillingBoardingDetail = () => {
                 // } catch (error) {
                 //   console.log(error);
                 // }
+                fetchBoardingInfo()
               }
             } catch (error) {
               console.log(error);
@@ -271,36 +272,37 @@ const BillingBoardingDetail = () => {
                   console.log(error);
                 }
 
-                //CHANGE STATUS SERVICE FORM DETAIL
-                try {
-                  const response = await api.get(
-                    `/service-form/${item.service_form_id}`
-                  );
+                // //CHANGE STATUS SERVICE FORM DETAIL
+                // try {
+                //   const response = await api.get(
+                //     `/service-form/${item.service_form_id}`
+                //   );
 
-                  setServiceFormDetailList(
-                    response.data.data[0].service_form_details
-                  );
-                  for (const item of response.data.data[0]
-                    .service_form_details) {
-                    const detailResponse = await api.put(
-                      `/service-form-detail/${item.service_form_detail_id}`,
-                      {
-                        status: "on_going",
-                        veterinarian_id: item.veterinarian_id,
-                        process_at: item.process_at,
-                      }
-                    );
+                //   setServiceFormDetailList(
+                //     response.data.data[0].service_form_details
+                //   );
+                //   for (const item of response.data.data[0]
+                //     .service_form_details) {
+                //     const detailResponse = await api.put(
+                //       `/service-form-detail/${item.service_form_detail_id}`,
+                //       {
+                //         status: "on_going",
+                //         veterinarian_id: item.veterinarian_id,
+                //         process_at: item.process_at,
+                //       }
+                //     );
 
-                    console.log(" doi ròi", detailResponse);
-                  }
-                  socket.emit("complete-payment", {
-                    customer_id: customerId,
-                    vet: vetDetailArr,
-                  });
-                  navigate("/billing");
-                } catch (error) {
-                  console.log(error);
-                }
+                //     console.log(" doi ròi", detailResponse);
+                //   }
+                //   socket.emit("complete-payment", {
+                //     customer_id: customerId,
+                //     vet: vetDetailArr,
+                //   });
+                //   navigate("/billing");
+                // } catch (error) {
+                //   console.log(error);
+                // }
+                fetchBoardingInfo()
               }
             } catch (error) {
               console.log(error);

@@ -40,15 +40,9 @@
 }
 
 .btnSearch {
-  background-color: #fff;
-  font-size: 20px;
-  align-self: center;
-  border: 1px gray solid;
-  padding: 10px;
-  border-radius: 5px;
-  border-right: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  display: flex;
+  margin-bottom: 40px;
+  align-items: center;
 }
 
 .right input {

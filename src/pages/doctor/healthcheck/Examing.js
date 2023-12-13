@@ -16,7 +16,7 @@ import PrescriptionModal from "../../../components/modals/PrescriptionModal";
 import ConfirmServiceModal from "../../../components/modals/ConfirmServiceModal";
 import { DonThuoc } from "../../../components/pdfData/DonThuoc";
 
-import { message, Modal } from "antd";
+import { message, Modal, Col, Row } from "antd";
 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -50,6 +50,7 @@ const Examing = () => {
   const [serviceFormList, setServiceFormList] = useState();
   const [modalComplete, setModalComplete] = useState(false);
   const [modalCancel, setModalCancel] = useState(false);
+  const [modalRequestService, setModalRequestService] = useState(false);
 
   const openPopup = async (id) => {
     const responseImgUrl = await api.get(
@@ -468,6 +469,11 @@ const Examing = () => {
   const printRefMd = useRef();
   const handlePrintMd = useReactToPrint({
     content: () => printRefMd.current,
+  });
+
+  const printRefSf = useRef();
+  const handlePrintSf = useReactToPrint({
+    content: () => printRefSf.current,
   });
 
   const handleChange = (event) => {
@@ -1095,186 +1101,221 @@ const Examing = () => {
 
                 <button
                   className={styles.printService}
-                  onClick={handleOpenConfirm}
+                  onClick={() => setModalRequestService(true)}
                 >
-                  Xác nhận
+                  Chỉ định
                 </button>
+                <Modal
+                  title="THÔNG TIN DỊCH VỤ CHỈ ĐỊNH"
+                  centered
+                  open={modalRequestService}
+                  onOk={() => setModalRequestService(false)}
+                  okText="Xác nhận"
+                  onCancel={() => setModalRequestService(false)}
+                  cancelText="Đóng"
+                  width={800}
+                >
+                  <Row
+                    gutter={[30, 20]}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      padding: 20,
+                    }}
+                  >
+                    {selectedServices.map((item, index) => (
+                      <Col className="gutter-row" span={12}>
+                        <div className={styles.styleService}>
+                          <span>{item.package_name}</span>
+                          <span>x1</span>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <button
+                      className={styles.btnPrintServiceForm}
+                      onClick={handlePrintSf}
+                    >
+                      <ion-icon name="print-outline"></ion-icon>
+                      In phiếu chỉ định
+                    </button>
+                  </div>
+                </Modal>
                 {/* <button className={styles.printService} onClick={handlePrint}>
                   In phiếu dịch vụ
                 </button> */}
               </div>
             )}
             {tab == 3 && (
-              <div className={styles.examingMedicine}>              
-                  {showButton && (
-                    <button className={styles.btnCreate} onClick={toggleInfo}>
+              <div className={styles.examingMedicine}>
+                {showButton && (
+                  <button className={styles.btnCreate} onClick={toggleInfo}>
                     <ion-icon name="add-outline"></ion-icon>
-                      Kê đơn thuốc
-                    </button>
-                  )}
-                  {showInfo && (
-                    <>
-                        <div>
-                          {forms.map((form, index) => (
-                            <div key={index} className={styles.contentAll}>
-                              <div className={styles.headerDelete}>
-                                <div className={styles.numberMedicine}>
-                                  {index + 1}. {form.selectedMedicine || "____________"}
-                                </div>
-                                <RiDeleteBinLine
-                                  className={styles.deleteMedicine}
-                                  onClick={() => removeForm(index)}
-                                />
-                              </div>
-                              <div className={styles.hsdMedicine}>HDSD:                     
-                               {medicineNames
+                    Kê đơn thuốc
+                  </button>
+                )}
+                {showInfo && (
+                  <>
+                    <div>
+                      {forms.map((form, index) => (
+                        <div key={index} className={styles.contentAll}>
+                          <div className={styles.headerDelete}>
+                            <div className={styles.numberMedicine}>
+                              {index + 1}.{" "}
+                              {form.selectedMedicine || "____________"}
+                            </div>
+                            <RiDeleteBinLine
+                              className={styles.deleteMedicine}
+                              onClick={() => removeForm(index)}
+                            />
+                          </div>
+                          <div className={styles.hsdMedicine}>
+                            HDSD:
+                            {medicineNames
+                              .filter(
+                                (timeSlot) =>
+                                  timeSlot.name === form.selectedMedicine
+                              )
+                              .map((filteredSlot, index) => (
+                                <div key={index}>{filteredSlot.usage}</div>
+                              ))}
+                          </div>
+                          <div className={styles.createFirst}>
+                            <div className={styles.First}>
+                              <p>Tên thuốc *</p>
+                              <select
+                                className={styles.DrugNameList}
+                                name="selectedMedicine"
+                                value={form.selectedMedicine}
+                                onChange={(e) =>
+                                  handleMedicineSelect(index, e.target.value)
+                                }
+                              >
+                                <option value="">Chọn thuốc</option>
+                                {medicineNames.map((medicine) => (
+                                  <option
+                                    key={medicine.medicine_id}
+                                    value={medicine.name}
+                                  >
+                                    {medicine.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className={styles.First}>
+                              <p>Đơn vị</p>
+                              <p className={styles.TypeList}>
+                                {medicineNames
                                   .filter(
                                     (timeSlot) =>
                                       timeSlot.name === form.selectedMedicine
                                   )
                                   .map((filteredSlot, index) => (
-                                    <div key={index}>
-                                      {filteredSlot.usage}
-                                    </div>
+                                    <p key={index}>{filteredSlot.unit}</p>
                                   ))}
-                              </div>
-                              <div className={styles.createFirst}>
-                                <div className={styles.First}>
-                                  <p>Tên thuốc *</p>
-                                  <select
-                                    className={styles.DrugNameList}
-                                    name="selectedMedicine"
-                                    value={form.selectedMedicine}
-                                    onChange={(e) =>
-                                      handleMedicineSelect(
-                                        index,
-                                        e.target.value
-                                      )
-                                    }
-                                  >
-                                    <option value="">Chọn thuốc</option>
-                                    {medicineNames.map((medicine) => (
-                                      <option
-                                        key={medicine.medicine_id}
-                                        value={medicine.name}
-                                      >
-                                        {medicine.name}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div className={styles.First}>
-                                  <p>Đơn vị</p>
-                                  <p className={styles.TypeList}>
-                                    {medicineNames
-                                      .filter(
-                                        (timeSlot) =>
-                                          timeSlot.name ===
-                                          form.selectedMedicine
-                                      )
-                                      .map((filteredSlot, index) => (
-                                        <p key={index}>{filteredSlot.unit}</p>
-                                      ))}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className={styles.createSecond}>
-                                <div className={styles.Second}>
-                                  <p>Liều *</p>
-                                  <select
-                                    className={styles.UnitList}
-                                    name="unit"
-                                    value={form.unit}
-                                    onChange={(e) =>
-                                      handleInputMedicineFirst(index, e)
-                                    }
-                                  >
-                                    {/* <option value="">--</option> */}
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                  </select>
-                                </div>
-                                <div className={styles.Second}>
-                                  <p>Ngày *</p>
-                                  <select
-                                    className={styles.DayList}
-                                    name="day"
-                                    value={form.day}
-                                    onChange={(e) =>
-                                      handleInputMedicineFirst(index, e)
-                                    }
-                                  >
-                                    {/* <option value="">--</option> */}
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                  </select>
-                                </div>
-                                <div className={styles.Second}>
-                                  <p>Tổng số liều dùng</p>
-                                  <p
-                                    className={styles.AmountList}
-                                    name="amount"
-                                    value={form.unit * form.day}
-                                  >
-                                    {form.unit * form.day}
-                                  </p>
-                                  {}
-                                </div>
-                              </div>
-                              <div className={styles.createThird}>
-                                <p className={styles.txtThird}>
-                                  Lời khuyên của bác sĩ
-                                </p>
-                                <textarea
-                                  type="text"
-                                  name="note"
-                                  className={styles.Instruct}
-                                  value={form.note}
-                                  onChange={(e) =>
-                                    handleInputMedicineFirst(index, e)
-                                  }
-                                  placeholder="VD: Uống sau khi ăn..."
-                                />
-                              </div>
+                              </p>
                             </div>
-                          ))}
+                          </div>
+                          <div className={styles.createSecond}>
+                            <div className={styles.Second}>
+                              <p>Liều *</p>
+                              <select
+                                className={styles.UnitList}
+                                name="unit"
+                                value={form.unit}
+                                onChange={(e) =>
+                                  handleInputMedicineFirst(index, e)
+                                }
+                              >
+                                {/* <option value="">--</option> */}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                              </select>
+                            </div>
+                            <div className={styles.Second}>
+                              <p>Ngày *</p>
+                              <select
+                                className={styles.DayList}
+                                name="day"
+                                value={form.day}
+                                onChange={(e) =>
+                                  handleInputMedicineFirst(index, e)
+                                }
+                              >
+                                {/* <option value="">--</option> */}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                              </select>
+                            </div>
+                            <div className={styles.Second}>
+                              <p>Tổng số liều dùng</p>
+                              <p
+                                className={styles.AmountList}
+                                name="amount"
+                                value={form.unit * form.day}
+                              >
+                                {form.unit * form.day}
+                              </p>
+                              {}
+                            </div>
+                          </div>
+                          <div className={styles.createThird}>
+                            <p className={styles.txtThird}>
+                              Lời khuyên của bác sĩ
+                            </p>
+                            <textarea
+                              type="text"
+                              name="note"
+                              className={styles.Instruct}
+                              value={form.note}
+                              onChange={(e) =>
+                                handleInputMedicineFirst(index, e)
+                              }
+                              placeholder="VD: Uống sau khi ăn..."
+                            />
+                          </div>
                         </div>
-                      <div className={styles.boxMedicine}>
-                        <button
-                          onClick={addForm}
-                          className={styles.AddMedicine}
-                        >
-                          <ion-icon name="add-circle-outline"></ion-icon>                          
-                          Thêm thuốc
-                        </button>
-                        <div
-                          className={styles.PrintMedicine}
-                          onClick={handlePrintMd}
-                          // onClick={() => setOpenModalPrescription(true)}
-                        >
-                          <ion-icon name="print-outline"></ion-icon>
-                          <span>In đơn thuốc</span>
-                        </div>
+                      ))}
+                    </div>
+                    <div className={styles.boxMedicine}>
+                      <button onClick={addForm} className={styles.AddMedicine}>
+                        <ion-icon name="add-circle-outline"></ion-icon>
+                        Thêm thuốc
+                      </button>
+                      <div
+                        className={styles.PrintMedicine}
+                        onClick={handlePrintMd}
+                        // onClick={() => setOpenModalPrescription(true)}
+                      >
+                        <ion-icon name="print-outline"></ion-icon>
+                        <span>In đơn thuốc</span>
                       </div>
-                    </>
-                  )}
-               
+                    </div>
+                  </>
+                )}
               </div>
             )}
             {tab == 4 && (
@@ -1282,6 +1323,7 @@ const Examing = () => {
                 <div className={styles.SelectDate}>
                   <div>
                     <div className={styles.expectedDate}>
+                      <ion-icon name="calendar-clear-outline"></ion-icon>
                       Ngày dự kiến: {formattedDate}
                     </div>
                     <Calendar
@@ -1292,19 +1334,22 @@ const Examing = () => {
                     />
                   </div>
                 </div>
-                <div>
-                  <div className={styles.txtNote}>Ghi chú thêm:</div>
+                <div style={{ marginLeft: 20 }}>
+                  <div className={styles.txtNote}>
+                    <ion-icon name="reader-outline"></ion-icon>Ghi chú thêm:
+                  </div>
                   <textarea
                     type="text"
                     rows={13}
                     name="note"
-                    placeholder="Vd: Nhớ tới hẹn đúng giờ"
+                    placeholder="VD: Nhớ tới hẹn đúng giờ..."
                     className={styles.Note}
                     value={bookingData.note}
                     onChange={handleInputSave}
                   />
                   <button className={styles.btnAdd} onClick={addBookingRe}>
-                    + Tạo
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                    Tạo lịch hẹn
                   </button>
                   {contextHolder}
                 </div>
@@ -1344,7 +1389,7 @@ const Examing = () => {
             <button
               className={styles.btnComplete}
               onClick={() => {
-                setModalComplete(true)
+                setModalComplete(true);
               }}
             >
               Hoàn thành khám
@@ -1377,7 +1422,16 @@ const Examing = () => {
             >
               <span>Xác nhận hủy khám ?</span>
             </Modal>
-            <button className={styles.btnHospitalize} style={{padding: '15px 35px', display: 'flex', justifyContent: 'center', alignItems: 'center'}} onClick={handlePrint}>
+            <button
+              className={styles.btnHospitalize}
+              style={{
+                padding: "15px 35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onClick={handlePrint}
+            >
               <ion-icon name="print-outline"></ion-icon>
               In phiếu kết quả
             </button>
@@ -1423,6 +1477,12 @@ const Examing = () => {
           forms={forms}
         ></DonThuoc>
       </div>
+      <div style={{ display: "none" }}>
+          <PhieuChiDinh
+            ref={printRefSf}
+            selectedServices={selectedServices}
+          ></PhieuChiDinh>
+        </div>
       <div className={styles.footerContent}>
         {tab !== 1 && (
           <button className={styles.btnBack} onClick={handleBackTab}>

@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
 import LoadingSkeleton from "../../../components/loading/LoadingSkeleton";
 import { ImFilesEmpty } from "react-icons/im";
+import { Input } from 'antd';
 import io from "socket.io-client";
 const socket = io("https://clinicsystem.io.vn");
+const { Search } = Input;
 
 const AppointmentSchedule = () => {
   const today = new Date();
@@ -138,8 +140,15 @@ const AppointmentSchedule = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.btnSearch}>
+        <div style={{ marginRight: "auto" }}>
+          <h1 className={styles.headerTitle}>LỊCH KHÁM</h1>
+        </div>
+        <div style={{ width: "30%" }}>
+          <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton />
+        </div>
+      </div>
       <div className={styles.headerContent}>
-        <div className={styles.left}></div>
         <div className={styles.navigation}>
           <button onClick={handlePrevDates}>&lt;</button>
         </div>
@@ -155,12 +164,6 @@ const AppointmentSchedule = () => {
         </div>
         <div className={styles.navigation}>
           <button onClick={handleNextDates}>&gt;</button>
-        </div>
-        <div className={styles.right}>
-          <div className={styles.btnSearch}>
-            <SearchOutlined />
-          </div>
-          <input type="text" placeholder="Tìm kiếm khách hàng" name="search" />
         </div>
       </div>
       <table>

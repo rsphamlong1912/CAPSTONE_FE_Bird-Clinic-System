@@ -103,7 +103,7 @@ const ProfileBirdModal = ({ open, onClose, birdProfile, birdProfileBreed, bookin
             {serviceFormDetails.map((service, index) => (
               <div key={index} className={styles.infHS}>
                 <p className={styles.infHSName}>{`${index + 1}. ${packageDetails[service.service_package_id] || 'Unknown Package'}`}</p>
-                <p className={styles.infHSDate}>{serviceFormDate.date}</p>
+                <p className={styles.infHSDate}>{new Date(serviceFormDate.date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</p>
                 <button
                   className={styles.button}
                   onClick={() => {

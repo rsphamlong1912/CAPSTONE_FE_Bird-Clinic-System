@@ -245,9 +245,6 @@ const Loading = () => {
         <LoadingSkeleton></LoadingSkeleton>
       </td>
       <td>
-        <LoadingSkeleton></LoadingSkeleton>
-      </td>
-      <td>
         <strong>
           <LoadingSkeleton></LoadingSkeleton>
         </strong>

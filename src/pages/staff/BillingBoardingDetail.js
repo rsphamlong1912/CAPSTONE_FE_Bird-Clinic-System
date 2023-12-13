@@ -379,8 +379,8 @@ const BillingBoardingDetail = () => {
                   {!loading && (
                     <tr>
                       <td>0</td>
-                      <td> {boardingInfo?.arrival_date} </td>
-                      <td>{boardingInfo?.departure_date}</td>
+                      <td>{new Date(boardingInfo?.arrival_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} </td>
+                      <td>{new Date(boardingInfo?.departure_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
                       <td>
                         {formattedPrice(serviceFormBoardingInfo.total_price)}
                       </td>

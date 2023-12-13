@@ -611,7 +611,7 @@ const Grooming = () => {
                             >
                               <h5>{service.package_name}</h5>
                               <div className={styles.serviceDesc}>{service.service_description}</div>
-                              <span className={styles.price}>{service.price}vnđ</span>
+                              <span className={styles.price}>{parseFloat(service.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                               <br />
                               {/* Highlight services present in serviceFormDetails */}
                               {serviceFormDetails.some((detail) => detail.service_package_id === service.service_package_id) && (
@@ -654,7 +654,7 @@ const Grooming = () => {
                             >
                               <h5>{service.package_name}</h5>
                               <div className={styles.serviceDesc}>{service.service_description}</div>
-                              <span className={styles.price}>{service.price}vnđ</span>
+                              <span className={styles.price}>{parseFloat(service.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                               <br />
                               <button onClick={() => toggleService(service)}>
                                 {selectedServices.includes(service) ? "Đã chọn" : "Thêm"}
@@ -762,7 +762,7 @@ const Grooming = () => {
 
                       return (
                         <div key={selectedService.service_package_id} className={styles.txtInfSV}>
-                          {selectedService.package_name} - {selectedService.price}<sup className={styles.unitPrice}>vnđ</sup>
+                          {selectedService.package_name} - {parseFloat(selectedService.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                         </div>
                       );
                     })}
@@ -806,6 +806,7 @@ const Grooming = () => {
       </div>
       <ProfileBirdModal
         open={openModalProfile}
+        bookingID={bookingId}
         birdProfile={birdProfile}
         birdProfileBreed={birdProfileBreed}
         onClose={() => setOpenModalProfile(false)}

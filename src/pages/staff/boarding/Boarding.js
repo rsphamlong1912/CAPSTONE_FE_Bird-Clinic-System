@@ -840,12 +840,12 @@ const Boarding = () => {
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Ngày đến:</span>
-                    <span>{arrivalDate}</span>
+                    <span>{new Date(arrivalDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Ngày trả:</span>
                     <span>
-                      {departureDate} ({totalDays} ngày lưu trú)
+                    {new Date(departureDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} ({totalDays} ngày lưu trú)
                     </span>
                   </div>
                   <div>
@@ -863,7 +863,7 @@ const Boarding = () => {
                     </button>
                   </div>
                   <div style={{ display: "none" }}>
-                    <PhieuNoiTru birdProfile={birdProfile} bookingInfo={bookingInfo} boardingData={{ service: serviceSelected?.package_name, arrivalDate, departureDate, totalDays  }} ref={printRef}></PhieuNoiTru>
+                    <PhieuNoiTru birdProfile={birdProfile} bookingInfo={bookingInfo} boardingData={{ service: serviceSelected?.package_name, price: serviceSelected?.price, arrivalDate, departureDate, totalDays  }} ref={printRef}></PhieuNoiTru>
                   </div>
                   <div style={{ display: "none" }}>
                     <MaSo birdProfile={birdProfile} bookingInfo={bookingInfo} boardingData={{ service: serviceSelected?.package_name, arrivalDate, departureDate, totalDays  }} ref={printRef2}></MaSo>

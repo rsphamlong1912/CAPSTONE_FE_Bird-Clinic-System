@@ -593,7 +593,7 @@ const Examing = () => {
           customer_id: bookingInfo.account_id,
           service_form_id: createdResponse.data.data.service_form_id,
         });
-        navigate("/examing");
+        navigate("/wait-result");
       }
 
       // const createdBill = await api.post(`/bill/`, {
@@ -1325,7 +1325,7 @@ const Examing = () => {
                   <div>
                     <div className={styles.expectedDate}>
                       <ion-icon name="calendar-clear-outline"></ion-icon>
-                      Ngày dự kiến: {formattedDate}
+                      Ngày dự kiến: {new Date(formattedDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                     </div>
                     <Calendar
                       className={styles.calendar}

@@ -177,7 +177,7 @@ const AppointmentSchedule = () => {
             <th> Giờ checkin</th>
             <th> Bác sĩ phụ trách</th>
             <th> Trạng thái</th>
-            <th> Hành động</th>
+            {/* <th> Hành động</th> */}
           </tr>
         </thead>
         <tbody>
@@ -265,9 +265,6 @@ const AppointmentSchedule = () => {
 const Loading = () => {
   return (
     <tr>
-      <td>
-        <LoadingSkeleton></LoadingSkeleton>
-      </td>
       <td>
         <LoadingSkeleton></LoadingSkeleton>
       </td>

@@ -404,7 +404,7 @@ const Billing = () => {
                   <td>{item.customer_name}</td>
                   <td>{item.bird.name}</td>
                   <td>{item.bird.customer.phone}</td>
-                  <td>{item.arrival_date}</td>
+                  <td>{new Date(item.arrival_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
                   {/* <td>
                     <p
                       className={`${styles.status} ${

@@ -328,8 +328,8 @@ const Billing = () => {
                   <td>{item.booking.bird.name}</td>
                   <td>{item.booking.bird.customer.phone}</td>
                   <td>{item.num_ser_must_do}</td>
-                  <td>{item.total_price}</td>
-                  <td>{new Date(item.time_create).toLocaleDateString('en-US')}</td>
+                  <td>{parseFloat(item.total_price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                  <td>{new Date(item.time_create).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                   <td>
                     <p
                       className={`${styles.status} ${

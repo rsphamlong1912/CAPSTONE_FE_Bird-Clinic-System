@@ -19,6 +19,17 @@ export const PhieuKetQua = React.forwardRef(
     //       currency: "VND",
     //     }).format(price);
     //   };
+    const today = new Date();
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${day}/${month}/${year}`;
+    };
+
+    const [dates, setDates] = useState(formatDate(today));
+
     return (
       <div ref={ref} className={styles.container}>
         <div className={styles.flex}>
@@ -27,8 +38,8 @@ export const PhieuKetQua = React.forwardRef(
             BIRD CLINIC SYSTEM
           </div>
           <div>
-            Ngày 21/09/2023<br></br>
-            Mã số: BCS_0FUBFEN
+            Ngày {dates}<br></br>
+            Mã số: {bookingInfo?.booking_id}
           </div>
         </div>
         <h3 className={styles.title}>PHIẾU KẾT QUẢ</h3>
@@ -42,7 +53,7 @@ export const PhieuKetQua = React.forwardRef(
               </div>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Số điện thoại:</span>
-                <span></span>
+                <span>{bookingInfo?.customer_phone}</span>
               </div>
             </div>
             <div className={styles.birdInfo}>

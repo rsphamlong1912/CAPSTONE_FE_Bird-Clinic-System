@@ -593,6 +593,7 @@ const Examing = () => {
           customer_id: bookingInfo.account_id,
           service_form_id: createdResponse.data.data.service_form_id,
         });
+        navigate("/examing");
       }
 
       // const createdBill = await api.post(`/bill/`, {
@@ -1109,7 +1110,7 @@ const Examing = () => {
                   title="THÔNG TIN DỊCH VỤ CHỈ ĐỊNH"
                   centered
                   open={modalRequestService}
-                  onOk={() => setModalRequestService(false)}
+                  onOk={() => createNewServiceForm(bookingInfo)}
                   okText="Xác nhận"
                   onCancel={() => setModalRequestService(false)}
                   cancelText="Đóng"
@@ -1480,6 +1481,8 @@ const Examing = () => {
       <div style={{ display: "none" }}>
           <PhieuChiDinh
             ref={printRefSf}
+            bookingInfo={bookingInfo}
+            birdProfile={birdProfile}
             selectedServices={selectedServices}
           ></PhieuChiDinh>
         </div>

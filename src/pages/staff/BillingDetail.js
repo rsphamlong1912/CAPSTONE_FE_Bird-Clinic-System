@@ -342,7 +342,7 @@ const BillingDetail = () => {
         <div className={styles.mainContent}>
           <div className={styles.content}>
             <div className={styles.customerInfo}>
-              <div className={styles.infText}>Thông tin khách hàng</div>
+              <div className={styles.infText}>Thông tin</div>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Tên khách hàng:</span>
                 <span>{customerName}</span>
@@ -351,6 +351,17 @@ const BillingDetail = () => {
                 <span className={styles.label}>Số điện thoại:</span>
                 <span>{customerPhone}</span>
               </div>
+              <div className={styles.lineItem}>
+                <span className={styles.label}>Trạng thái:</span>
+                <span>{serviceFormInfo?.status === "paid" || serviceFormInfo?.status === "done"? "Đã thanh toán": "Chưa thanh toán"}</span>
+              </div>
+              {/* {(serviceFormInfo?.status === "paid" || serviceFormInfo?.status === "done") && (
+                <div className={styles.lineItem}>
+                <span className={styles.label}>Phương thức</span>
+                <span></span>
+              </div>
+              )} */}
+              
             </div>
             <div className={styles.billingInfo}>
               <div className={styles.infText}>Chi tiết hoá đơn</div>

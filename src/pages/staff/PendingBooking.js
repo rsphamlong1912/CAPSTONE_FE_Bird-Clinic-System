@@ -17,6 +17,11 @@ const PendingBooking = () => {
   const [customerList, setCustomerList] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const formatDateForDisplay = (date) => {
+    const [yyyy, mm, dd] = date.split("-");
+    return `${dd}/${mm}/${yyyy}`;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -182,6 +187,7 @@ const PendingBooking = () => {
             <th> Chim</th>
             <th> Dịch vụ</th>
             <th> Giờ đặt</th>
+            <th> Ngày đặt</th>
             <th> Bác sĩ phụ trách</th>
             <th> Trạng thái</th>
             <th> Hành động</th>
@@ -220,6 +226,7 @@ const PendingBooking = () => {
                 <td>{item.bird.name}</td>
                 <td>{item.service_type}</td>
                 <td>{item.estimate_time}</td>
+                <td>{formatDateForDisplay(item.booking_date)}</td>
                 <td>
                   <strong>{item.veterinarian.name}</strong>
                 </td>

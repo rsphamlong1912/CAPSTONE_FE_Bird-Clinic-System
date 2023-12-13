@@ -190,7 +190,7 @@ const ReTesting = () => {
           `/service-form-detail/${serviceFormDetailId}`
         );
         // serviceFormDetailInfo()
-        setServiceFormDetailInfo(response.data.data);
+        setServiceFormDetailInfo(response.data.data[0]);
       } catch (error) {
         console.log(error);
       }
@@ -366,15 +366,19 @@ const ReTesting = () => {
               <h2 className={styles.title}>{serviceFormDetailInfo?.note}</h2>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Mã số:</span>
-                <span>HCO012J6</span>
+                <span>{serviceFormDetailInfo?.service_form_detail_id}</span>
               </div>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Tên khách hàng:</span>
-                <span>Nguyễn Trí Công</span>
+                <span>{serviceFormDetailInfo?.customer_name}</span>
+              </div>
+              <div className={styles.lineItem}>
+                <span className={styles.label}>Số điện thoại:</span>
+                <span>{serviceFormDetailInfo?.phone}</span>
               </div>
               <div className={styles.lineItem}>
                 <span className={styles.label}>Tên chim:</span>
-                <span>Vẹt xanh</span>
+                <span>{serviceFormDetailInfo?.bird_name}</span>
               </div>
             </div>
           </div>

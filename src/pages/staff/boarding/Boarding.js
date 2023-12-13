@@ -442,7 +442,7 @@ const Boarding = () => {
                     bird_id: birdProfile.bird_id,
                     booking_id: bookingId,
                     reason_referral: "any",
-                    status: "done",
+                    status: "pending",
                     date: arrivalDate,
                     veterinarian_referral: bookingInfo.veterinarian_id,
                     total_price: serviceSelected.price * totalDays,

@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import { BsCalendar2 } from "react-icons/bs";
-import { Input, Popconfirm } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Input, Popconfirm } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 
@@ -21,26 +21,24 @@ const PendingBooking = () => {
     const [yyyy, mm, dd] = date.split("-");
     return `${dd}/${mm}/${yyyy}`;
   };
+  const fetchData = async () => {
+    try {
+      const response = await api.get("/booking");
+      const pendingBookings = response.data.data.filter(
+        (booking) => booking.status === "pending"
+      );
+
+      setCustomerList(pendingBookings);
+      setLoading(false); // Move setLoading here to ensure it's called after setting the data
+      console.log("pending list", pendingBookings);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("/booking");
-        const pendingBookings = response.data.data.filter(
-          (booking) => booking.status === "pending"
-        );
-
-        setCustomerList(pendingBookings);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 850);
     fetchData();
-  });
+  }, []); // Empty dependency array to run the effect only once
 
   const options = {
     title: "Xác nhận!",
@@ -56,11 +54,11 @@ const PendingBooking = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -106,6 +104,7 @@ const PendingBooking = () => {
       const response = await api.put(`/booking/${item.booking_id}`, {
         status: "booked",
       });
+      fetchData()
       toast.success("Xác nhận lịch hẹn thành công!", {
         position: "top-right",
         autoClose: 5000,
@@ -121,7 +120,6 @@ const PendingBooking = () => {
     }
   };
 
-
   const optionsCancel = {
     title: "Xác nhận",
     message: "Bạn có chắc huỷ cuộc hẹn?",
@@ -136,11 +134,11 @@ const PendingBooking = () => {
     closeOnEscape: true,
     closeOnClickOutside: true,
     keyCodeForClose: [8, 32],
-    willUnmount: () => { },
-    afterClose: () => { },
-    onClickOutside: () => { },
-    onKeypress: () => { },
-    onKeypressEscape: () => { },
+    willUnmount: () => {},
+    afterClose: () => {},
+    onClickOutside: () => {},
+    onKeypress: () => {},
+    onKeypressEscape: () => {},
     overlayClassName: "overlay-custom-class-name",
   };
 
@@ -149,7 +147,13 @@ const PendingBooking = () => {
       const responseCancel = await api.put(`/booking/${item.booking_id}`, {
         status: "cancelled",
       });
-      if (responseCancel) {
+      const responseChangeStatusSlot = await api.put(
+        `/veterinarian-slot-detail/${item.time_id}`,
+        {
+          status: "available",
+        }
+      );
+      if (responseCancel && responseChangeStatusSlot) {
         console.log("đã huỷ cuộc hẹn");
         toast.success("Đã huỷ thành công!", {
           position: "top-right",
@@ -171,12 +175,12 @@ const PendingBooking = () => {
   return (
     <div className={styles.container}>
       <div className={styles.btnSearch}>
-           <div style={{ marginRight: 'auto' }}>
-           <h1 className={styles.headerTitle}>LỊCH HẸN CHỜ PHÊ DUYỆT</h1>
-          </div>
-          <div style={{width: "30%"}}>
+        <div style={{ marginRight: "auto" }}>
+          <h1 className={styles.headerTitle}>LỊCH HẸN CHỜ PHÊ DUYỆT</h1>
+        </div>
+        <div style={{ width: "30%" }}>
           <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton />
-          </div>
+        </div>
       </div>
       <table>
         <thead>
@@ -211,13 +215,15 @@ const PendingBooking = () => {
                 <div className={styles.emptyContentCenter}>
                   <BsCalendar2 size={50} className={styles.iconEmpty} />
                   <h3 className={styles.txtNoGrooming}>
-                      Không có lịch hẹn chờ phê duyệt.
+                    Không có lịch hẹn chờ phê duyệt.
                   </h3>
                 </div>
               </td>
             </tr>
-          )}          
+          )}
           {!loading &&
+            customerList &&
+            customerList.length > 0 &&
             customerList.map((item, index) => (
               <tr key={index}>
                 <td> {index + 1} </td>
@@ -232,41 +238,45 @@ const PendingBooking = () => {
                 </td>
                 <td>
                   <p
-                    className={`${styles.status} ${item.status === "pending"
-                      ? styles.pending
-                      : item.status === "booked"
+                    className={`${styles.status} ${
+                      item.status === "pending"
+                        ? styles.pending
+                        : item.status === "booked"
                         ? styles.booked
                         : ""
-                      } `}
+                    } `}
                   >
                     {item.status === "pending" ? "Chờ duyệt" : ""}
                   </p>
                 </td>
                 <td className={styles.flexAction}>
-                <Popconfirm
+                  <Popconfirm
                     placement="top"
-                    cancelText="Hủy"     
+                    cancelText="Hủy"
                     title="DUYỆT LỊCH HẸN"
                     description="Bạn có chắc duyệt lịch hẹn này?"
-                    icon={<QuestionCircleOutlined style={{color: '#32B768'}}/>}
+                    icon={
+                      <QuestionCircleOutlined style={{ color: "#32B768" }} />
+                    }
                     onConfirm={() => handleConfirmAlert(item)}
-                >
-                  <div className={styles.btnCheckin}>
-                    Duyệt
-                  </div>
-                </Popconfirm>
-                <Popconfirm
+                  >
+                    <div className={styles.btnCheckin}>Duyệt</div>
+                  </Popconfirm>
+                  <Popconfirm
                     placement="bottom"
-                    cancelText="Hủy"     
+                    cancelText="Hủy"
                     title="HỦY LỊCH HẸN"
                     description="Bạn có chắc hủy lịch hẹn này?"
-                    icon={<QuestionCircleOutlined style={{color: 'red'}}/>}
+                    icon={<QuestionCircleOutlined style={{ color: "red" }} />}
                     onConfirm={() => handleConfirmCancel(item)}
-                >                 
-                  <div className={styles.btnCheckin} style={{backgroundColor: 'red'}}>
-                    Huỷ
-                  </div>
-                </Popconfirm>
+                  >
+                    <div
+                      className={styles.btnCheckin}
+                      style={{ backgroundColor: "red" }}
+                    >
+                      Huỷ
+                    </div>
+                  </Popconfirm>
                 </td>
               </tr>
             ))}

@@ -9,11 +9,13 @@ import { api } from "../../../services/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import { toast } from "react-toastify";
+import { Modal } from "antd";
 const socket = io("https://clinicsystem.io.vn/");
 
 const Report = () => {
   const { boarding_id } = useParams();
   const [boardingInfo, setBoardingInfo] = useState();
+  const [bookingInfo, setBookingInfo] = useState();
   const [serviceFormList, setServiceFormList] = useState();
   const [serviceFormSelect, setServiceFormSelect] = useState();
   const [serviceFormDetailList, setServiceFormDetailList] = useState();
@@ -25,8 +27,15 @@ const Report = () => {
   const [customerId, setCustomerId] = useState();
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
+  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
+
+  // Tạo một đối tượng Date đại diện cho ngày hiện tại
+  const currentDate = new Date();
+
+  // Định dạng ngày thành chuỗi theo định dạng YYYY-MM-DD
+  const formattedDate = currentDate.toISOString().split("T")[0];
 
   // Hàm này được sử dụng để thêm một bảng mới vào danh sách
   const createTable = () => {
@@ -73,7 +82,7 @@ const Report = () => {
       const responseBoarding = await api.get(`/boarding/${boarding_id}`);
       if (responseBoarding) {
         setBoardingInfo(responseBoarding.data.data);
-        console.log("boarding info", responseBoarding.data.data)
+        console.log("boarding info", responseBoarding.data.data);
         setChatId(responseBoarding.data.data.chats.chat_id);
         setCustomerId(responseBoarding.data.data.chats.customer_id);
         getChatContent(
@@ -99,9 +108,19 @@ const Report = () => {
       console.log(error);
     }
   };
+
+  const getBookingInfo = async () => {
+    try {
+      const responseBooking = await api.get(`/booking/${boarding_id}`);
+      setBookingInfo(responseBooking.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getBoardingInfo();
     fetchServiceForm();
+    getBookingInfo();
   }, []);
 
   const sendMessage = async () => {
@@ -221,9 +240,12 @@ const Report = () => {
   };
 
   const handleDoneService = async (item) => {
-    const responseHandleDone = await api.put(`/service-form-detail/${item.service_form_detail_id}`, {
-      status: "done",
-    });
+    const responseHandleDone = await api.put(
+      `/service-form-detail/${item.service_form_detail_id}`,
+      {
+        status: "done",
+      }
+    );
 
     //TĂNG SERVICE HAS DONE LÊN 1
     const serviceFormId = item.service_form_id;
@@ -259,6 +281,61 @@ const Report = () => {
     }
   };
 
+  const handleCheckout = async () => {
+    try {
+      const responseUpdateBoarding = await api.put(
+        `/boarding/${boardingInfo.boarding_id}`,
+        {
+          act_departure_date: formattedDate, //lay ngay hien tai
+        }
+      );
+      console.log("done update boarding", responseUpdateBoarding.data);
+
+      const responseDoneBooking = await api.put(
+        `/booking/${boardingInfo.boarding_id}`,
+        {
+          status: "finish",
+        }
+      );
+      console.log("done booking", responseDoneBooking.data);
+
+      const responseResetCage = await api.put(`/cage/${boardingInfo.cage_id}`, {
+        boarding_id: null,
+        bird_id: null,
+        status: "empty",
+      });
+      console.log("reset cage", responseResetCage);
+
+      for (const item of serviceFormList) {
+        try {
+          const responseHandleDone = await api.put(
+            `/service-form/${item.service_form_id}`,
+            {
+              status: "done",
+            }
+          );
+          console.log("set done sf", responseHandleDone);
+        } catch (error) {}
+      }
+
+      if (responseUpdateBoarding && responseDoneBooking && responseResetCage) {
+        toast.success("Checkout thành công", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      setOpen(false);
+      navigate("/manage-report");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
@@ -378,9 +455,7 @@ const Report = () => {
                                     className={styles.flexStatus}
                                     onClick={() => {
                                       if (!serviceFormDetailList.flag)
-                                        handleDoneService(
-                                          item
-                                        );
+                                        handleDoneService(item);
                                     }}
                                   >
                                     <ion-icon name="checkmark-circle-outline"></ion-icon>
@@ -418,7 +493,7 @@ const Report = () => {
               <span>Hồ sơ chim khám</span>
             </div>
           </div>
-          <Popup
+          {/* <Popup
             modal
             trigger={<button className={styles.btnComplete}>Hoàn thành</button>}
           >
@@ -494,7 +569,38 @@ const Report = () => {
                 </button>
               </div>
             </div>
-          </Popup>
+          </Popup> */}
+          <button className={styles.btnComplete} onClick={() => setOpen(true)}>
+            Hoàn thành
+          </button>
+          <Modal
+            centered
+            open={open}
+            onOk={() => handleCheckout()}
+            onCancel={() => setOpen(false)}
+            width={600}
+          >
+            <div>
+              <div className={styles.headerConfirm}>Xác nhận Checkout</div>
+              {boardingInfo.departure_date == formattedDate ? (
+                <div className={styles.headerTxtFirst}>
+                  Hoàn thành quá trình nội trú cho thú cưng của khách hàng
+                </div>
+              ) : (
+                <div className={styles.headerTxtFirst}>
+                  Lưu ý: Bạn có muốn checkout sớm hơn lịch dự kiến cho
+                </div>
+              )}
+
+              <div className={styles.headerTxtSecond}>
+                {bookingInfo?.customer_name}
+              </div>
+
+              <div className={styles.headerTxtThird}>
+                Vui lòng nhấn OK để xác nhận.
+              </div>
+            </div>
+          </Modal>
         </div>
       </div>
     </div>

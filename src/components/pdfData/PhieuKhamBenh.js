@@ -80,8 +80,14 @@ export const PhieuKhamBenh = React.forwardRef(
                             </div>
                         </div>
                     </div>
+                    <div className={styles.right}>
+                        <img
+                            src="https://vinacheck.vn/media/2019/05/ma-qr-code_vinacheck.vm_001.jpg"
+                            alt=""
+                            className={styles.qr}
+                        />
+                    </div>
                 </div>
-
                 <div className={styles.lineItem}>
                     <span className={`${styles.label} ${styles.label2}`}>
                         Loại dịch vụ:

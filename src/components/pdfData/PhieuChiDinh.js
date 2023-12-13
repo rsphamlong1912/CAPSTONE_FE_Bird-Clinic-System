@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./PhieuChiDinh.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
 
-export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
+export const PhieuChiDinh = React.forwardRef(({ selectedServices, bookingInfo, birdProfile }, ref) => {
   const { currentDate } = useCurrentDate();
 
   // Tính tổng số tiền từ cột price
@@ -18,6 +18,17 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
       currency: "VND",
     }).format(price);
   };
+
+  const today = new Date();
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${day}/${month}/${year}`;
+  };
+
+  const [dates, setDates] = useState(formatDate(today));
   return (
     <div ref={ref} className={styles.container}>
       <div className={styles.flex}>
@@ -26,8 +37,8 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
           BIRD CLINIC SYSTEM
         </div>
         <div>
-          Ngày 21/09/2023<br></br>
-          Mã số: BCS_0FUBFEN
+          Ngày {dates}<br></br>
+          Mã số: {bookingInfo?.booking_id}
         </div>
       </div>
       <h3 className={styles.title}>PHIẾU CHỈ ĐỊNH</h3>
@@ -37,34 +48,34 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
             <h4 className={styles.subTitle}>Thông tin khách hàng</h4>
             <div className={styles.lineItem}>
               <span className={styles.label}>Tên khách hàng:</span>
-              <span>Nguyễn Trí Công</span>
+              <span>{bookingInfo?.customer_name}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Số điện thoại:</span>
-              <span>0333198224</span>
+              <span>{bookingInfo?.customer_phone}</span>
             </div>
           </div>
           <div className={styles.birdInfo}>
             <h4 className={styles.subTitle}>Thông tin chim</h4>
             <div className={styles.lineItem}>
               <span className={styles.label}>Tên chim:</span>
-              <span>Con vẹt xanh</span>
+              <span>{birdProfile?.name}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Ngày nở:</span>
-              <span>23/09/2022</span>
+              <span>{birdProfile?.hatching_date}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Giới tính:</span>
-              <span>Đực</span>
+              <span>{birdProfile?.gender}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Size:</span>
-              <span>Vừa</span>
+              <span>{birdProfile?.bird_breed?.bird_size?.size}</span>
             </div>
             <div className={styles.lineItem}>
               <span className={styles.label}>Giống:</span>
-              <span>Không</span>
+              <span>{birdProfile?.bird_breed?.breed}</span>
             </div>
           </div>
         </div>
@@ -80,7 +91,7 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
         <span className={`${styles.label} ${styles.label2}`}>
           Bác sĩ chỉ định:
         </span>
-        <span>Trịnh Ngọc Bảo</span>
+        <span>{localStorage.getItem("name")}</span>
       </div>
       <div className={styles.lineItem}>
         <span className={`${styles.label} ${styles.label2}`}>
@@ -116,7 +127,7 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
       <div className={styles.footer}>
         <div>{currentDate}</div>
         <div>BS CHỈ ĐỊNH DỊCH VỤ</div>
-        <div className={styles.sign}>BS. Trịnh Ngọc Bảo</div>
+        <div className={styles.sign}>BS. {localStorage.getItem("name")}</div>
       </div>
     </div>
   );

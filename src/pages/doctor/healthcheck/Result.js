@@ -31,8 +31,8 @@ const Result = () => {
     });
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async () => {
+
     const fileInput = document.getElementById("file");
     const file = fileInput.files[0];
     if (file) {
@@ -43,7 +43,7 @@ const Result = () => {
       formData.append("type_id", serviceFormDetailInfo.service_form_detail_id);
       formData.append("type_service", serviceFormDetailInfo.service_package_id);
 
-      console.log("file ne: ", file);
+      console.log("form data ne: ",serviceFormDetailInfo.service_form_detail_id );
 
       // Thực hiện gọi API sử dụng axios
       try {
@@ -74,78 +74,76 @@ const Result = () => {
         theme: "light",
       });
 
-      // Additional handling if required
+      //XU LY DONE SERVICE
+      try {
+        const doneResponse = await api.put(
+          `/service-form-detail/${serviceFormDetailId}`,
+          {
+            status: "done",
+            veterinarian_id: localStorage.getItem("account_id"),
+            process_at: 0,
+          }
+        );
+  
+        //TĂNG SERVICE HAS DONE LÊN 1
+        const serviceFormId = serviceFormDetailInfo.service_form_id;
+        // Lấy thông tin hiện tại của service form
+        const serviceFormResult = await api.get(`/service-form/${serviceFormId}`);
+        // Lấy giá trị hiện tại của num_ser_has_done từ response
+  
+        const currentNumSerHasDone =
+          serviceFormResult.data.data[0].num_ser_has_done;
+        // Tăng giá trị lên 1
+        const updatedNumSerHasDone = currentNumSerHasDone + 1;
+  
+        const isDone =
+          serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
+  
+        //   if (isDone) {
+        //     try {
+        //       const updateBookingResponse = await api.put(
+        //         `/booking/${serviceFormDetailInfo.booking_id}`,
+        //         {
+        //           status: "checked_in_after_test",
+        //         }
+        //       );
+        //     } catch (error) {
+        //       console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
+        //     }
+        //   }
+  
+        // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
+        const increaseResponse = await api.put(`/service-form/${serviceFormId}`, {
+          num_ser_has_done: updatedNumSerHasDone,
+          status: isDone ? "done" : "paid",
+        });
+  
+        console.log("increaseRes", increaseResponse.data);
+  
+        //TOAST THÔNG BÁO
+        toast.success("Hoàn thành khám thành công!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+  
+        navigate(`/retesting`);
+        // Additional handling if required
+      } catch (error) {
+        console.error("Error submitting data:", error);
+        // Error handling, if needed
+      }
     } catch (error) {
       console.error("Error submitting data:", error);
       // Error handling, if needed
     }
   };
 
-  const handleDoneServiceFormDetail = async () => {
-    try {
-      const doneResponse = await api.put(
-        `/service-form-detail/${serviceFormDetailId}`,
-        {
-          status: "done",
-          veterinarian_id: localStorage.getItem("account_id"),
-          process_at: 0,
-        }
-      );
-
-      //TĂNG SERVICE HAS DONE LÊN 1
-      const serviceFormId = serviceFormDetailInfo.service_form_id;
-      // Lấy thông tin hiện tại của service form
-      const serviceFormResult = await api.get(`/service-form/${serviceFormId}`);
-      // Lấy giá trị hiện tại của num_ser_has_done từ response
-
-      const currentNumSerHasDone =
-        serviceFormResult.data.data[0].num_ser_has_done;
-      // Tăng giá trị lên 1
-      const updatedNumSerHasDone = currentNumSerHasDone + 1;
-
-      const isDone =
-        serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
-
-      //   if (isDone) {
-      //     try {
-      //       const updateBookingResponse = await api.put(
-      //         `/booking/${serviceFormDetailInfo.booking_id}`,
-      //         {
-      //           status: "checked_in_after_test",
-      //         }
-      //       );
-      //     } catch (error) {
-      //       console.error("Đã xảy ra lỗi khi cập nhật đặt chỗ:", error);
-      //     }
-      //   }
-
-      // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
-      const increaseResponse = await api.put(`/service-form/${serviceFormId}`, {
-        num_ser_has_done: updatedNumSerHasDone,
-        status: isDone ? "done" : "paid",
-      });
-
-      console.log("increaseRes", increaseResponse.data);
-
-      //TOAST THÔNG BÁO
-      toast.success("Hoàn thành khám thành công!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-
-      navigate(`/retesting`);
-      // Additional handling if required
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      // Error handling, if needed
-    }
-  };
 
   const options = {
     title: "Xác nhận",
@@ -212,15 +210,15 @@ const Result = () => {
         const response = await api.get(
           `/service-form-detail/${serviceFormDetailId}`
         );
-        // serviceFormDetailInfo()
-        setServiceFormDetailInfo(response.data.data);
+        setServiceFormDetailInfo(response.data.data[0]);
+        console.log("sdf", response.data.data);
       } catch (error) {
         console.log(error);
       }
     };
 
     getServiceFormDetail();
-  }, [serviceFormDetailId]);
+  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -239,7 +237,7 @@ const Result = () => {
             <div className={styles.retesting}>
               <h2 className={styles.title}>Trả kết quả xét nghiệm</h2>
               <div className={styles.fileInput}>
-                <label htmlFor="symptom">Triệu chứng</label>
+                <label htmlFor="symptom">Triệu chứng (nếu có)</label>
                 <input
                   type="text"
                   name="symptom"
@@ -248,7 +246,7 @@ const Result = () => {
                 />
               </div>
               <div className={styles.fileInput}>
-                <label htmlFor="diagnose">Chẩn đoán</label>
+                <label htmlFor="diagnose">Chẩn đoán (nếu có)</label>
                 <input
                   type="text"
                   name="diagnose"
@@ -257,7 +255,7 @@ const Result = () => {
                 />
               </div>
               <div className={styles.fileInput}>
-                <label htmlFor="recommendations">Đề nghị</label>
+                <label htmlFor="recommendations">Đề nghị (nếu có)</label>
                 <input
                   type="text"
                   name="recommendations"
@@ -272,13 +270,6 @@ const Result = () => {
                   *Dung lượng không vượt quá 5mb
                 </p>
               </div>
-              <button
-                type="submit"
-                className={styles.btnSubmit}
-                onClick={handleFormSubmit}
-              >
-                Gửi
-              </button>
             </div>
           </div>
           <div className={styles.metaContent}>
@@ -300,7 +291,7 @@ const Result = () => {
             </div>
             <button
               className={styles.btnComplete}
-              onClick={handleDoneServiceFormDetail}
+              onClick={()=>handleFormSubmit()}
             >
               Hoàn thành
             </button>

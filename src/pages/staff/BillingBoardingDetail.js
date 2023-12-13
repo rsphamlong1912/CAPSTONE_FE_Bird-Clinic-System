@@ -187,46 +187,46 @@ const BillingBoardingDetail = () => {
                   console.log(error);
                 }
 
-                //CHANGE STATUS SERVICE FORM DETAIL
-                try {
-                  const response = await api.get(
-                    `/service-form/${item.service_form_id}`
-                  );
+                // //CHANGE STATUS SERVICE FORM DETAIL
+                // try {
+                //   const response = await api.get(
+                //     `/service-form/${item.service_form_id}`
+                //   );
 
-                  setServiceFormDetailList(
-                    response.data.data[0].service_form_details
-                  );
-                  for (const item of response.data.data[0]
-                    .service_form_details) {
-                    const detailResponse = await api.put(
-                      `/service-form-detail/${item.service_form_detail_id}`,
-                      {
-                        status: "on_going",
-                        veterinarian_id: item.veterinarian_id,
-                        process_at: item.process_at,
-                      }
-                    );
+                //   setServiceFormDetailList(
+                //     response.data.data[0].service_form_details
+                //   );
+                //   for (const item of response.data.data[0]
+                //     .service_form_details) {
+                //     const detailResponse = await api.put(
+                //       `/service-form-detail/${item.service_form_detail_id}`,
+                //       {
+                //         status: "done",
+                //         veterinarian_id: item.veterinarian_id,
+                //         process_at: item.process_at,
+                //       }
+                //     );
 
-                    console.log(" doi ròi", detailResponse);
-                  }
-                  socket.emit("complete-payment", {
-                    customer_id: customerId,
-                    vet: vetDetailArr,
-                  });
-                  fetchServiceForm();
-                  toast.success("Dịch vụ đã được thanh toán!", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
-                } catch (error) {
-                  console.log(error);
-                }
+                //     console.log(" doi ròi", detailResponse);
+                //   }
+                //   socket.emit("complete-payment", {
+                //     customer_id: customerId,
+                //     vet: vetDetailArr,
+                //   });
+                //   fetchServiceForm();
+                //   toast.success("Dịch vụ đã được thanh toán!", {
+                //     position: "top-right",
+                //     autoClose: 5000,
+                //     hideProgressBar: false,
+                //     closeOnClick: true,
+                //     pauseOnHover: true,
+                //     draggable: true,
+                //     progress: undefined,
+                //     theme: "light",
+                //   });
+                // } catch (error) {
+                //   console.log(error);
+                // }
               }
             } catch (error) {
               console.log(error);
@@ -386,16 +386,16 @@ const BillingBoardingDetail = () => {
                       </td>
                       <td>
                         <p
-                          className={`${styles.status} ${serviceFormBoardingInfo.status === "paid" ||
-                            serviceFormBoardingInfo.status === "done"
-                            ? styles.paid
-                            : styles.pending
+                          className={`${styles.status} ${serviceFormBoardingInfo.status === "pending" ||
+                            serviceFormBoardingInfo.status === "done_not_paid"
+                            ? styles.pending
+                            : styles.paid
                             } `}
                         >
-                          {serviceFormBoardingInfo.status === "paid" ||
-                            serviceFormBoardingInfo.status === "done"
-                            ? "Đã thanh toán"
-                            : "Chưa thanh toán"}
+                          {serviceFormBoardingInfo.status === "pending" ||
+                            serviceFormBoardingInfo.status === "done_not_paid"
+                            ? "Chưa thanh toán"
+                            : "Đã thanh toán"}
                         </p>
                       </td>
 
@@ -406,16 +406,16 @@ const BillingBoardingDetail = () => {
                             handleOpenBoardingInfo(serviceFormBoardingInfo)
                           }
                         ></ion-icon>
-                        {serviceFormBoardingInfo.status !== 'paid' && serviceFormBoardingInfo.status !== 'done' ? (
+                        {serviceFormBoardingInfo.status !== 'pending' && serviceFormBoardingInfo.status !== 'done_not_paid' ? (
                           <div
-                            className={styles.btnCheckin}
-                            onClick={() => handleConfirmAlert(serviceFormBoardingInfo)}
+                            className={styles.disabled}
                           >
                             Thanh toán
                           </div>
                         ) : (
                           <div
-                            className={styles.disabled}
+                            className={styles.btnCheckin}
+                            onClick={() => handleConfirmAlert(serviceFormBoardingInfo)}
                           >
                             Thanh toán
                           </div>

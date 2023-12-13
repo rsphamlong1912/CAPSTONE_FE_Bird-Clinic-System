@@ -155,7 +155,7 @@ const WaitingResult = () => {
                     className={styles.btnExam}
                     onClick={() => navigate(`/examing/${item.booking_id}`)}
                   >
-                    Khám
+                    Tiếp tục
                   </div>
                 </td>
               </tr>

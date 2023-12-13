@@ -73,6 +73,7 @@ const Report = () => {
       const responseBoarding = await api.get(`/boarding/${boarding_id}`);
       if (responseBoarding) {
         setBoardingInfo(responseBoarding.data.data);
+        console.log("boarding info", responseBoarding.data.data)
         setChatId(responseBoarding.data.data.chats.chat_id);
         setCustomerId(responseBoarding.data.data.chats.customer_id);
         getChatContent(
@@ -241,7 +242,7 @@ const Report = () => {
     // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
     const increaseResponse = await api.put(`/service-form/${serviceFormId}`, {
       num_ser_has_done: updatedNumSerHasDone,
-      status: isDone ? "done" : "paid",
+      status: isDone ? "done_not_paid" : "pending",
     });
     handleFetchServiceDetail(serviceFormSelect);
     if (responseHandleDone) {
@@ -430,7 +431,7 @@ const Report = () => {
                   <div className={styles.headerTxtFirst}>
                     Hoàn thành quá trình nội trú cho thú cứng của khách hàng
                   </div>
-                  <div className={styles.headerTxtSecond}>Nguyễn Trí Công</div>
+                  <div className={styles.headerTxtSecond}>{boardingInfo}</div>
                   <div className={styles.headerTxtThird}>
                     Vui lòng tiếp tục để xác nhận.
                   </div>

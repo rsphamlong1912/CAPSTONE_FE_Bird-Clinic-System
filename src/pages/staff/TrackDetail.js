@@ -504,7 +504,7 @@ const TrackDetail = () => {
                       </tr>
                       <tr>
                         <th>Ngày đặt</th>
-                        <td>{bookingInfo?.arrival_date}</td>
+                        <td>{new Date(bookingInfo?.arrival_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
                       </tr>
                       <tr>
                         <th>Giờ dự kiến</th>

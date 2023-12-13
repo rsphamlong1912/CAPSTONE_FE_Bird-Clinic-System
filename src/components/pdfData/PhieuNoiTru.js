@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./PhieuNoiTru.module.scss";
 import useCurrentDate from "../../hooks/useCurrentDate";
 
-export const PhieuNoiTru = React.forwardRef(({bookingInfo, birdProfile, boardingData}, ref) => {
+export const PhieuNoiTru = React.forwardRef(({ bookingInfo, birdProfile, boardingData }, ref) => {
   const { currentDate } = useCurrentDate();
 
   // Tính tổng số tiền từ cột price
@@ -26,8 +26,8 @@ export const PhieuNoiTru = React.forwardRef(({bookingInfo, birdProfile, boarding
           BIRD CLINIC SYSTEM
         </div>
         <div>
-        {currentDate}<br></br>
-        {bookingInfo?.booking_id}
+          {currentDate}<br></br>
+          {bookingInfo?.booking_id}
         </div>
       </div>
       <h3 className={styles.title}>PHIẾU NỘI TRÚ</h3>
@@ -87,22 +87,22 @@ export const PhieuNoiTru = React.forwardRef(({bookingInfo, birdProfile, boarding
           Thông tin nội trú:
         </span>
         <div className={styles.lineItem}>
-              <span className={styles.label}>Mã số:</span>
-              <span>{bookingInfo?.booking_id}</span>
-            </div>
+          <span className={styles.label}>Mã số:</span>
+          <span>{bookingInfo?.booking_id}</span>
+        </div>
         <div className={styles.lineItem}>
-              <span className={styles.label}>Dịch vụ:</span>
-              <span>{boardingData?.service}</span>
-            </div>
+          <span className={styles.label}>Dịch vụ:</span>
+          <span>{boardingData?.service} - {formattedPrice(boardingData?.price)}</span>
+        </div>
         <div className={styles.lineItem}>
-              <span className={styles.label}>Ngày đến:</span>
-              <span>{boardingData?.arrivalDate}</span>
-            </div>
+          <span className={styles.label}>Ngày đến:</span>
+          <span>{new Date(boardingData?.arrivalDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
+        </div>
         <div className={styles.lineItem}>
-              <span className={styles.label}>Ngày trả:</span>
-              <span>{boardingData?.departureDate} ({boardingData?.totalDays} ngày lưu trú)</span>
-            </div>
-      
+          <span className={styles.label}>Ngày trả:</span>
+          <span>{new Date(boardingData?.departureDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} ({boardingData?.totalDays} ngày lưu trú)</span>
+        </div>
+
       </div>
       <div className={styles.footer}>
         <div>{currentDate}</div>

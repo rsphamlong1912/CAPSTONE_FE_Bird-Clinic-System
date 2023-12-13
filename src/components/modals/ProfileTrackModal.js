@@ -97,7 +97,7 @@ const ProfileTrackModal = ({ open, onClose, birdProfile, birdProfileBreed, booki
                                 <>
                                     <div key={index} className={styles.infSF}>
                                         <p className={styles.infSFId}>{`${index + 1}. ${service.service_form_id}`}</p>
-                                        <p className={styles.infSFDate}>{service.date}</p>
+                                        <p className={styles.infSFDate}>{new Date(service.date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</p>
                                     </div>
                                     {service.service_form_details.map((service, index) => (
                                         <div key={index} className={styles.infSFD}>

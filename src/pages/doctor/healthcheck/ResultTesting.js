@@ -69,7 +69,7 @@ const ResultTesting = () => {
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-        <div className={styles.left}>DANH SÁCH XÉT NGHIỆM HÔM NAY</div>
+        <div className={styles.left}>DANH SÁCH ĐÃ KHÁM</div>
         <div className={styles.right}>{currentDate}</div>
       </div>
       <table>

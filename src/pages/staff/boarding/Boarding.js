@@ -165,6 +165,7 @@ const Boarding = () => {
     try {
       const responseBoarding = await api.get(`/boarding/${bookingId}`);
       setBoardingInfo(responseBoarding.data.data);
+      console.log("boarding i4 ne", responseBoarding.data.data)
       setArrivalDate(responseBoarding.data.data.arrival_date);
       setDepartureDate(responseBoarding.data.data.departure_date);
       console.log("fetch boading", responseBoarding.data.data.arrival_date);
@@ -383,6 +384,31 @@ const Boarding = () => {
           onClick: async () => {
             try {
               if (arrivalDate && departureDate && cageSelected) {
+                //up hinh
+                const fileInput = document.getElementById("file");
+                const file = fileInput.files[0];
+                if (file) {
+                  // Tạo formData chứa dữ liệu cần gửi
+                  const formData = new FormData();
+                  formData.append("image", file);
+                  formData.append("type", "boarding");
+                  formData.append("type_id", boardingInfo.boarding_id);
+                  formData.append("type_service", boardingInfo.boarding_id);
+            
+                  console.log("file ne: ", file);
+            
+                  // Thực hiện gọi API sử dụng axios
+                  try {
+                    const response = await api.post("/media", formData, {
+                      headers: {
+                        "Content-Type": "multipart/form-data",
+                      },
+                    });
+                    console.log("Response:", response.data);
+                  } catch (error) {
+                    console.error("Error:", error);
+                  }
+                }
                 const responseUpdateBoarding = await api.put(
                   `/boarding/${bookingId}`,
                   {
@@ -759,7 +785,7 @@ const Boarding = () => {
               <div className={styles.confirm}>
                 <div className={styles.confirmLeft}>
                   <h3 className={styles.title}>Hình ảnh tiếp nhận</h3>
-                  <Form.Item
+                  {/* <Form.Item
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
@@ -785,7 +811,13 @@ const Boarding = () => {
               uploadButton
             )}
           </Upload>
-        </Form.Item>
+        </Form.Item> */}
+        <div className={styles.fileInput}>
+                <input type="file" name="file" id="file" />
+                <p className={styles.fileInfo}>
+                  *Dung lượng không vượt quá 5mb
+                </p>
+              </div>
                   
                 </div>
                 <div className={styles.confirmRight}>

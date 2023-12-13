@@ -59,7 +59,10 @@ const MainLayout = (props) => {
             ))}
           </div>
           <div className={styles.bottomSidebar}>
-            <div className={styles.logOutTab} onClick={() => navigate(`/`)}>
+            <div className={styles.logOutTab} onClick={() => {
+              localStorage.clear();
+              navigate("/");
+            }}>
               
               <div className={styles.iconLogOut}> <BsBoxArrowLeft 
                 size={30}

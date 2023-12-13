@@ -219,9 +219,29 @@ const Report = () => {
     }
   };
 
-  const handleDoneService = async (id) => {
-    const responseHandleDone = await api.put(`/service-form-detail/${id}`, {
+  const handleDoneService = async (item) => {
+    const responseHandleDone = await api.put(`/service-form-detail/${item.service_form_detail_id}`, {
       status: "done",
+    });
+
+    //TĂNG SERVICE HAS DONE LÊN 1
+    const serviceFormId = item.service_form_id;
+    // Lấy thông tin hiện tại của service form
+    const serviceFormResult = await api.get(`/service-form/${serviceFormId}`);
+    // Lấy giá trị hiện tại của num_ser_has_done từ response
+
+    const currentNumSerHasDone =
+      serviceFormResult.data.data[0].num_ser_has_done;
+    // Tăng giá trị lên 1
+    const updatedNumSerHasDone = currentNumSerHasDone + 1;
+
+    const isDone =
+      serviceFormResult.data.data[0].num_ser_must_do === updatedNumSerHasDone;
+
+    // Gửi yêu cầu PUT để cập nhật giá trị num_ser_has_done
+    const increaseResponse = await api.put(`/service-form/${serviceFormId}`, {
+      num_ser_has_done: updatedNumSerHasDone,
+      status: isDone ? "done" : "paid",
     });
     handleFetchServiceDetail(serviceFormSelect);
     if (responseHandleDone) {
@@ -358,7 +378,7 @@ const Report = () => {
                                     onClick={() => {
                                       if (!serviceFormDetailList.flag)
                                         handleDoneService(
-                                          item.service_form_detail_id
+                                          item
                                         );
                                     }}
                                   >

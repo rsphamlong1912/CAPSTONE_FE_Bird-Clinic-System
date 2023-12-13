@@ -87,8 +87,9 @@ export const PhieuChiDinh = React.forwardRef(({ selectedServices }, ref) => {
           Lý do chỉ định:
         </span>
         <span>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. A doloremque
-          quod neque saepe nemo animi.
+          .....................................................................................................................
+          .....................................................................................................................
+          ....................................................................................
         </span>
       </div>
       <div className={styles.lineItem}>

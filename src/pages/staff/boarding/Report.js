@@ -61,7 +61,7 @@ const Report = () => {
   const getChatContent = async (chatId, customerId) => {
     try {
       const responseChatContent = await api.get(
-        `content_chat/?chat_id=${chatId}&user1=clinic&user2=${customerId}`
+        `content-chat/?chat_id=${chatId}&user1=clinic&user2=${customerId}`
       );
       setContentChat(responseChatContent.data.data);
     } catch (error) {

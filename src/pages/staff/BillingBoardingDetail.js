@@ -27,7 +27,7 @@ const BillingBoardingDetail = () => {
   const [customerName, setCustomerName] = useState();
   const [customerPhone, setCustomerPhone] = useState();
   const [totalPrice, setTotalPrice] = useState();
-  const [totalDays, setTotalDays] = useState(0);
+  const [totalDays, setTotalDays] = useState();
   const [open, setOpen] = useState(false);
   const [openBoardingInfo, setOpenBoardingInfo] = useState(false);
   const [serviceDetailModal, setServiceDetailModal] = useState();
@@ -76,22 +76,10 @@ const BillingBoardingDetail = () => {
         setServiceFormList(dataWithoutLastElement);
         setTotalPrice(
           responseServiceForm.data.data.reduce((total, item) => {
-            const price = parseFloat(item.total_price);
+            const price = parseFloat(item?.total_price);
             return total + price;
           }, 0)
         );
-        // console.log(
-        //   "detail",
-        //   responseServiceForm.data.data[0].service_form_details
-        // );
-        // const vetDetailArr =
-        //   responseServiceForm.data.data[0].service_form_details.map(
-        //     (item, index) => item.veterinarian_id
-        //   );
-        // setVetDetailArr(vetDetailArr);
-        // setServiceSelected(
-        //   responseServiceForm.data.data[0].service_form_details
-        // );
       }
     } catch (error) {
       console.log(error);
@@ -101,14 +89,15 @@ const BillingBoardingDetail = () => {
 
   const fetchBoardingInfo = async () => {
     try {
-      const responseBoardingInfo = await api.get(`/boarding/?booking_id=${id}`);
-      setBoardingInfo(responseBoardingInfo.data.data[0]);
+      const responseBoardingInfo = await api.get(`/boarding/${id}`);
+      console.log("boarding i4 ne",responseBoardingInfo.data.data);
+      setBoardingInfo(responseBoardingInfo.data.data);
       const oneDay = 24 * 60 * 60 * 1000; // số mili giây trong một ngày
       const firstDate = new Date(
-        responseBoardingInfo.data.data[0].arrival_date
+        responseBoardingInfo.data.data.arrival_date
       );
       const secondDate = new Date(
-        responseBoardingInfo.data.data[0].departure_date
+        responseBoardingInfo.data.data.departure_date
       );
       const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
       setTotalDays(diffDays);
@@ -166,7 +155,7 @@ const BillingBoardingDetail = () => {
             try {
               const createdBill = await api.post(`/bill/`, {
                 title: "Thanh toán lần 1",
-                total_price: item.total_price,
+                total_price: item?.total_price,
                 service_form_id: item.service_form_id,
                 booking_id: item.booking_id,
                 payment_method: "cash",
@@ -227,7 +216,7 @@ const BillingBoardingDetail = () => {
                 // } catch (error) {
                 //   console.log(error);
                 // }
-                fetchBoardingInfo()
+                fetchServiceForm()
               }
             } catch (error) {
               console.log(error);
@@ -240,7 +229,7 @@ const BillingBoardingDetail = () => {
             try {
               const createdBill = await api.post(`/bill/`, {
                 title: "Thanh toán lần 1",
-                total_price: item.total_price,
+                total_price: item?.total_price,
                 service_form_id: item.service_form_id,
                 booking_id: item.booking_id,
                 payment_method: "banking",
@@ -302,7 +291,7 @@ const BillingBoardingDetail = () => {
                 // } catch (error) {
                 //   console.log(error);
                 // }
-                fetchBoardingInfo()
+                fetchServiceForm()
               }
             } catch (error) {
               console.log(error);
@@ -384,18 +373,18 @@ const BillingBoardingDetail = () => {
                       <td>{new Date(boardingInfo?.arrival_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} </td>
                       <td>{new Date(boardingInfo?.departure_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
                       <td>
-                        {formattedPrice(serviceFormBoardingInfo.total_price)}
+                        {formattedPrice(serviceFormBoardingInfo?.total_price)}
                       </td>
                       <td>
                         <p
-                          className={`${styles.status} ${serviceFormBoardingInfo.status === "pending" ||
-                            serviceFormBoardingInfo.status === "done_not_paid"
+                          className={`${styles.status} ${serviceFormBoardingInfo?.status === "pending" ||
+                            serviceFormBoardingInfo?.status === "done_not_paid"
                             ? styles.pending
                             : styles.paid
                             } `}
                         >
-                          {serviceFormBoardingInfo.status === "pending" ||
-                            serviceFormBoardingInfo.status === "done_not_paid"
+                          {serviceFormBoardingInfo?.status === "pending" ||
+                            serviceFormBoardingInfo?.status === "done_not_paid"
                             ? "Chưa thanh toán"
                             : "Đã thanh toán"}
                         </p>
@@ -408,7 +397,7 @@ const BillingBoardingDetail = () => {
                             handleOpenBoardingInfo(serviceFormBoardingInfo)
                           }
                         ></ion-icon>
-                        {serviceFormBoardingInfo.status !== 'pending' && serviceFormBoardingInfo.status !== 'done_not_paid' ? (
+                        {serviceFormBoardingInfo?.status !== 'pending' && serviceFormBoardingInfo?.status !== 'done_not_paid' ? (
                           <div
                             className={styles.disabled}
                           >
@@ -472,15 +461,15 @@ const BillingBoardingDetail = () => {
                         <td> {item.service_form_id} </td>
                         <td> {convertTime(item.time_create)} </td>
                         <td>{item.num_ser_must_do}</td>
-                        <td>{formattedPrice(item.total_price)}</td>
+                        <td>{formattedPrice(item?.total_price)}</td>
                         <td>
                           <p
-                            className={`${styles.status} ${item.status === "paid" || item.status === "done"
+                            className={`${styles.status} ${item?.status === "paid" || item?.status === "done"
                               ? styles.paid
                               : styles.pending
                               } `}
                           >
-                            {item.status === "paid" || item.status === "done"
+                            {item?.status === "paid" || item?.status === "done"
                               ? "Đã thanh toán"
                               : "Chưa thanh toán"}
                           </p>
@@ -491,7 +480,7 @@ const BillingBoardingDetail = () => {
                             name="eye-outline"
                             onClick={() => handleOpenDetail(item)}
                           ></ion-icon>
-                          {item.status !== 'paid' && item.status !== 'done' ? (
+                          {item?.status !== 'paid' && item?.status !== 'done' ? (
                             <div
                               className={styles.btnCheckin}
                               onClick={() => handleConfirmAlert(item)}
@@ -558,9 +547,9 @@ const BillingBoardingDetail = () => {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.note}</td>
-                          <td>{formattedPrice(item.price)}</td>
+                          <td>{formattedPrice(item?.price)}</td>
                           <td>{totalDays}</td>
-                          <td>{formattedPrice(item.price * totalDays)}</td>
+                          <td>{formattedPrice(item?.price * totalDays)}</td>
                         </tr>
                       ))}
                   </tbody>

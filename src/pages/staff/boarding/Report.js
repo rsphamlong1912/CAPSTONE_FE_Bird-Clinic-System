@@ -230,6 +230,7 @@ const Report = () => {
       flag: item.veterinarian_referral ? true : false,
       list: item.service_form_details,
     });
+
     const responseServiceForm = await api.get(
       `/service-form/?booking_id=${boarding_id}`
     );
@@ -315,6 +316,17 @@ const Report = () => {
             }
           );
           console.log("set done sf", responseHandleDone);
+        } catch (error) {}
+      }
+      for (const item of serviceFormDetailList.list) {
+        try {
+          const responseHandleDoneDetail = await api.put(
+            `/service-form-detail/${item.service_form_detail_id}`,
+            {
+              status: "done",
+            }
+          );
+          console.log("set done sfd", responseHandleDoneDetail);
         } catch (error) {}
       }
 
@@ -582,7 +594,7 @@ const Report = () => {
           >
             <div>
               <div className={styles.headerConfirm}>Xác nhận Checkout</div>
-              {boardingInfo.departure_date == formattedDate ? (
+              {boardingInfo?.departure_date == formattedDate ? (
                 <div className={styles.headerTxtFirst}>
                   Hoàn thành quá trình nội trú cho thú cưng của khách hàng
                 </div>

@@ -472,7 +472,7 @@ const Boarding = () => {
                     progress: undefined,
                     theme: "light",
                   });
-                  setTab((tab) => (tab += 1));
+                  navigate("/boarding")
                 } else {
                   console.log("KHONG TAO DUOC SERVICE FORM");
                 }

@@ -19,6 +19,7 @@ const Report = () => {
   const [serviceFormList, setServiceFormList] = useState();
   const [serviceFormSelect, setServiceFormSelect] = useState();
   const [serviceFormDetailList, setServiceFormDetailList] = useState();
+  const [serviceFormDetailArr, setServiceFormDetailArr] = useState()
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [tables, setTables] = useState([]);
   const [selectedType, setSelectedType] = useState("");
@@ -108,6 +109,19 @@ const Report = () => {
       console.log(error);
     }
   };
+  const fetchServiceFormDetail = async () => {
+    try {
+      const responseServiceFormDetail = await api.get(
+        `/service-form-detail/?booking_id=${boarding_id}`
+      );
+      if (responseServiceFormDetail) {
+        console.log("service form list arr ne: ", responseServiceFormDetail.data.data);
+        setServiceFormDetailArr(responseServiceFormDetail.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getBookingInfo = async () => {
     try {
@@ -121,6 +135,7 @@ const Report = () => {
     getBoardingInfo();
     fetchServiceForm();
     getBookingInfo();
+    fetchServiceFormDetail()
   }, []);
 
   const sendMessage = async () => {
@@ -318,7 +333,8 @@ const Report = () => {
           console.log("set done sf", responseHandleDone);
         } catch (error) {}
       }
-      for (const item of serviceFormDetailList.list) {
+
+      for (const item of serviceFormDetailArr) {
         try {
           const responseHandleDoneDetail = await api.put(
             `/service-form-detail/${item.service_form_detail_id}`,

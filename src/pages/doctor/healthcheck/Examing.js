@@ -216,6 +216,9 @@ const Examing = () => {
 
       const response = api.post(`/booking/re-exam`, requestData);
       console.log("Re-exam thanh cong:", response);
+      setTimeout(() => {
+        setTab(5);
+      }, 1000);
       success();
     } catch (error) {
       console.log(error);

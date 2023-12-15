@@ -140,7 +140,7 @@ const Report = () => {
 
   const sendMessage = async () => {
     if (message !== "") {
-      const responsePost = await api.post(`content_chat/`, {
+      const responsePost = await api.post(`content-chat/`, {
         user1: "clinic",
         user2: customerId,
         message: message,
@@ -148,7 +148,7 @@ const Report = () => {
         chat_id: chatId,
       });
 
-      const responsePost2 = await api.post(`content_chat/`, {
+      const responsePost2 = await api.post(`content-chat/`, {
         user1: customerId,
         user2: "clinic",
         message: message,

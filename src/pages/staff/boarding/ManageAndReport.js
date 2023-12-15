@@ -8,17 +8,18 @@ const ManageAndReport = () => {
   const [cageList, setCageList] = useState([]);
   const navigate = useNavigate();
 
+  const fetchCage = async () => {
+    try {
+      const response = await api.get(`/cage/`);
+      console.log("response:", response.data.data);
+      setCageList(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const sendApiForData = async () => {
-      try {
-        const response = await api.get(`/cage/`);
-        console.log("response:", response);
-        setCageList(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    sendApiForData();
+    fetchCage();
   }, []);
 
   const handleCageClick = (cage) => {

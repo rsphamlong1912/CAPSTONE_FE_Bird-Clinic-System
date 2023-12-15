@@ -52,9 +52,10 @@ const HistoryBoarding = () => {
                 const response = await api.get(`/booking?arrival_date=${selectedDate}`);
                 const filterBookings = response.data.data.filter(
                     (booking) =>
-                        booking.service_type_id == "ST003" &&
-                        booking.status == "on_going" ||
-                        booking.status == "finish"
+                        (booking.service_type_id === "ST003" &&
+                        booking.status === "on_going") ||
+                        (booking.service_type_id === "ST003" &&
+                        booking.status === "finish")
                 );
                 setCustomerList(filterBookings);
             } catch (error) {

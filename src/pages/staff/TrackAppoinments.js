@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
 import styles from "./TrackAppoinments.module.scss";
 import { api } from "../../services/axios";
 import LoadingSkeleton from "../../components/loading/LoadingSkeleton";
@@ -69,43 +68,41 @@ const TrackAppoinments = () => {
     setVisibleDates(dateList.slice(visibleIndex - 3, visibleIndex + 4));
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/booking?arrival_date=${selectedDate}`);
-        console.log("sdjvbcs", response.data.data);
-        let filterBookings = response.data.data.filter(
-          (booking) => booking.status !== "pending"
-        );
-        // filterBookings = filterBookings.filter(
-        //   (booking) => booking.checkin_time !== null
-        // );
+  const fetchData = async () => {
+    try {
+      const response = await api.get(`/booking?arrival_date=${selectedDate}`);
+      console.log("data", response.data.data);
+      let filterBookings = response.data.data.filter(
+        (booking) => booking.status !== "pending"
+      );
+      // filterBookings = filterBookings.filter(
+      //   (booking) => booking.checkin_time !== null
+      // );
 
-        filterBookings.sort((a, b) => {
-          if (a.checkin_time && b.checkin_time) {
-            const timeA = a.checkin_time.split(":").map(Number);
-            const timeB = b.checkin_time.split(":").map(Number);
+      filterBookings.sort((a, b) => {
+        if (a.checkin_time && b.checkin_time) {
+          const timeA = a.checkin_time.split(":").map(Number);
+          const timeB = b.checkin_time.split(":").map(Number);
 
-            // So sánh giờ
-            if (timeA[0] !== timeB[0]) {
-              return timeA[0] - timeB[0];
-            }
-
-            // Nếu giờ bằng nhau, so sánh phút
-            return timeA[1] - timeB[1];
+          // So sánh giờ
+          if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
           }
-          return 0;
-        });
 
-        setCustomerList(filterBookings);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+          // Nếu giờ bằng nhau, so sánh phút
+          return timeA[1] - timeB[1];
+        }
+        return 0;
+      });
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 850);
+      setCustomerList(filterBookings);
+      setLoading(false)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [selectedDate]);
 

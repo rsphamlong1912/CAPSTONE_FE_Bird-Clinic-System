@@ -147,13 +147,19 @@ const PendingBooking = () => {
       const responseCancel = await api.put(`/booking/${item.booking_id}`, {
         status: "cancelled",
       });
-      const responseChangeStatusSlot = await api.put(
-        `/veterinarian-slot-detail/${item.time_id}`,
-        {
-          status: "available",
-        }
+      const responseGetStatusSlot = await api.get(
+        `/veterinarian-slot-detail/?time_slot_clinic_id=${item.time_id}&veterinarian_id=${item.veterinarian_id}`
       );
-      if (responseCancel && responseChangeStatusSlot) {
+
+      if (responseGetStatusSlot) {
+        const responseChangeStatusSlot = await api.put(
+          `/veterinarian-slot-detail/${responseGetStatusSlot.data.data[0].veterinarian_slot_detail_id}`, {
+            status: "available"
+          }
+        );
+        console.log("change status", responseChangeStatusSlot.data.data)
+      }
+      if (responseCancel && responseGetStatusSlot) {
         console.log("đã huỷ cuộc hẹn");
         toast.success("Đã huỷ thành công!", {
           position: "top-right",

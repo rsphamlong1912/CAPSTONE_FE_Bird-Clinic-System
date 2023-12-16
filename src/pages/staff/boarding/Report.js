@@ -19,16 +19,17 @@ const Report = () => {
   const [serviceFormList, setServiceFormList] = useState();
   const [serviceFormSelect, setServiceFormSelect] = useState();
   const [serviceFormDetailList, setServiceFormDetailList] = useState();
-  const [serviceFormDetailArr, setServiceFormDetailArr] = useState()
+  const [serviceFormDetailArr, setServiceFormDetailArr] = useState();
   const [openModalProfile, setOpenModalProfile] = useState(false);
-  const [tables, setTables] = useState([]);
-  const [selectedType, setSelectedType] = useState("");
-  const [tab, setTab] = useState(1);
   const [chatId, setChatId] = useState();
   const [customerId, setCustomerId] = useState();
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
   const [open, setOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  let chatID;
+  let customerID;
 
   const navigate = useNavigate();
 
@@ -38,62 +39,37 @@ const Report = () => {
   // Định dạng ngày thành chuỗi theo định dạng YYYY-MM-DD
   const formattedDate = currentDate.toISOString().split("T")[0];
 
-  // Hàm này được sử dụng để thêm một bảng mới vào danh sách
-  const createTable = () => {
-    const handleChangeType = (event) => {
-      setSelectedType(event.target.value); // Cập nhật giá trị đã chọn khi người dùng thay đổi
-    };
-    // Tạo một bảng mới (có thể là một đối tượng hoặc một mã HTML JSX)
-    const newTable = (
-      <div className={styles.Services}>
-        <div className={styles.ListServices}>
-          <select
-            className={styles.TypeList}
-            value={selectedType}
-            onChange={handleChangeType}
-          >
-            <option value="">--</option>
-            <option value="Tỉa lông">Tỉa lông</option>
-            <option value="Cắt móng">Cắt móng</option>
-            <option value="Cắt cánh">Cắt cánh</option>
-          </select>
-        </div>
-        <div className={styles.iconCheck}>
-          <MdOutlineDone />
-        </div>
-        <div className={styles.unCheck}>X</div>
-      </div>
-    );
-
-    // Cập nhật danh sách bảng bằng cách thêm bảng mới vào mảng hiện tại
-    setTables([...tables, newTable]);
-  };
-  const getChatContent = async (chatId, customerId) => {
+  const getChatContent = async () => {
     try {
       const responseChatContent = await api.get(
-        `content-chat/?chat_id=${chatId}&user1=clinic&user2=${customerId}`
+        `content-chat/?chat_id=${chatID}&user1=clinic&user2=${customerID}`
       );
       setContentChat(responseChatContent.data.data);
+      console.log("fetch chat ne", responseChatContent.data.data);
     } catch (error) {
       console.log(error);
     }
   };
+
   const getBoardingInfo = async () => {
     try {
       const responseBoarding = await api.get(`/boarding/${boarding_id}`);
+      setChatId(responseBoarding.data.data.chats.chat_id);
+      setCustomerId(responseBoarding.data.data.chats.customer_id);
+      chatID = responseBoarding.data.data.chats.chat_id;
+      customerID = responseBoarding.data.data.chats.customer_id;
       if (responseBoarding) {
         setBoardingInfo(responseBoarding.data.data);
         console.log("boarding info", responseBoarding.data.data);
-        setChatId(responseBoarding.data.data.chats.chat_id);
-        setCustomerId(responseBoarding.data.data.chats.customer_id);
-        getChatContent(
-          responseBoarding.data.data.chats.chat_id,
-          responseBoarding.data.data.chats.customer_id
-        );
+        getChatContent();
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
 
   const fetchServiceForm = async () => {
@@ -115,7 +91,10 @@ const Report = () => {
         `/service-form-detail/?booking_id=${boarding_id}`
       );
       if (responseServiceFormDetail) {
-        console.log("service form list arr ne: ", responseServiceFormDetail.data.data);
+        console.log(
+          "service form list arr ne: ",
+          responseServiceFormDetail.data.data
+        );
         setServiceFormDetailArr(responseServiceFormDetail.data.data);
       }
     } catch (error) {
@@ -135,11 +114,12 @@ const Report = () => {
     getBoardingInfo();
     fetchServiceForm();
     getBookingInfo();
-    fetchServiceFormDetail()
+    fetchServiceFormDetail();
   }, []);
 
-  const sendMessage = async () => {
-    if (message !== "") {
+  const sendMessage = async (textChat) => {
+    console.log("text chat", textChat);
+    try {
       const responsePost = await api.post(`content-chat/`, {
         user1: "clinic",
         user2: customerId,
@@ -156,87 +136,112 @@ const Report = () => {
         chat_id: chatId,
       });
 
-      if (responsePost && responsePost2) {
+      if (responsePost.status === 200 && responsePost2.status === 200) {
+        console.log("Cả hai message đã được gửi thành công");
+        console.log("socket id khi gửi: ", socket.id);
+        socket.emit("client-sent-message", {
+          user1: "clinic",
+          user2: customerID,
+          message: textChat,
+          type: "sent",
+          chat_id: chatID,
+        });
+        setMessage("");
+      } else {
+        console.log("Có lỗi khi gửi một hoặc cả hai message");
+      }
+    } catch (error) {
+      console.log("Đã xảy ra lỗi khi gửi tin nhắn:", error);
+    }
+  };
+
+  const sendImage = async (textChat) => {
+    try {
+      const fileInput = document.getElementById("file");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        console.error("Please select a file.");
+        return;
+      }
+      if (selectedFile) {
+        // Thực hiện upload hình ảnh ở đây
+        console.log("Đã upload:", selectedFile);
+      }
+
+      const formDataSent = new FormData();
+      formDataSent.append("image", selectedFile);
+      formDataSent.append("user1", "clinic");
+      formDataSent.append("user2", customerId);
+      formDataSent.append("type", "sent");
+      formDataSent.append("chat_id", chatId);
+
+      const formDataReceived = new FormData();
+      formDataReceived.append("image", selectedFile);
+      formDataReceived.append("user1", customerId);
+      formDataReceived.append("user2", "clinic");
+      formDataReceived.append("type", "receive");
+      formDataReceived.append("chat_id", chatId);
+
+      const sendImage = async (formData) => {
+        try {
+          const response = await api.post("/content-chat/img", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          return response;
+        } catch (error) {
+          throw new Error("Failed to send image.");
+        }
+      };
+
+      // Sending image as 'sent'
+      const responseSent = await sendImage(formDataSent);
+
+      // Sending image as 'received'
+      const responseReceived = await sendImage(formDataReceived);
+
+      if (responseSent && responseReceived) {
         socket.emit("client-sent-message", {
           user1: "clinic",
           user2: customerId,
-          message: message,
+          message: selectedFile,
           type: "sent",
           chat_id: chatId,
         });
-        console.log("chay roif ne");
+
+        console.log("Message sent successfully.");
         setMessage("");
+        getChatContent();
       }
-    } else {
-      // Lấy file đã chọn
-      const fileInput = document.getElementById("file");
-      const file = fileInput.files[0];
-      console.log("file", file);
-
-      // Tạo formData chứa dữ liệu cần gửi
-      const formData = new FormData();
-      formData.append("image", file);
-      formData.append("user1", "clinic");
-      formData.append("user2", customerId);
-      formData.append("type", "sent");
-      formData.append("chat_id", chatId);
-
-      const formData2 = new FormData();
-      formData2.append("image", file);
-      formData2.append("user1", customerId);
-      formData2.append("user2", "clinic");
-      formData2.append("type", "receive");
-      formData2.append("chat_id", chatId);
-
-      // Thực hiện gọi API sử dụng axios
-      try {
-        const response1 = await api.post("/content-chat/img", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        const response2 = await api.post("/content-chat/img", formData2, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (response1 && response2) {
-          socket.emit("client-sent-message", {
-            user1: "clinic",
-            user2: customerId,
-            message: file,
-            type: "sent",
-            chat_id: chatId,
-          });
-          console.log("chay roif ne");
-          setMessage("");
-        }
-        // getChatContent();
-      } catch (error) {
-        // Xử lý lỗi nếu có
-        console.error("Error:", error);
-      }
+    } catch (error) {
+      console.error("Error:", error.message);
     }
   };
+
   useEffect(() => {
-    let data = {};
-    data.account_id = "clinic";
-    socket.emit("login", data);
+    socket.emit("login", { account_id: "clinic" });
+
     socket.on("server-send-data_seft", (message) => {
-      // setContentChat((prevMessages) => [...prevMessages, message]);
-      // console.log("Chạy vào đây rồi ♥")
       console.log("send data seft ♥: ", message);
-      setContentChat((chatContent) => [...chatContent, message]);
+      getChatContent();
+      // setContentChat((chatContent) => [...chatContent, message]);
     });
+
     socket.on("server-send-data", (message) => {
-      console.log("message", message);
-      message.type = "receive";
-      // setContentChat((prevMessages) => [...prevMessages, message]);
-      // console.log("Chạy vào đây rồi ♥")
+      // console.log("message", message);
+      // message.type = "receive";
       console.log("send data♥: ", message);
-      setContentChat((chatContent) => [...chatContent, message]);
+      getChatContent();
+      // setContentChat((chatContent) => [...chatContent, message]);
     });
+    return () => {
+      if (socket) {
+        // socket.disconnect();
+        console.log("Disconnect thành công ♥ !");
+      }
+    };
   }, []);
 
   const handleFetchServiceDetail = async (item) => {
@@ -388,19 +393,19 @@ const Report = () => {
                 <div className={styles.chatMessages}>
                   {chatContent &&
                     chatContent.length > 0 &&
-                    chatContent.map((message, index) => {
-                      if (message?.img_link) {
-                        const imgUrl = URL.createObjectURL(
-                          new Blob([message?.img_link])
-                        );
-                        return (
+                    chatContent.map((message, index) => (
+                      <div
+                        key={index}
+                        className={`${
+                          message.type === "sent"
+                            ? styles.clinic
+                            : styles.customer
+                        }`}
+                      >
+                        {message.img_link && (
                           <img
                             key={message.content_chat_id}
-                            className={`${styles.message} ${styles.imgChat} ${
-                              message.type === "sent"
-                                ? styles.clinic
-                                : styles.customer
-                            }`}
+                            className={styles.imgChat}
                             src={
                               message.img_link
                                 ? message.img_link
@@ -408,21 +413,14 @@ const Report = () => {
                             }
                             alt=""
                           />
-                        );
-                      } else
-                        return (
-                          <div
-                            key={message.content_chat_id}
-                            className={`${styles.message} ${
-                              message.type === "sent"
-                                ? styles.clinic
-                                : styles.customer
-                            }`}
-                          >
+                        )}
+                        {message.message && (
+                          <div key={message.content_chat_id}>
                             {message.message}
                           </div>
-                        );
-                    })}
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -442,13 +440,6 @@ const Report = () => {
                   </div>
                   <div className={styles.bodyPopup}>
                     <div className={styles.addPopup}>
-                      {/* <div>{tables}</div>
-                      <button
-                        onClick={createTable}
-                        className={styles.addServices}
-                      >
-                        + Thêm dịch vụ
-                      </button> */}
                       {serviceFormList &&
                         serviceFormList.length > 0 &&
                         serviceFormList.map((item, index) => (
@@ -507,8 +498,23 @@ const Report = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <input type="file" name="file" id="file" />
-            <button onClick={sendMessage}>Gửi</button>
+            <input
+              type="file"
+              name="file"
+              id="file"
+              onChange={handleFileChange}
+            />
+            <button
+              onClick={() => {
+                if (selectedFile) {
+                  sendImage(message);
+                } else {
+                  sendMessage(message);
+                }
+              }}
+            >
+              Gửi
+            </button>
           </div>
         </div>
         <div className={styles.metaContent}>
@@ -521,83 +527,6 @@ const Report = () => {
               <span>Hồ sơ chim khám</span>
             </div>
           </div>
-          {/* <Popup
-            modal
-            trigger={<button className={styles.btnComplete}>Hoàn thành</button>}
-          >
-            <div className={styles.popupComplete}>
-              {tab == 1 && (
-                <div>
-                  <div className={styles.headerConfirm}>
-                    Xác nhận hoàn thành
-                  </div>
-                  <div className={styles.headerTxtFirst}>
-                    Hoàn thành quá trình nội trú cho thú cứng của khách hàng
-                  </div>
-                  <div className={styles.headerTxtSecond}>{boardingInfo}</div>
-                  <div className={styles.headerTxtThird}>
-                    Vui lòng tiếp tục để xác nhận.
-                  </div>
-                </div>
-              )}
-              {tab == 2 && (
-                <div>
-                  <div className={styles.headerServiceInfo}>
-                    Thông tin dịch vụ
-                  </div>
-                  <div className={styles.PrintServiceTickets}>
-                    <AiOutlinePrinter className={styles.iconPrinter} />
-                    In phiếu dịch vụ
-                  </div>
-                  <div className={styles.serviceUsed}>Dịch vụ đã sử dụng:</div>
-                  <div className={styles.serviceInfo}>
-                    <div className={styles.serviceFirst}>
-                      <div className={styles.serviceLeft}>
-                        <span>Cắt móng</span>
-                        <p>Vừa</p>
-                      </div>
-                      <p>x2</p>
-                    </div>
-                    <div className={styles.serviceFirst}>
-                      <div className={styles.serviceLeft}>
-                        <span>Cắt mỏ</span>
-                        <p>Vừa</p>
-                      </div>
-                      <p>x2</p>
-                    </div>
-                    <div className={styles.serviceFirst}>
-                      <div className={styles.serviceLeft}>
-                        <span>Cắt cánh</span>
-                        <p>Vừa</p>
-                      </div>
-                      <p>x2</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <ProfileBirdModal
-                open={openModalProfile}
-                onClose={() => setOpenModalProfile(false)}
-              />
-              <div className={styles.footerContent}>
-                {tab !== 1 && (
-                  <button
-                    className={styles.btnBack}
-                    onClick={() => setTab((tab) => tab - 1)}
-                  >
-                    Quay lại
-                  </button>
-                )}
-
-                <button
-                  className={styles.btnCont}
-                  onClick={() => setTab((tab) => tab + 1)}
-                >
-                  Tiếp tục
-                </button>
-              </div>
-            </div>
-          </Popup> */}
           <button className={styles.btnComplete} onClick={() => setOpen(true)}>
             Hoàn thành
           </button>

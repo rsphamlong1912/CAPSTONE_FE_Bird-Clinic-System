@@ -68,10 +68,10 @@ const BillingDetail = () => {
       const responseServiceForm = await api.get(`/service-form/${id}`);
       if (responseServiceForm) {
         setServiceFormInfo(responseServiceForm.data.data[0]);
-        // console.log(
-        //   "detail",
-        //   responseServiceForm.data.data[0].service_form_details
-        // );
+        console.log(
+          "detail",
+          responseServiceForm.data.data[0]
+        );
         const vetDetailArr =
           responseServiceForm.data.data[0].service_form_details.map(
             (item, index) => item.veterinarian_id
@@ -355,12 +355,12 @@ const BillingDetail = () => {
                 <span className={styles.label}>Trạng thái:</span>
                 <span>{serviceFormInfo?.status === "paid" || serviceFormInfo?.status === "done"? "Đã thanh toán": "Chưa thanh toán"}</span>
               </div>
-              {/* {(serviceFormInfo?.status === "paid" || serviceFormInfo?.status === "done") && (
+              {(serviceFormInfo?.status === "paid" || serviceFormInfo?.status === "done") && (
                 <div className={styles.lineItem}>
-                <span className={styles.label}>Phương thức</span>
-                <span></span>
+                <span className={styles.label}>Phương thức:</span>
+                <span>{serviceFormInfo?.bills[0]?.payment_method === "cash" ? "Tiền mặt" : "Chuyển khoản"}</span>
               </div>
-              )} */}
+              )}
               
             </div>
             <div className={styles.billingInfo}>

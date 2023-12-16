@@ -33,6 +33,15 @@ const Report = () => {
 
   const navigate = useNavigate();
 
+  function convertToHHMM(dateTimeString) {
+    const date = new Date(dateTimeString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+  
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    return formattedTime;
+  }
+
   // Tạo một đối tượng Date đại diện cho ngày hiện tại
   const currentDate = new Date();
 
@@ -448,7 +457,7 @@ const Report = () => {
                             onClick={() => handleFetchServiceDetail(item)}
                             key={index}
                           >
-                            {index + 1}. <span>{item.service_form_id}</span>
+                            {index + 1}. <span>{item.service_form_id} </span> <span>{new Date(item.date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
                         ))}
                     </div>

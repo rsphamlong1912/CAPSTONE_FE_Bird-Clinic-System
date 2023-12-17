@@ -1401,13 +1401,13 @@ const Examing = () => {
                   <ion-icon name="calendar-clear-outline"></ion-icon>
                   <span>Hồ sơ chim khám</span>
                 </div>
-                {/* <div
+                <div
                   className={styles.boxDataItem}
                   onClick={() => setOpenModal(true)}
                 >
                   <ion-icon name="thermometer-outline"></ion-icon>
                   <span>Nội dung khám</span>
-                </div> */}
+                </div>
               </div>
             </div>
             <button

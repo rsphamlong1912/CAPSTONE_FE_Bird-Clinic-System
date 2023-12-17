@@ -14,6 +14,9 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const socket = io("https://clinicsystem.io.vn/");
 
+let chatID;
+let customerID;
+
 const Report = () => {
   const { boarding_id } = useParams();
   const [boardingInfo, setBoardingInfo] = useState();
@@ -23,8 +26,6 @@ const Report = () => {
   const [serviceFormDetailList, setServiceFormDetailList] = useState();
   const [serviceFormDetailArr, setServiceFormDetailArr] = useState();
   const [openModalProfile, setOpenModalProfile] = useState(false);
-  const [chatId, setChatId] = useState();
-  const [customerId, setCustomerId] = useState();
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
   const [open, setOpen] = useState(false);
@@ -33,9 +34,6 @@ const Report = () => {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [load, setLoad] = useState(false);
-
-  let chatID;
-  let customerID;
 
   const navigate = useNavigate();
 
@@ -82,8 +80,8 @@ const Report = () => {
   const getBoardingInfo = async () => {
     try {
       const responseBoarding = await api.get(`/boarding/${boarding_id}`);
-      setChatId(responseBoarding.data.data.chats.chat_id);
-      setCustomerId(responseBoarding.data.data.chats.customer_id);
+      // setChatId(responseBoarding.data.data.chats.chat_id);
+      // setCustomerId(responseBoarding.data.data.chats.customer_id);
       chatID = responseBoarding.data.data.chats.chat_id;
       customerID = responseBoarding.data.data.chats.customer_id;
       if (responseBoarding) {
@@ -150,18 +148,18 @@ const Report = () => {
     try {
       const responsePost = await api.post(`content-chat/`, {
         user1: "clinic",
-        user2: customerId,
+        user2: customerID,
         message: message,
         type: "sent",
-        chat_id: chatId,
+        chat_id: chatID,
       });
 
       const responsePost2 = await api.post(`content-chat/`, {
-        user1: customerId,
+        user1: customerID,
         user2: "clinic",
         message: message,
         type: "receive",
-        chat_id: chatId,
+        chat_id: chatID,
       });
 
       if (responsePost.status === 200 && responsePost2.status === 200) {
@@ -200,16 +198,16 @@ const Report = () => {
       const formDataSent = new FormData();
       formDataSent.append("image", selectedFile);
       formDataSent.append("user1", "clinic");
-      formDataSent.append("user2", customerId);
+      formDataSent.append("user2", customerID);
       formDataSent.append("type", "sent");
-      formDataSent.append("chat_id", chatId);
+      formDataSent.append("chat_id", chatID);
 
       const formDataReceived = new FormData();
       formDataReceived.append("image", selectedFile);
-      formDataReceived.append("user1", customerId);
+      formDataReceived.append("user1", customerID);
       formDataReceived.append("user2", "clinic");
       formDataReceived.append("type", "receive");
-      formDataReceived.append("chat_id", chatId);
+      formDataReceived.append("chat_id", chatID);
 
       const sendImage = async (formData) => {
         try {
@@ -231,16 +229,18 @@ const Report = () => {
       const responseReceived = await sendImage(formDataReceived);
 
       if (responseSent && responseReceived) {
+        document.getElementById("file").value = null;
         socket.emit("client-sent-message", {
           user1: "clinic",
-          user2: customerId,
+          user2: customerID,
           message: selectedFile,
           type: "sent",
-          chat_id: chatId,
+          chat_id: chatID,
         });
 
         console.log("Message sent successfully.");
         setMessage("");
+        setSelectedFile(null)
         getChatContent();
       }
     } catch (error) {

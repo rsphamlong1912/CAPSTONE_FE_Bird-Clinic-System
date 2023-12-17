@@ -34,6 +34,7 @@ const Grooming = () => {
   const [birdSizeId, setBirdSizeId] = useState(null);
   const [packageDetail, setPackageDetail] = useState(null);
   const [sfds, setSfds] = useState([]);
+  const navigate = useNavigate();
 
   const toggleInfo1 = (serviceIndex) => {
     const newShowInfo = [...showInfo];
@@ -331,6 +332,9 @@ const Grooming = () => {
         }
       };
       updateServiceFormDetails();
+      setTimeout(() => {
+        navigate("/grooming");
+      }, 1000);
     }
   };
 
@@ -429,7 +433,7 @@ const Grooming = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const navigate = useNavigate();
+  
   const handleConfirmAlert = (item) => {
     const updatedOptions = {
       ...options,

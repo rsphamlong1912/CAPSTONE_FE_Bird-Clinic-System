@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import { toast } from "react-toastify";
 import { Modal, Popconfirm, message } from "antd";
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const socket = io("https://clinicsystem.io.vn/");
 
@@ -28,6 +28,7 @@ const Report = () => {
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
   const [open, setOpen] = useState(false);
+  const [openBoardingInfo, setOpenBoardingInfo] = useState();
   const [modalService, setModalService] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -42,10 +43,23 @@ const Report = () => {
     const date = new Date(dateTimeString);
     const hours = date.getHours();
     const minutes = date.getMinutes();
-  
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
     return formattedTime;
   }
+
+  // Hàm chuyển đổi định dạng ngày tháng
+  const convertDateFormat = (inputDate) => {
+    // Tách chuỗi ngày tháng thành mảng [year, month, day]
+    const [year, month, day] = inputDate.split("-");
+
+    // Định dạng lại thành ngày/tháng/năm
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
+  };
 
   // Tạo một đối tượng Date đại diện cho ngày hiện tại
   const currentDate = new Date();
@@ -386,22 +400,32 @@ const Report = () => {
 
   function formatTimeCreate(timeCreate) {
     let p = new Date(timeCreate);
-    return p.getHours() + ":" + p.getMinutes() +", "+ p.getDate() + '/' + (p.getMonth()+1) + '/' + p.getFullYear();
+    return (
+      p.getHours() +
+      ":" +
+      p.getMinutes() +
+      ", " +
+      p.getDate() +
+      "/" +
+      (p.getMonth() + 1) +
+      "/" +
+      p.getFullYear()
+    );
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.headerContent}>
-          <div className={styles.left} onClick={() => navigate(`/manage-report`)}>
-            <ion-icon name="chevron-back-outline"></ion-icon>
-            <h4>THOÁT</h4>
-          </div>
-          <div className={styles.right}>
-            <div className={styles.nameCustomer}>
-              KH: {bookingInfo?.customer_name}
-            </div>
+        <div className={styles.left} onClick={() => navigate(`/manage-report`)}>
+          <ion-icon name="chevron-back-outline"></ion-icon>
+          <h4>THOÁT</h4>
+        </div>
+        <div className={styles.right}>
+          <div className={styles.nameCustomer}>
+            KH: {bookingInfo?.customer_name}
           </div>
         </div>
+      </div>
 
       <div className={styles.mainContent}>
         <div className={styles.content}>
@@ -452,9 +476,16 @@ const Report = () => {
                 src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Mimus_polyglottus1_cropped.png"
                 alt=""
               />
-              <button className={styles.services} onClick={()=> {setModalService(true); setLoad(!load)}}>
-                  <ion-icon name="layers-outline"></ion-icon>
-                  Dịch vụ</button>
+              <button
+                className={styles.services}
+                onClick={() => {
+                  setModalService(true);
+                  setLoad(!load);
+                }}
+              >
+                <ion-icon name="layers-outline"></ion-icon>
+                Dịch vụ
+              </button>
               {/* <Popup
                 modal
                 trigger={<button className={styles.services}>
@@ -462,14 +493,14 @@ const Report = () => {
                   Dịch vụ</button>
                   }
               > */}
-            <Modal
-            centered
-            open={modalService}
-            onOk={() => setModalService(false)}
-            onCancel={() => setModalService(false)}
-            cancelText="Đóng"
-            width={1000}
-            >
+              <Modal
+                centered
+                open={modalService}
+                onOk={() => setModalService(false)}
+                onCancel={() => setModalService(false)}
+                cancelText="Đóng"
+                width={1000}
+              >
                 <div className={styles.popup}>
                   <div className={styles.headerPopup}>
                     <span>DỊCH VỤ</span>
@@ -481,16 +512,23 @@ const Report = () => {
                         serviceFormList.length > 0 &&
                         serviceFormList.map((item, index) => (
                           <>
-                          <div
-                            className={styles.serviceItem}
-                            onClick={() => handleFetchServiceDetail(item)}
-                            key={index}
-                          >
-                          
-                            <span style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><ion-icon name="reader-outline"></ion-icon>{item.service_form_id}</span>
+                            <div
+                              className={styles.serviceItem}
+                              onClick={() => handleFetchServiceDetail(item)}
+                              key={index}
+                            >
+                              <span
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <ion-icon name="reader-outline"></ion-icon>
+                                {item.service_form_id}
+                              </span>
                               <span>{formatTimeCreate(item.time_create)}</span>
-
-                          </div>
+                            </div>
                           </>
                         ))}
                     </div>
@@ -518,19 +556,22 @@ const Report = () => {
                                     okText="OK"
                                     cancelText="Đóng"
                                     onConfirm={() => {
-                                      if (!serviceFormDetailList.flag){
+                                      if (!serviceFormDetailList.flag) {
                                         handleDoneService(item);
-                                      }else{
-                                        toast.error("Không thể hoàn thành gói dịch vụ này ở đây!", {
-                                          position: "top-right",
-                                          autoClose: 5000,
-                                          hideProgressBar: false,
-                                          closeOnClick: true,
-                                          pauseOnHover: true,
-                                          draggable: true,
-                                          progress: undefined,
-                                          theme: "light",
-                                        });
+                                      } else {
+                                        toast.error(
+                                          "Không thể hoàn thành gói dịch vụ này ở đây!",
+                                          {
+                                            position: "top-right",
+                                            autoClose: 5000,
+                                            hideProgressBar: false,
+                                            closeOnClick: true,
+                                            pauseOnHover: true,
+                                            draggable: true,
+                                            progress: undefined,
+                                            theme: "light",
+                                          }
+                                        );
                                       }
                                     }}
                                     icon={
@@ -560,7 +601,7 @@ const Report = () => {
                     </div>
                   </div>
                 </div>
-                </Modal>
+              </Modal>
               {/* </Popup> */}
             </div>
           </div>
@@ -593,25 +634,26 @@ const Report = () => {
         <div className={styles.metaContent}>
           <div className={styles.boxData}>
             <div>
-            <div
-              className={styles.boxDataItem}
-              onClick={() => setOpenModalProfile(true)}
-            >
-              <ion-icon name="calendar-clear-outline"></ion-icon>
-              <span>Hồ sơ chim nội trú</span>
-            </div>
-            <div
+              {/* <div
                 className={styles.boxDataItem}
                 onClick={() => setOpenModalProfile(true)}
+              >
+                <ion-icon name="calendar-clear-outline"></ion-icon>
+                <span>Hồ sơ chim nội trú</span>
+              </div> */}
+              <div
+                className={styles.boxDataItem}
+                onClick={() => setOpenBoardingInfo(true)}
               >
                 <ion-icon name="reader-outline"></ion-icon>
                 <span>Nội dung nội trú</span>
               </div>
-              </div>
+            </div>
           </div>
           <button className={styles.btnComplete} onClick={() => setOpen(true)}>
             Hoàn thành
           </button>
+          {/* MODAL CONFIRM  */}
           <Modal
             centered
             open={open}
@@ -621,14 +663,17 @@ const Report = () => {
             width={600}
           >
             <div>
-              <div className={styles.headerConfirm}>XÁC NHẬN HOÀN TẤT NỘI TRÚ</div>
+              <div className={styles.headerConfirm}>
+                XÁC NHẬN HOÀN TẤT NỘI TRÚ
+              </div>
               {boardingInfo?.departure_date == formattedDate ? (
                 <div className={styles.headerTxtFirst}>
                   Hoàn thành quá trình nội trú cho thú cưng của khách hàng
                 </div>
               ) : (
                 <div className={styles.headerTxtFirst}>
-                  Lưu ý: Bạn có muốn hoàn tất nội sớm hơn lịch dự kiến cho Khách hàng
+                  Lưu ý: Bạn có muốn hoàn tất nội sớm hơn lịch dự kiến cho Khách
+                  hàng
                 </div>
               )}
 
@@ -639,6 +684,28 @@ const Report = () => {
               <div className={styles.headerTxtThird}>
                 Vui lòng nhấn OK để xác nhận.
               </div>
+            </div>
+          </Modal>
+          {/* MODAL BORADING INFO  */}
+          <Modal
+            title="Nội dung nội trú"
+            centered
+            open={openBoardingInfo}
+            onOk={() => setOpenBoardingInfo(false)}
+            onCancel={() => setOpenBoardingInfo(false)}
+            width={500}
+          >
+            <div className={styles.lineItem}>
+              <span className={styles.label}>Ngày bắt đầu:</span>
+              <span>{boardingInfo && convertDateFormat(boardingInfo?.arrival_date)}</span>
+            </div>
+            <div className={styles.lineItem}>
+              <span className={styles.label}>Ngày kết thúc:</span>
+              <span>{boardingInfo && convertDateFormat(boardingInfo?.departure_date)}</span>
+            </div>
+            <div className={styles.lineItem}>
+              <span className={styles.label}>Phòng:</span>
+              <span>{boardingInfo?.room_type}</span>
             </div>
           </Modal>
         </div>

@@ -18,7 +18,7 @@ const DoneDetail = () => {
   const [imgUrl, setImgUrl] = useState();
   const [isOpen, setIsOpen] = useState(false);
   const [serviceFormDetailSideArr, setServiceFormDetailSideArr] = useState();
-  // const [birdProfile, setBirdProfile] = useState();
+  const [birdProfile, setBirdProfile] = useState();
   // const location = useLocation();
   // const { socket } = location.state || {};
   const { bookingId } = useParams();
@@ -60,6 +60,10 @@ const DoneDetail = () => {
         );
         setBookingInfo(response.data.data[0]);
         console.log("thong tin booking ne:", response.data.data[0]);
+
+        //GET BIRF PROFILE
+        const responseBird = await api.get(`/bird/${response.data.data[0].bird_id}`);
+        setBirdProfile(responseBird.data.data);
 
         //GET SERVICE FORM
         const responseServiceForm = await api.get(
@@ -398,6 +402,7 @@ const DoneDetail = () => {
       </div>
       <ProfileBirdModal
         open={openModalProfile}
+        birdProfile={birdProfile}
         onClose={() => setOpenModalProfile(false)}
       />
       <Modal

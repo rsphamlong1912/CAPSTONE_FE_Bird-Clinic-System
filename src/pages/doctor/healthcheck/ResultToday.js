@@ -49,7 +49,6 @@ const ResultToday = () => {
             <th> Số điện thoại</th>
             <th> Chim</th>
             <th> Dịch vụ</th>
-            <th> Bác sĩ phụ trách</th>
             <th> Trạng thái</th>
             <th> Hành động</th>
           </tr>
@@ -76,9 +75,6 @@ const ResultToday = () => {
                 <td>{item.bird_name}</td>
                 <td>{item.note}</td>
                 <td>
-                  <strong>Phạm Ngọc Long</strong>
-                </td>
-                <td>
                   <p
                     className={`${styles.status} ${
                       item.status === "pending"
@@ -103,7 +99,7 @@ const ResultToday = () => {
                       navigate(`/result/${item.service_form_detail_id}`)
                     }
                   >
-                    Tiến hành
+                    Trả kết quả
                   </div>
                 </td>
               </tr>

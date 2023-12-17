@@ -239,6 +239,24 @@
   border: 2px solid #32b768;
 }
 
+.nameBird {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border-radius: 50px;
+  background-color: #f5f5f5;
+  color: #32b768;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  font-family: Inter, sans-serif;
+  margin-top: 20px;
+  cursor: text !important;
+  border: 2px solid transparent;
+}
+
 .addReport {
   width: 200px;
   height: 50px;
@@ -533,8 +551,8 @@
 }
 
 .imgChat {
-  width: 300px;
-  height: 240px;
+  width: 250;
+  height: 150;
 }
 
 .serviceItem {

@@ -21,6 +21,7 @@ const Report = () => {
   const { boarding_id } = useParams();
   const [boardingInfo, setBoardingInfo] = useState();
   const [bookingInfo, setBookingInfo] = useState();
+  const [birdInfo, setBirdInfo] = useState();
   const [serviceFormList, setServiceFormList] = useState();
   const [serviceFormSelect, setServiceFormSelect] = useState();
   const [serviceFormDetailList, setServiceFormDetailList] = useState();
@@ -132,6 +133,10 @@ const Report = () => {
     try {
       const responseBooking = await api.get(`/booking/${boarding_id}`);
       setBookingInfo(responseBooking.data.data);
+      if(responseBooking.data.data){
+        const responseBird = await api.get(`/bird/${responseBooking.data.data.bird_id}`);
+        if(responseBird.data.data) setBirdInfo(responseBird.data.data)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -473,9 +478,17 @@ const Report = () => {
             </div>
             <div className={styles.contentServices}>
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Mimus_polyglottus1_cropped.png"
+                src={ birdInfo ?  birdInfo?.image : "https://media.istockphoto.com/id/1370544962/vi/anh/n%E1%BB%81n-gi%E1%BA%A5y-tr%E1%BA%AFng-k%E1%BA%BFt-c%E1%BA%A5u-b%C3%ACa-c%E1%BB%A9ng-s%E1%BB%A3i-%C4%91%E1%BB%83-c%E1%BA%A1o-r%C3%A2u.jpg?s=612x612&w=0&k=20&c=7fuXKUP3PkMIZhFg4MWyov7kxvVh2oFSQ3qBmhtvodw="}
                 alt=""
               />
+              <button
+                className={styles.nameBird}
+                onClick={() => {
+                  getChatContent();
+                }}
+              >
+                {birdInfo?.name}
+              </button>
               <button
                 className={styles.services}
                 onClick={() => {
@@ -634,13 +647,13 @@ const Report = () => {
         <div className={styles.metaContent}>
           <div className={styles.boxData}>
             <div>
-              {/* <div
+              <div
                 className={styles.boxDataItem}
                 onClick={() => setOpenModalProfile(true)}
               >
                 <ion-icon name="calendar-clear-outline"></ion-icon>
                 <span>Hồ sơ chim nội trú</span>
-              </div> */}
+              </div>
               <div
                 className={styles.boxDataItem}
                 onClick={() => setOpenBoardingInfo(true)}
@@ -710,6 +723,11 @@ const Report = () => {
           </Modal>
         </div>
       </div>
+      <ProfileBirdModal
+        open={openModalProfile}
+        birdProfile={birdInfo}
+        onClose={() => setOpenModalProfile(false)}
+      />
     </div>
   );
 };

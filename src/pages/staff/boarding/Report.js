@@ -9,7 +9,9 @@ import { api } from "../../../services/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import { toast } from "react-toastify";
-import { Modal } from "antd";
+import { Modal, Popconfirm, message } from "antd";
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
 const socket = io("https://clinicsystem.io.vn/");
 
 const Report = () => {
@@ -26,7 +28,10 @@ const Report = () => {
   const [chatContent, setContentChat] = useState([]);
   const [message, setMessage] = useState();
   const [open, setOpen] = useState(false);
+  const [modalService, setModalService] = useState(false);
+
   const [selectedFile, setSelectedFile] = useState(null);
+  const [load, setLoad] = useState(false);
 
   let chatID;
   let customerID;
@@ -115,7 +120,7 @@ const Report = () => {
     fetchServiceForm();
     getBookingInfo();
     fetchServiceFormDetail();
-  }, []);
+  }, [load]);
 
   const sendMessage = async (textChat) => {
     console.log("text chat", textChat);
@@ -369,20 +374,29 @@ const Report = () => {
       console.log(error);
     }
   };
+
+  function formatTimeCreate(timeCreate) {
+    let p = new Date(timeCreate);
+    return p.getHours() + ":" + p.getMinutes() +", "+ p.getDate() + '/' + (p.getMonth()+1) + '/' + p.getFullYear();
+  }
+
   return (
     <div className={styles.container}>
-      <div className={styles.headerContainer}>
-        <div className={styles.left} onClick={() => navigate("/manage-report")}>
-          <ion-icon name="chevron-back-outline"></ion-icon>
-          <span>Trở về</span>
+      <div className={styles.headerContent}>
+          <div className={styles.left} onClick={() => navigate(`/manage-report`)}>
+            <ion-icon name="chevron-back-outline"></ion-icon>
+            <h4>THOÁT</h4>
+          </div>
+          <div className={styles.right}>
+            <div className={styles.nameCustomer}>
+              KH: {bookingInfo?.customer_name}
+            </div>
+          </div>
         </div>
-        <div className={styles.right}>
-          <div className={styles.nameCustomer}>KH: Nguyễn Trí Công</div>
-        </div>
-      </div>
+
       <div className={styles.mainContent}>
         <div className={styles.content}>
-          <div className={styles.headerContent}>
+          <div className={styles.headerContentBoarding}>
             <div className={styles.roomNumber}>L.{boardingInfo?.cage_id}</div>
             <div className={styles.nestedCode}>{boarding_id}</div>
           </div>
@@ -429,33 +443,50 @@ const Report = () => {
                 src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Mimus_polyglottus1_cropped.png"
                 alt=""
               />
-              <Popup
+              <button className={styles.services} onClick={()=> {setModalService(true); setLoad(!load)}}>
+                  <ion-icon name="layers-outline"></ion-icon>
+                  Dịch vụ</button>
+              {/* <Popup
                 modal
-                trigger={<button className={styles.services}>Dịch vụ</button>}
-              >
+                trigger={<button className={styles.services}>
+                  <ion-icon name="layers-outline"></ion-icon>
+                  Dịch vụ</button>
+                  }
+              > */}
+            <Modal
+            centered
+            open={modalService}
+            onOk={() => setModalService(false)}
+            onCancel={() => setModalService(false)}
+            cancelText="Đóng"
+            width={1000}
+            >
                 <div className={styles.popup}>
                   <div className={styles.headerPopup}>
-                    <span>Dịch vụ</span>
-                    <span>Dịch vụ chi tiết</span>
+                    <span>DỊCH VỤ</span>
+                    <span>CHI TIẾT DỊCH VỤ</span>
                   </div>
                   <div className={styles.bodyPopup}>
                     <div className={styles.addPopup}>
                       {serviceFormList &&
                         serviceFormList.length > 0 &&
                         serviceFormList.map((item, index) => (
+                          <>
                           <div
                             className={styles.serviceItem}
                             onClick={() => handleFetchServiceDetail(item)}
                             key={index}
                           >
-                            {index + 1}. <span>{item.service_form_id}</span>
+                            <span style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><ion-icon name="reader-outline"></ion-icon>{item.service_form_id}</span>
+                              <span>{formatTimeCreate(item.time_create)}</span>
                           </div>
+                          </>
                         ))}
                     </div>
                     <div className={styles.tablePopup}>
                       <table>
                         <tr>
-                          <th>Tên dịch vụ</th>
+                          <th>Tên gói dịch vụ</th>
                           <th>Trạng thái</th>
                         </tr>
                         {serviceFormDetailList &&
@@ -463,23 +494,53 @@ const Report = () => {
                           serviceFormDetailList.list.map((item, index) => {
                             return (
                               <tr key={index}>
-                                <td>{item.note}</td>
+                                <td style={{ width: 270 }}>{item.note}</td>
                                 {item.status === "done" ? (
                                   <td className={styles.flexStatus}>
                                     <ion-icon name="checkmark-circle"></ion-icon>
                                     <span>Đã hoàn thành</span>
                                   </td>
                                 ) : (
-                                  <td
-                                    className={styles.flexStatus}
-                                    onClick={() => {
-                                      if (!serviceFormDetailList.flag)
+                                  <Popconfirm
+                                    title="Xác nhận"
+                                    description="Hoàn thành gói dịch vụ này ?"
+                                    okText="OK"
+                                    cancelText="Đóng"
+                                    onConfirm={() => {
+                                      if (!serviceFormDetailList.flag){
                                         handleDoneService(item);
+                                      }else{
+                                        toast.error("Không thể hoàn thành gói dịch vụ này ở đây!", {
+                                          position: "top-right",
+                                          autoClose: 5000,
+                                          hideProgressBar: false,
+                                          closeOnClick: true,
+                                          pauseOnHover: true,
+                                          draggable: true,
+                                          progress: undefined,
+                                          theme: "light",
+                                        });
+                                      }
                                     }}
+                                    icon={
+                                      <QuestionCircleOutlined
+                                        style={{
+                                          color: "#32b768",
+                                        }}
+                                      />
+                                    }
                                   >
-                                    <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                    <span>Đang tiến hành</span>
-                                  </td>
+                                    <td
+                                      className={styles.flexStatus}
+                                      // onClick={() => {
+                                      //   if (!serviceFormDetailList.flag)
+                                      //     handleDoneService(item);
+                                      // }}
+                                    >
+                                      <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                      <span>Đang tiến hành</span>
+                                    </td>
+                                  </Popconfirm>
                                 )}
                               </tr>
                             );
@@ -488,13 +549,14 @@ const Report = () => {
                     </div>
                   </div>
                 </div>
-              </Popup>
+                </Modal>
+              {/* </Popup> */}
             </div>
           </div>
           <div className={styles.chatInput}>
             <input
               type="text"
-              placeholder="Nhập tin nhắn của bạn..."
+              placeholder="Nhập tin nhắn..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
@@ -519,13 +581,22 @@ const Report = () => {
         </div>
         <div className={styles.metaContent}>
           <div className={styles.boxData}>
+            <div>
             <div
               className={styles.boxDataItem}
               onClick={() => setOpenModalProfile(true)}
             >
               <ion-icon name="calendar-clear-outline"></ion-icon>
-              <span>Hồ sơ chim khám</span>
+              <span>Hồ sơ chim nội trú</span>
             </div>
+            <div
+                className={styles.boxDataItem}
+                onClick={() => setOpenModalProfile(true)}
+              >
+                <ion-icon name="reader-outline"></ion-icon>
+                <span>Nội dung nội trú</span>
+              </div>
+              </div>
           </div>
           <button className={styles.btnComplete} onClick={() => setOpen(true)}>
             Hoàn thành
@@ -535,17 +606,18 @@ const Report = () => {
             open={open}
             onOk={() => handleCheckout()}
             onCancel={() => setOpen(false)}
+            cancelText="Đóng"
             width={600}
           >
             <div>
-              <div className={styles.headerConfirm}>Xác nhận Checkout</div>
+              <div className={styles.headerConfirm}>XÁC NHẬN HOÀN TẤT NỘI TRÚ</div>
               {boardingInfo?.departure_date == formattedDate ? (
                 <div className={styles.headerTxtFirst}>
                   Hoàn thành quá trình nội trú cho thú cưng của khách hàng
                 </div>
               ) : (
                 <div className={styles.headerTxtFirst}>
-                  Lưu ý: Bạn có muốn checkout sớm hơn lịch dự kiến cho
+                  Lưu ý: Bạn có muốn hoàn tất nội sớm hơn lịch dự kiến cho Khách hàng
                 </div>
               )}
 

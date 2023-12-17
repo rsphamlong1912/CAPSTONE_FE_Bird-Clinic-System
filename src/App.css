@@ -30,3 +30,8 @@ img {
   display: block;
   max-width: 100%;
 }
+
+.avatar-uploader > .ant-upload {
+  width: 200px !important;
+  height: 150px !important;
+}

@@ -159,7 +159,7 @@ const listTabsGrooming = [
 const listTabsBoarding = [
   {
     id: 1,
-    name: "Khám hôm nay",
+    name: "Tiếp nhận hôm nay",
     icon: BsFillPlusSquareFill,
     to: "/boarding",
   },

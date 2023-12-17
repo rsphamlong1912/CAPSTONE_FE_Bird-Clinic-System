@@ -1,26 +1,44 @@
 .container {
-  margin: 30px;
-  background-color: #fff;
-  height: 700px;
+  padding: 40px;
+  // background-color: #fff;
+  // height: 700px;
 }
 
 .headerContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 30px;
-  padding-top: 30px;
+  margin-bottom: 25px;
+  .left {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    ion-icon {
+      color: black;
+    }
+  }
+  // .right {
+  //   transform: translateX(176px);
+  // }
+}
+.headerTitle{
+  padding: 10px;
+    background-color: white;
+    border-radius: 8px;
 }
 
-.left {
-  font-size: 25px;
-  font-weight: 600;
-  margin-left: 30px;
-}
+// .left {
+//   font-size: 25px;
+//   font-weight: 600;
+//   margin-left: 30px;
+// }
 
-.right {
-  display: flex;
-}
+// .right {
+//   display: flex;
+// }
 
 .btnSearch {
   background-color: #fff;
@@ -45,57 +63,74 @@
 }
 
 .cageChosen {
-    width: 1200px;
-    height: 500px;
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
-    margin-left: 150px;
-
+    // margin-left: 150px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
     .cageItem {
-        width: 190px;
-        height: 100px;
+        width: 18%;
+        height: 120px;
         border-radius: 5px;
-        border: 1px solid #32b768;
-        gap: 25px;
-        margin: 20px 20px;
+        border: 2px solid #32b768;
+        // gap: 25px;
+        margin: 10px 10px;
         cursor: pointer;
         background-color: #32b768;
         color: #fff;
-
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         &.active {
             background-color: #32b768;
-
+            padding: 10px;
+            .topCage{
+              display: flex;
+              justify-content: space-between;
+              .pEnd{
+                text-align: end;
+              }
+            }
             p {
-                margin-left: 15px;
-                margin-top: 5px;
-                margin-bottom: 45px;
                 color: #fff;
+                font-weight: 600;
+                font-size: 16px;
             }
 
             span {
-                margin-left: 100px;
+                color: #fff;
+                align-self: flex-end;
             }
         }
 
         &.inactive {
             border-radius: 5px;
             border: 2px solid #32b768;
-            gap: 25px;
-            margin: 20px 20px;
+            padding: 10px;
+            // gap: 25px;
+            // margin: 20px 20px;
             cursor: pointer;
             background-color: #fff;
-
+            .topCage{
+              display: flex;
+              justify-content: space-between;
+              .pEnd{
+                text-align: end;
+                font-size: 15px;
+                font-weight: 500;
+              }
+            }
             p {
-                margin-left: 15px;
-                margin-top: 5px;
-                margin-bottom: 45px;
                 color: #32b768;
+                font-weight: 600;
+                font-size: 18px;
             }
 
             span {
-                margin-left: 80px;
                 color: #32b768;
+                align-self: flex-end;
             }
         }
     }

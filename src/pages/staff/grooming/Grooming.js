@@ -252,7 +252,17 @@ const Grooming = () => {
         return service?.bird_size_id !== selectedBirdSizeId;
       })
     ) {
-      message.error("Bạn đã chọn dịch vụ của size chim khác");
+      // message.error("Bạn đã chọn dịch vụ của size chim khác");
+      toast.error("Bạn đã chọn dịch vụ của size chim khác!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       return;
     }
 
@@ -316,10 +326,30 @@ const Grooming = () => {
         arr_service_pack: arrServicePack,
       });
       setConfirmButtonVisible(false);
-      success();
+      // success();
+      toast.success("Chọn dịch vụ thành công!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (err) {
       console.log(err);
-      showError();
+      // showError();
+      toast.error("Vui lòng chọn dịch vụ!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } finally {
       const updateServiceFormDetails = async () => {
         try {
@@ -402,9 +432,29 @@ const Grooming = () => {
             },
           });
 
-          message.success("Cập nhật thành công");
+          // message.success("Cập nhật thành công");
+          toast.success("Cập nhật thành công!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
         } catch (error) {
-          message.error("Cập nhật thất bại");
+          // message.error("Cập nhật thất bại");
+          toast.error("Cập nhật thất bại!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
           console.error("Error:", error);
         }
       })

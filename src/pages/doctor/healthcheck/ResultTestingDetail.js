@@ -19,7 +19,7 @@ const ResultTestingDetail = () => {
   const [openModalProfile, setOpenModalProfile] = useState(false);
   const [medicalRecord, setMedicalRecord] = useState();
   const [imgUrl, setImgUrl] = useState();
-  const [serviceFormDetailInfo, setServiceFormDetailInfo] = useState()
+  const [serviceFormDetailInfo, setServiceFormDetailInfo] = useState();
 
   const fetchMedicalRecord = async () => {
     try {
@@ -54,18 +54,17 @@ const ResultTestingDetail = () => {
       const responseServiceFormDetail = await api.get(
         `/service-form-detail/${serviceFormDetailId}`
       );
-      setServiceFormDetailInfo(responseServiceFormDetail.data.data[0])
-      
+      console.log("sfd:", responseServiceFormDetail.data.data[0]);
+      setServiceFormDetailInfo(responseServiceFormDetail.data.data[0]);
     } catch (error) {
       console.log(error);
     }
   };
 
-
   useEffect(() => {
     fetchMedicalRecord();
     fetchFileImg();
-    fetchServiceFormDetail()
+    fetchServiceFormDetail();
   }, []);
 
   return (
@@ -81,7 +80,7 @@ const ResultTestingDetail = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.nameCustomer}>
-               KH: {serviceFormDetailInfo?.customer_name} 
+              KH: {serviceFormDetailInfo?.customer_name}
             </div>
           </div>
         </div>
@@ -93,19 +92,25 @@ const ResultTestingDetail = () => {
                 <tbody>
                   <tr>
                     <th>Triệu chứng</th>
-                    <td>{medicalRecord?.symptom}</td>
+                    <td>{medicalRecord?.symptom || "Không"}</td>
                   </tr>
                   <tr>
                     <th>Chẩn đoán</th>
-                    <td>{medicalRecord?.diagnose}</td>
+                    <td>{medicalRecord?.diagnose || "Không"}</td>
                   </tr>
                   <tr>
                     <th>Lời khuyên</th>
-                    <td>{medicalRecord?.recommendations}</td>
+                    <td>{medicalRecord?.recommendations || "Không"}</td>
                   </tr>
                 </tbody>
               </table>
-              <span style={{ display: "inline-block", marginTop: "5px", fontWeight: "bold" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  marginTop: "5px",
+                  fontWeight: "bold",
+                }}
+              >
                 Hình ảnh kết quả
               </span>
               {imgUrl && (
@@ -116,7 +121,7 @@ const ResultTestingDetail = () => {
               <div className={styles.boxData}>
                 <div
                   className={styles.boxDataItem}
-                  onClick={() => setOpenModalProfile(true)}
+                  // onClick={() => setOpenModalProfile(true)}
                 >
                   <ion-icon name="calendar-clear-outline"></ion-icon>
                   <span>Hồ sơ chim khám</span>
@@ -132,7 +137,7 @@ const ResultTestingDetail = () => {
       />
 
       <div className={styles.footerContent}>
-        <button className={styles.btnBack} onClick={() => navigate(`/track`)}>
+        <button className={styles.btnBack} onClick={() => navigate(`/done-retesting`)}>
           Quay lại
         </button>
       </div>

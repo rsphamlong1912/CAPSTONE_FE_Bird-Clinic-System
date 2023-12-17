@@ -8,8 +8,8 @@ const WarningRole = () => {
             <div className={styles.error}>
                   <span>Không tìm thấy!
                   </span>
-              <p>Đi lạc rồi bấm để trở về!</p>
-            <button className={styles.button}>Trở về</button>
+              <p style={{fontWeight: "700"}}>Vui lòng quay lại!</p>
+            {/* <button className={styles.button}>Trở về</button> */}
          </div>
           <div className={styles.img}>
           <img src={require("../assets/404.png")} alt="" />

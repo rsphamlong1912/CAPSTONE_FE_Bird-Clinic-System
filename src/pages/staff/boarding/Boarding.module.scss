@@ -4,33 +4,40 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+.container {
+  padding: 40px;
+}
+
 .headerContent {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  margin: 25px 0;
+  margin-bottom: 25px;
   .left {
-    transform: translateX(-200px);
     display: flex;
     align-items: center;
     cursor: pointer;
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
     ion-icon {
       color: black;
     }
   }
-  .right {
-    transform: translateX(176px);
-  }
+  // .right {
+  //   transform: translateX(176px);
+  // }
 }
 .nameCustomer {
-  width: 280px;
   text-align: center;
-  background-color: #32b768;
-  color: white;
-  padding: 10px 30px;
+  background-color: white;
+  color: #32b768;
+  padding: 20px 40px;
   border-radius: 5px;
-  margin-left: 15%;
   font-weight: 600;
+  min-width: 255px;
+  font-size: 18px;
 }
 
 .mainContent {
@@ -39,30 +46,28 @@
 }
 
 .mainContent .content {
-  width: 68%;
+  width: 75%;
   background-color: #fff;
   padding: 20px;
-  height: 600px;
-  border-radius: 5px;
-  margin-left: 3.5rem;
+  min-height: 615px;
+  border-radius: 8px;
 }
 
 .mainContent .metaContent {
   width: 25%;
-  margin: 0 auto;
+  margin-left: 40px;
   .boxData {
-    width: 80%;
-    margin-left: 2.5rem;
-    display: inline-block;
-    padding: 15px 45px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
     background-color: #32b768;
     text-align: center;
     border-radius: 5px;
     .boxDataItem {
       display: flex;
       align-items: center;
-      margin: 15px 0;
-      padding-left: 25px;
+      margin: 20px 0;
       color: white;
       cursor: pointer;
       font-weight: bold;
@@ -73,24 +78,24 @@
   }
   button {
     display: block;
-    width: 80%;
     height: auto;
     padding: 15px 45px;
     margin: 15px 0;
-    margin-left: 2.5rem;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     border-radius: 5px;
+    font-family: Inter, sans-serif;
+    width: 100%;
   }
-  //   button.btnComplete {
-  //     background-color: #32b768;
-  //     color: white;
-  //     border: none;
-  //   }
   button.btnComplete {
-    background-color: white;
-    color: #32b768;
-    border: 1px solid #32b768;
+    background-color: #32b768;
+    color: white;
+    border: none;
+  }
+  button.btnCancel {
+    background-color: #fff;
+    color: red;
+    border: 1px solid red; 
   }
 }
 
@@ -98,41 +103,62 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 70%;
-  margin: 0 auto;
+  // width: 80%;
+  margin: 20px 20px;
   margin-bottom: 50px;
 }
 
 .procedureTab span {
-  width: 160px;
+  // width: 160px;
   text-align: center;
   background-color: white;
-  border: 1px solid #32b768;
+  // border: 1px solid #32b768;
   color: #32b768;
   font-weight: bold;
-  padding: 15px;
-  border-radius: 50px;
-  cursor: pointer;
+  // padding: 15px;
+  border-radius: 8px;
+}
+
+.lineProgress {
+  width: 100px; 
+  height: 3px; 
+  background-color: #32b768; 
+  border-radius: 10x; 
+  margin: 0px 10px;
+}
+@media (max-width: 1400px) {
+  .lineProgress {
+    width: 50px; 
+    height: 2px; 
+    background-color: #32b768; 
+    border-radius: 10px; 
+    margin: 0px 10px;
+  }
 }
 
 span.active {
   background-color: #32b768;
   color: white;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .boarding {
-  width: 75%;
-  margin: 0 auto;
+  // width: 75%;
+  margin-left: 20px;
+  margin-right: 20px;
+
 }
 .boardingChosen {
-  margin: 0 auto;
-  width: 820px; /* Độ rộng của khối */
-  height: 400px; /* Độ cao của khối */
-  overflow: auto; /* Tạo thanh cuộn khi nội dung tràn */
+  margin: 0px 20px;
+  // width: 820px; /* Độ rộng của khối */
+  // height: 400px; /* Độ cao của khối */
+  // overflow: auto; /* Tạo thanh cuộn khi nội dung tràn */
 }
 
 .title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 27px;
   letter-spacing: 0.01em;
@@ -142,8 +168,19 @@ span.active {
 }
 
 .customerInfo {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #f5f5f5;
+  border-radius: 10px;
 }
+
+.birdInfo {
+  margin-bottom: 0px;
+  padding: 20px;
+  border: 1px solid #f5f5f5;
+  border-radius: 10px;
+}
+
 .lineItem {
   margin: 10px 0;
   font-weight: 500;
@@ -162,33 +199,44 @@ span.active {
 
 .sizeBirdWrapper {
   display: flex;
-  margin-bottom: 24px;
+  margin-bottom: 25px;
 }
 
 .sizeBirdItem {
-  background-color: #ccc;
+  background-color: #d9d9d9;
   text-align: center;
-  width: 260px;
-  height: auto;
+  width: 25%;
+  height: 100px;
   padding: 12px;
   border-radius: 5px;
   gap: 25px;
   margin: 0 5px;
   cursor: pointer;
   p {
-    display: inline-block;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    font-weight: 500;
-    font-size: 18px;
+    font-weight: 600;
+    font-size: 16px;
   }
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.serviceChosen{
+  margin-bottom: 25px;
 }
 
 .sizeBirdItemActive {
   background-color: #32b768;
   color: #fff;
   text-align: center;
-  width: 260px;
-  height: auto;
+  width: 25%;
+  height: 100px;
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #32b768;
@@ -196,11 +244,18 @@ span.active {
   margin: 0 5px;
   cursor: pointer;
   p {
-    display: inline-block;
-    font-weight: 500;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    font-size: 18px;
+    font-weight: 600;
+    font-size: 16px;
     color: #fff;
+  }
+  span {
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 
@@ -210,13 +265,13 @@ span.active {
 }
 .serviceItem {
   text-align: center;
-  width: 290px;
+  width: 50%;
   height: auto;
   padding: 16px;
   border-radius: 5px;
   border: 1px solid #32b768;
   gap: 25px;
-  margin: 0 10px;
+  margin: 0 5px;
   transition: all 0.2s ease-in-out;
   h5 {
     font-size: 18px;
@@ -254,15 +309,15 @@ span.active {
 }
 .serviceItemActive {
   text-align: center;
-  width: 290px;
+  width: 50%;
   height: auto;
   padding: 16px;
   border-radius: 5px;
-  // border: 1px solid #32b768;
+  border: 1px solid #32b768;
   background-color: #32b768;
   color: #fff;
   gap: 25px;
-  margin: 0 10px;
+  margin: 0 5px;
   h5 {
     font-size: 18px;
   }
@@ -307,15 +362,14 @@ ion-icon {
 }
 
 .footerContent {
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   display: flex;
   justify-content: end;
-  padding: 20px;
+  padding: 20px 40px;
 }
 
 .footerContent button {
   padding: 15px 30px;
-  margin: 0 15px;
   border: none;
   border-radius: 5px;
   font-size: 18px;
@@ -323,11 +377,18 @@ ion-icon {
 }
 
 .btnBack {
-  background-color: rgba(108, 108, 108, 0.5);
+  background-color: white;
+  color: #000;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+  margin-right: 20px;
 }
 
 .btnCont {
-  background-color: rgba(50, 183, 104, 0.5);
+  background-color: #32b768;
+  color: #fff;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
 }
 
 .requireText {
@@ -336,15 +397,17 @@ ion-icon {
 }
 
 .printService {
-  background-color: #32b768;
+  background-color: #fff;
   padding: 10px 15px;
-  color: white;
-  border: none;
+  color: #32b768;
+  border: 2px solid #32b768;
   border-radius: 5px;
   text-align: center;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   margin-right: 10px;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
 }
 
 .cageChosen {
@@ -354,26 +417,40 @@ ion-icon {
   display: flex;
   flex-wrap: wrap;
   .cageItem {
-    text-align: center;
-    width: 220px;
-    height: 90px;
-    padding: 12px;
+    width: 23%;
+    height: 120px;
+    padding: 20px;
     border-radius: 5px;
     border: 2px solid #32b768;
-    gap: 25px;
-    margin: 10px 5px;
+    margin: 0px 5px;
+    margin-bottom: 10px;
     cursor: pointer;
   }
   .cageItemActive {
-    text-align: center;
-    width: 220px;
-    height: 90px;
-    padding: 12px;
+    width: 23%;
+    height: 120px;
+    padding: 20px;
     border-radius: 5px;
     background-color: #32b768;
     color: #fff;
-    gap: 25px;
-    margin: 10px 5px;
+    margin: 0px 5px;
+    margin-bottom: 10px;
+
+    cursor: pointer;
+    p {
+      color: #fff;
+    }
+  }
+  .cageItemSelected {
+    width: 23%;
+    height: 120px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #00B2FF;
+    color: #fff;
+    margin: 0px 5px;
+    margin-bottom: 10px;
+
     cursor: pointer;
     p {
       color: #fff;
@@ -383,7 +460,7 @@ ion-icon {
 
 .confirm {
   display: flex;
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   .confirmLeft {
     width: 50%;
@@ -408,16 +485,27 @@ ion-icon {
 
 .timeManage {
   margin-bottom: 24px;
+  width: 1040;
+  overflow-x: scroll;
   input {
     border-radius: 5px;
     border: 1px solid #32b768;
-    padding: 5px 10px;
+    padding: 10px 15px;
+    font-family: Inter, sans-serif;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .timeManage {
+    margin-bottom: 24px;
+    width: 680px;
   }
 }
 
 .labelSelect {
   display: inline-block;
-  min-width: 120px;
+  min-width: 150px;
   margin: 10px 0;
 }
 

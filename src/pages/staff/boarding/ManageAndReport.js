@@ -3,7 +3,7 @@ import styles from "./ManageAndReport.module.scss";
 import { SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../services/axios";
-import { message } from "antd";
+import { message, Select } from "antd";
 const ManageAndReport = () => {
   const [cageList, setCageList] = useState([]);
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ const ManageAndReport = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.headerContent}>
+      {/* <div className={styles.headerContent}>
         <div className={styles.left}>QUẢN LÝ LỒNG</div>
         <div className={styles.center}>
           <select
@@ -68,6 +68,55 @@ const ManageAndReport = () => {
           </div>
           <input type="text" placeholder="Tìm kiếm" name="search" />
         </div>
+      </div> */}
+      <div className={styles.headerContent}>
+        <div style={{ marginRight: "auto" }}>
+          <h1 className={styles.headerTitle}>QUẢN LÝ VÀ BÁO CÁO</h1>
+        </div>
+        <div style={{ width: "20%" }}>
+          {/* <Search size="large" placeholder="Tìm kiếm lịch hẹn..." enterButton /> */}
+          <Select
+            onChange={(value) => setSelectedSize(value)}
+            name="size"
+            // className={styles.selectCenter}
+            style={{
+              width: '100%',
+            }}
+            defaultValue={""}
+          >
+            <Select.Option
+              key={1}
+              value={""}
+              selected={true}
+            >
+              Tất cả
+            </Select.Option>
+            <Select.Option
+              key={2}
+              value={"SZ001"}
+            >
+              Rất nhỏ
+            </Select.Option>
+            <Select.Option
+              key={3}
+              value={"SZ002"}
+            >
+              Nhỏ
+            </Select.Option>
+            <Select.Option
+              key={4}
+              value={"SZ003"}
+            >
+              Vừa
+            </Select.Option>
+            <Select.Option
+              key={5}
+              value={"SZ004"}
+            >
+              Lớn
+            </Select.Option>
+          </Select>
+        </div>
       </div>
       <div className={styles.cageChosen}>
         {filteredCageList.map((cage, index) => (
@@ -78,10 +127,13 @@ const ManageAndReport = () => {
             }`}
             onClick={() => handleCageClick(cage)}
           >
-            <p>{`L.${cage.cage_id}`}</p>
-            <span>{`${
-              cage.bird_id ? cage.bird_id.slice(0, 6) + "..." : "Empty Slot"
-            }`}</span>
+            <div className={styles.topCage}>
+              <p>{`L.${cage.cage_id}`}</p>
+              <p className={styles.pEnd}>
+                {cage.bird_size.size.replace(/\s*\(.*?\)\s*/, "")}
+              </p>
+            </div>
+            <span>{`${cage.bird_id ? cage.boarding_id : "Trống"}`}</span>
           </div>
         ))}
       </div>

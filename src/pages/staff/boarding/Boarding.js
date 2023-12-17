@@ -10,20 +10,11 @@ import { confirmAlert } from "react-confirm-alert";
 import { useReactToPrint } from "react-to-print";
 import { PhieuNoiTru } from "../../../components/pdfData/PhieuNoiTru";
 import {
-  Table,
   Modal,
-  Tabs,
-  Checkbox,
-  Form,
-  Input,
-  Radio,
-  Upload,
   message,
-  Row,
-  Button
+  Form, Upload
 } from "antd";
 import { EditOutlined, PlusOutlined, LoadingOutlined } from "@ant-design/icons";
-import { BsPersonFillAdd } from "react-icons/bs";
 import { MaSo } from "../../../components/pdfData/MaSo";
 
 const normFile = (e) => {
@@ -60,7 +51,9 @@ const Boarding = () => {
   const [totalDays, setTotalDays] = useState(0);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
-  const [imageBirdBoarding, setImageBirdBoarding] = useState();
+  const [imageBirdBoarding, setImageBirdBoarding] = useState([]);
+  const [customerName, setCustomerName] = useState([]);
+  const [modalComplete, setModalComplete] = useState(false);
 
   const uploadButton = (
     <div>
@@ -332,6 +325,7 @@ const Boarding = () => {
       const response = await api.get(`/booking/${bookingId}`);
       setBookingInfo(response.data.data);
       console.log("thong tin booking ne:", response.data.data);
+      setCustomerName(response.data.data.customer_name)
 
       const responseBird = await api.get(`/bird/${response.data.data.bird_id}`);
       setBirdProfile(responseBird.data.data);
@@ -375,27 +369,150 @@ const Boarding = () => {
     overlayClassName: "overlay-custom-class-name",
   };
 
-  const handleConfirmAlert = async (item) => {
-    const updatedOptions = {
-      ...options,
-      buttons: [
-        {
-          label: "Xác nhận",
-          onClick: async () => {
+  // const handleConfirmAlert = async (item) => {
+  //   const updatedOptions = {
+  //     ...options,
+  //     buttons: [
+  //       {
+  //         label: "Xác nhận",
+  //         onClick: async () => {
+  //           try {
+  //             if (arrivalDate && departureDate && cageSelected) {
+  //               //up hinh
+  //               const fileInput = document.getElementById("file");
+  //               const file = fileInput.files[0];
+  //               if (file) {
+  //                 // Tạo formData chứa dữ liệu cần gửi
+  //                 const formData = new FormData();
+  //                 formData.append("image", file);
+  //                 formData.append("type", "boarding");
+  //                 formData.append("type_id", boardingInfo.boarding_id);
+  //                 formData.append("type_service", boardingInfo.boarding_id);
+            
+  //                 console.log("file ne: ", file);
+            
+  //                 // Thực hiện gọi API sử dụng axios
+  //                 try {
+  //                   const response = await api.post("/media", formData, {
+  //                     headers: {
+  //                       "Content-Type": "multipart/form-data",
+  //                     },
+  //                   });
+  //                   console.log("Response:", response.data);
+  //                 } catch (error) {
+  //                   console.error("Error:", error);
+  //                 }
+  //               }
+  //               const responseUpdateBoarding = await api.put(
+  //                 `/boarding/${bookingId}`,
+  //                 {
+  //                   act_arrival_date: arrivalDate,
+  //                   // act_departure_date: departureDate,
+  //                   room_type: serviceSelected.package_name,
+  //                   cage_id: cageSelected.cage_id,
+  //                 }
+  //               );
+  //               // const responseUpdateBooking = await api.put(
+  //               //   `/booking/${bookingId}`,
+  //               //   {
+  //               //     status: "finish",
+  //               //   }
+  //               // );
+
+  //               const responseUpdateCage = await api.put(
+  //                 `/cage/${cageSelected.cage_id}`,
+  //                 {
+  //                   boarding_id: bookingId,
+  //                   bird_id: bookingInfo.bird_id,
+  //                   status: "not_empty",
+  //                 }
+  //               );
+
+  //               console.log("update cage", responseUpdateCage);
+
+  //               const createdResponseServiceForm = await api.post(
+  //                 `/service-form/`,
+  //                 {
+  //                   bird_id: birdProfile.bird_id,
+  //                   booking_id: bookingId,
+  //                   reason_referral: "any",
+  //                   status: "pending",
+  //                   date: arrivalDate,
+  //                   veterinarian_referral: bookingInfo.veterinarian_id,
+  //                   total_price: serviceSelected.price * totalDays,
+  //                   qr_code: "any",
+  //                   num_ser_must_do: 1,
+  //                   num_ser_has_done: 1,
+  //                   arr_service_pack: [
+  //                     {
+  //                       service_package_id: serviceSelected.service_package_id,
+  //                       note: serviceSelected.package_name,
+  //                     },
+  //                   ],
+  //                 }
+  //               );
+  //               if (createdResponseServiceForm) {
+  //                 console.log(
+  //                   "tao servicee form roi",
+  //                   createdResponseServiceForm.data.data
+  //                 );
+  //                 toast.success("Xác nhận thành công!", {
+  //                   position: "top-right",
+  //                   autoClose: 5000,
+  //                   hideProgressBar: false,
+  //                   closeOnClick: true,
+  //                   pauseOnHover: true,
+  //                   draggable: true,
+  //                   progress: undefined,
+  //                   theme: "light",
+  //                 });
+  //                 navigate("/boarding")
+  //               } else {
+  //                 console.log("KHONG TAO DUOC SERVICE FORM");
+  //               }
+  //             } else {
+  //               toast.error("Không thành công!", {
+  //                 position: "top-right",
+  //                 autoClose: 5000,
+  //                 hideProgressBar: false,
+  //                 closeOnClick: true,
+  //                 pauseOnHover: true,
+  //                 draggable: true,
+  //                 progress: undefined,
+  //                 theme: "light",
+  //               });
+  //             }
+  //           } catch (error) {
+  //             console.log(error);
+  //           }
+  //         },
+  //       },
+  //       {
+  //         label: "Huỷ",
+  //         onClick: () => {
+  //           console.log("click no");
+  //         },
+  //       },
+  //     ],
+  //   };
+  //   confirmAlert(updatedOptions);
+  // };
+
+  const handleConfirmAlert = async () => {
             try {
               if (arrivalDate && departureDate && cageSelected) {
                 //up hinh
-                const fileInput = document.getElementById("file");
-                const file = fileInput.files[0];
-                if (file) {
+                // const fileInput = document.getElementById("file");
+                // const file = fileInput.files[0];
+                if (imageBirdBoarding.length>0) {
                   // Tạo formData chứa dữ liệu cần gửi
                   const formData = new FormData();
-                  formData.append("image", file);
+                  formData.append("image", imageBirdBoarding[0]);
                   formData.append("type", "boarding");
                   formData.append("type_id", boardingInfo.boarding_id);
                   formData.append("type_service", boardingInfo.boarding_id);
             
-                  console.log("file ne: ", file);
+                  // console.log("file ne: ", file);
             
                   // Thực hiện gọi API sử dụng axios
                   try {
@@ -491,18 +608,7 @@ const Boarding = () => {
             } catch (error) {
               console.log(error);
             }
-          },
-        },
-        {
-          label: "Huỷ",
-          onClick: () => {
-            console.log("click no");
-          },
-        },
-      ],
-    };
-    confirmAlert(updatedOptions);
-  };
+  }
 
   const handleClickSize = () => {
     // Kiểm tra điều kiện trước khi xử lý sự kiện onClick
@@ -522,31 +628,35 @@ const Boarding = () => {
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
-          <div className={styles.left} onClick={()=> navigate("/boarding")}>
+          <div className={styles.left} onClick={() => navigate(`/boarding`)}>
             <ion-icon name="chevron-back-outline"></ion-icon>
-            <span>Trở về</span>
+            <h4>THOÁT</h4>
           </div>
           <div className={styles.right}>
-            <div className={styles.nameCustomer}>KH: Nguyễn Trí Công</div>
+            <div className={styles.nameCustomer}>KH: {customerName}</div>
           </div>
         </div>
+
         <div className={styles.mainContent}>
           <div className={styles.content}>
             <div className={styles.procedureTab}>
               <span className={`${tab === 1 ? styles.active : ""}`}>
-                Thông tin
+                Thông tin tiếp nhận
               </span>
-              <ion-icon name="chevron-forward-outline"></ion-icon>
+              {/* <ion-icon name="chevron-forward-outline"></ion-icon> */}
+              <div className={styles.lineProgress}></div>
               <span className={`${tab === 2 ? styles.active : ""}`}>
                 Chọn dịch vụ
               </span>
-              <ion-icon name="chevron-forward-outline"></ion-icon>
+              {/* <ion-icon name="chevron-forward-outline"></ion-icon> */}
+              <div className={styles.lineProgress}></div>
               <span className={`${tab === 3 ? styles.active : ""}`}>
                 Chọn lồng
               </span>
-              <ion-icon name="chevron-forward-outline"></ion-icon>
+              {/* <ion-icon name="chevron-forward-outline"></ion-icon> */}
+              <div className={styles.lineProgress}></div>
               <span className={`${tab === 4 ? styles.active : ""}`}>
-                Hoàn tất
+                Xác nhận
               </span>
             </div>
             {tab == 1 && (
@@ -564,10 +674,10 @@ const Boarding = () => {
                 </div>
                 <div className={styles.birdInfo}>
                   <h4 className={styles.title}>Thông tin chim</h4>
-                  <div className={styles.lineItem}>
+                  {/* <div className={styles.lineItem}>
                     <span className={styles.label}>Mã số:</span>
                     <span>{bookingInfo?.booking_id}</span>
-                  </div>
+                  </div> */}
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Tên chim:</span>
                     <span>{birdProfile?.name}</span>
@@ -623,7 +733,7 @@ const Boarding = () => {
             {tab == 2 && (
               <div className={styles.boardingChosen}>
                 <div className={styles.sizeBirdChosen}>
-                  <h4 className={styles.title}>Chọn size chim: </h4>
+                  <h4 className={styles.title}>Size chim: </h4>
                   <div className={styles.sizeBirdWrapper}>
                     {birdSizeList.map((item, index) => {
                       if (birdSizeSelected === item.bird_size_id) {
@@ -655,7 +765,7 @@ const Boarding = () => {
                   </div>
                 </div>
                 <div className={styles.serviceChosen}>
-                  <h4 className={styles.title}>Chọn dịch vụ: </h4>
+                  <h4 className={styles.title}>Dịch vụ: </h4>
                   <div className={styles.serviceWrapper}>
                     {serviceList.map((item, index) => (
                       <div
@@ -684,8 +794,8 @@ const Boarding = () => {
                 </div>
                 <div className={styles.timeManage}>
                   <h4 className={styles.title}>Thời gian đặt: </h4>
-                  <div>
-                    <label className={styles.labelSelect}>Ngày gửi: </label>
+                  <div style={{marginBottom: 10}}>
+                    <label className={styles.labelSelect}>Ngày tiếp nhận: </label>
                     <input
                       type="date"
                       value={arrivalDate || ""}
@@ -693,7 +803,7 @@ const Boarding = () => {
                     />
                   </div>
                   <div>
-                    <label className={styles.labelSelect}>Ngày trả: </label>
+                    <label className={styles.labelSelect}>Ngày kết thúc: </label>
                     <input
                       type="date"
                       value={departureDate || ""}
@@ -707,8 +817,8 @@ const Boarding = () => {
               <div className={styles.boardingChosen}>
                 <div className={styles.timeManage}>
                   <h4 className={styles.title}>Tra lịch lồng: </h4>
-                  <div>
-                    <label className={styles.labelSelect}>Từ: </label>
+                  <div style={{marginBottom: 10}}>
+                    <label className={styles.labelSelect} style={{minWidth: 50}}>Từ: </label>
                     <input
                       type="date"
                       value={startDate || ""}
@@ -716,7 +826,7 @@ const Boarding = () => {
                     />
                   </div>
                   <div>
-                    <label className={styles.labelSelect}>Đến: </label>
+                    <label className={styles.labelSelect} style={{minWidth: 50}}>Đến: </label>
                     <input
                       type="date"
                       value={endDate || ""}
@@ -765,18 +875,31 @@ const Boarding = () => {
                   )}
                   {cageList.length > 0 &&
                     cageList.map((item, index) => (
+                      item.status === "empty" ?
                       <div
                         key={index}
                         className={
                           item?.cage_id === cageSelected?.cage_id
-                            ? styles.cageItemActive
+                            ? styles.cageItemSelected
                             : styles.cageItem
                         }
                         onClick={() => handleCageClick(item)}
                       >
-                        <p>B00{item.cage_id}</p>
-                        <span>BCS_2FEVGF</span>
-                      </div>
+                        <p style={{fontWeight: 600}}>L.{item.cage_id}</p>
+                        {item.status === "empty" ? 
+                          <span>Trống</span> : <span>Đang sử dụng</span>
+                      }
+                      </div> : 
+                      <div
+                      key={index}
+                      className={styles.cageItemActive}
+                      onClick={() => {}}
+                    >
+                      <p style={{fontWeight: 600}}>L.{item.cage_id}</p>
+                      {item.status === "empty" ? 
+                        <span>Trống</span> : <span>Đang sử dụng</span>
+                    }
+                    </div>
                     ))}
                 </div>
               </div>
@@ -785,7 +908,7 @@ const Boarding = () => {
               <div className={styles.confirm}>
                 <div className={styles.confirmLeft}>
                   <h3 className={styles.title}>Hình ảnh tiếp nhận</h3>
-                  {/* <Form.Item
+        <Form.Item
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
@@ -796,28 +919,28 @@ const Boarding = () => {
             showUploadList={false}
             action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
             beforeUpload={beforeUpload}
-            imageBirdBoarding={imageBirdBoarding}
+            imageBirdBoarding
             onChange={handleChange}
           >
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt="avatar"
-                style={{
-                  width: "100%",
-                }}
               />
             ) : (
               uploadButton
             )}
           </Upload>
-        </Form.Item> */}
-        <div className={styles.fileInput}>
+          <span style={{fontSize: 12, marginTop: 5}}>
+              *Dung lượng không vượt quá 5mb
+          </span>
+        </Form.Item>
+              {/* <div className={styles.fileInput} style={{display: 'flex', flexDirection: 'column'}}>
                 <input type="file" name="file" id="file" />
-                <p className={styles.fileInfo}>
+                <span style={{fontSize: 12, marginTop: 5}}>
                   *Dung lượng không vượt quá 5mb
-                </p>
-              </div>
+                </span>
+              </div> */}
                   
                 </div>
                 <div className={styles.confirmRight}>
@@ -831,12 +954,24 @@ const Boarding = () => {
                     <span>{birdProfile?.name}</span>
                   </div>
                   <div className={styles.lineItem}>
+                    <span className={styles.label}>Giống:</span>
+                    <span>{birdProfile?.bird_breed.breed}</span>
+                  </div>
+                  <div className={styles.lineItem}>
+                    <span className={styles.label}>Kích thước:</span>
+                    <span>{birdProfile?.bird_breed.bird_size.size}</span>
+                  </div>
+                  <div className={styles.lineItem}>
                     <span className={styles.label}>Giới tính:</span>
                     <span>{birdProfile?.gender}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Dịch vụ:</span>
                     <span>{serviceSelected?.package_name}</span>
+                  </div>
+                  <div className={styles.lineItem}>
+                    <span className={styles.label}>Lồng:</span>
+                    <span>L.{cageSelected?.cage_id}</span>
                   </div>
                   <div className={styles.lineItem}>
                     <span className={styles.label}>Ngày đến:</span>
@@ -848,17 +983,21 @@ const Boarding = () => {
                     {new Date(departureDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} ({totalDays} ngày lưu trú)
                     </span>
                   </div>
-                  <div>
+                  <div style={{display: 'flex',marginTop: 20}}>
                     <button
                       className={styles.printService}
+                      style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
                       onClick={handlePrint}
                     >
+                      <ion-icon name="print-outline"></ion-icon>
                       In phiếu dịch vụ
                     </button>
                     <button
                       className={styles.printService}
+                      style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
                       onClick={handlePrint2}
                     >
+                      <ion-icon name="print-outline"></ion-icon>
                       In mã số
                     </button>
                   </div>
@@ -874,24 +1013,42 @@ const Boarding = () => {
           </div>
           <div className={styles.metaContent}>
             <div className={styles.boxData}>
+              <div>
               <div
                 className={styles.boxDataItem}
                 onClick={() => setOpenModalProfile(true)}
               >
                 <ion-icon name="calendar-clear-outline"></ion-icon>
-                <span>Hồ sơ chim khám</span>
+                <span>Hồ sơ chim nội trú</span>
+              </div>
+              <div
+                className={styles.boxDataItem}
+                onClick={() => setOpenModalProfile(true)}
+              >
+                <ion-icon name="reader-outline"></ion-icon>
+                <span>Nội dung tiếp nhận</span>
+              </div>
               </div>
             </div>
-            <button className={styles.btnComplete}>Huỷ khám</button>
-
             {tab === 4 && (
               <button
                 className={styles.btnComplete}
-                onClick={handleConfirmAlert}
+                onClick={()=>setModalComplete(true)}
               >
-                Hoàn thành
+                Hoàn tất tiếp nhận
               </button>
             )}
+            <Modal
+              title="Hoàn thành tiếp nhận"
+              centered
+              open={modalComplete}
+              onOk={()=>handleConfirmAlert()}
+              onCancel={() => setModalComplete(false)}
+              cancelText="Đóng"
+            >
+              <span>Xác nhận hoàn tất tiếp nhận chim nội trú?</span>
+            </Modal>
+            <button className={styles.btnCancel}>Huỷ</button>
           </div>
         </div>
       </div>

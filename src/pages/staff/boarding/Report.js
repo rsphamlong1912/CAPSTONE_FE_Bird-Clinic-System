@@ -38,6 +38,15 @@ const Report = () => {
 
   const navigate = useNavigate();
 
+  function convertToHHMM(dateTimeString) {
+    const date = new Date(dateTimeString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+  
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    return formattedTime;
+  }
+
   // Tạo một đối tượng Date đại diện cho ngày hiện tại
   const currentDate = new Date();
 
@@ -477,8 +486,10 @@ const Report = () => {
                             onClick={() => handleFetchServiceDetail(item)}
                             key={index}
                           >
+                          
                             <span style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}><ion-icon name="reader-outline"></ion-icon>{item.service_form_id}</span>
                               <span>{formatTimeCreate(item.time_create)}</span>
+
                           </div>
                           </>
                         ))}

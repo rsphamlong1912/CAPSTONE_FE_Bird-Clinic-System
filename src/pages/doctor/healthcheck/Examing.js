@@ -212,6 +212,7 @@ const Examing = () => {
         service_type_id: serviceTypeId,
         arrival_date: formattedDate,
         is_re_exam: bookingData.is_re_exam,
+        money_has_paid: 0
       };
 
       const response = api.post(`/booking/re-exam`, requestData);

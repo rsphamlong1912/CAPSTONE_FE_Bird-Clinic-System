@@ -162,6 +162,7 @@ const Examing = () => {
       ...examData,
       [name]: value,
     });
+    console.log("Exam data", examData);
   };
 
   //tab 2
@@ -212,7 +213,7 @@ const Examing = () => {
         service_type_id: serviceTypeId,
         arrival_date: formattedDate,
         is_re_exam: bookingData.is_re_exam,
-        money_has_paid: 0
+        money_has_paid: 0,
       };
 
       const response = api.post(`/booking/re-exam`, requestData);
@@ -786,41 +787,54 @@ const Examing = () => {
   // };
 
   const handleConfirmFinish = async (item) => {
-    try {
-      const responseSFD = await api.put(
-        `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
-        {
-          status: "done",
-        }
-      );
-      const responseSF = await api.put(
-        `/service-form/${serviceFormDetail.service_form_id}`,
-        {
-          status: "done",
-        }
-      );
-      const responseBooking = await api.put(`/booking/${item.booking_id}`, {
-        status: "finish",
-        diagnosis: examData.diagnosis,
-        recommendations: examData.additionalNotes,
+    if (examData.diagnosis == null || examData.additionalNotes == null || examData.diagnosis.trim() === '' || examData.additionalNotes.trim() === '') {
+      toast.error("Chưa điền đủ thông tin!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
-      addPrescriptionData();
-      if (responseSFD && responseSF && responseBooking) {
-        console.log("đã hoàn thành cuộc hẹn");
-        toast.success("Xác nhận thành công!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
+    } else {
+      try {
+        const responseSFD = await api.put(
+          `/service-form-detail/${serviceFormDetail.service_form_detail_id}`,
+          {
+            status: "done",
+          }
+        );
+        const responseSF = await api.put(
+          `/service-form/${serviceFormDetail.service_form_id}`,
+          {
+            status: "done",
+          }
+        );
+        const responseBooking = await api.put(`/booking/${item.booking_id}`, {
+          status: "finish",
+          diagnosis: examData.diagnosis,
+          recommendations: examData.additionalNotes,
         });
-        navigate("/examing");
+        addPrescriptionData();
+        if (responseSFD && responseSF && responseBooking) {
+          console.log("đã hoàn thành cuộc hẹn");
+          toast.success("Xác nhận thành công!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          navigate("/examing");
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -1329,7 +1343,12 @@ const Examing = () => {
                   <div>
                     <div className={styles.expectedDate}>
                       <ion-icon name="calendar-clear-outline"></ion-icon>
-                      Ngày dự kiến: {new Date(formattedDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                      Ngày dự kiến:{" "}
+                      {new Date(formattedDate).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })}
                     </div>
                     <Calendar
                       className={styles.calendar}
@@ -1382,13 +1401,13 @@ const Examing = () => {
                   <ion-icon name="calendar-clear-outline"></ion-icon>
                   <span>Hồ sơ chim khám</span>
                 </div>
-                <div
+                {/* <div
                   className={styles.boxDataItem}
                   onClick={() => setOpenModal(true)}
                 >
                   <ion-icon name="thermometer-outline"></ion-icon>
                   <span>Nội dung khám</span>
-                </div>
+                </div> */}
               </div>
             </div>
             <button
@@ -1483,13 +1502,13 @@ const Examing = () => {
         ></DonThuoc>
       </div>
       <div style={{ display: "none" }}>
-          <PhieuChiDinh
-            ref={printRefSf}
-            bookingInfo={bookingInfo}
-            birdProfile={birdProfile}
-            selectedServices={selectedServices}
-          ></PhieuChiDinh>
-        </div>
+        <PhieuChiDinh
+          ref={printRefSf}
+          bookingInfo={bookingInfo}
+          birdProfile={birdProfile}
+          selectedServices={selectedServices}
+        ></PhieuChiDinh>
+      </div>
       <div className={styles.footerContent}>
         {tab !== 1 && (
           <button className={styles.btnBack} onClick={handleBackTab}>

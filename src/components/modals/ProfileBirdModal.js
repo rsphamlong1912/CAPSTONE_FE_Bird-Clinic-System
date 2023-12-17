@@ -88,7 +88,11 @@ const ProfileBirdModal = ({ open, onClose, birdProfile, birdProfileBreed, bookin
                 </tr>
                 <tr>
                   <th>Giống</th>
-                  <td>{birdProfileBreed}</td>
+                  <td>{birdProfile?.bird_breed?.breed}</td>
+                </tr>
+                <tr>
+                  <th>Size</th>
+                  <td>{birdProfile?.bird_breed?.bird_size?.size}</td>
                 </tr>
               </tbody>
             </table>

@@ -422,7 +422,7 @@ const ReTesting = () => {
         onClose={() => setOpenModalProfile(false)}
       />
       <div className={styles.footerContent}>
-        <button className={styles.btnBack}>Quay lại</button>
+        <button className={styles.btnBack} onClick={() => navigate("/retesting")}>Quay lại</button>
       </div>
     </div>
   );

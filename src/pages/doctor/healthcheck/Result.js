@@ -132,7 +132,7 @@ const Result = () => {
           theme: "light",
         });
   
-        navigate(`/retesting`);
+        navigate("/result")
         // Additional handling if required
       } catch (error) {
         console.error("Error submitting data:", error);
